@@ -207,3 +207,147 @@ pub fn start_scan(
         running_clone.store(false, Ordering::SeqCst);
     });
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── classify_env_file ─────────────────────────────────────
+
+    #[test]
+    fn test_classify_env_file_root() {
+        assert_eq!(classify_env_file(".env"), "root");
+    }
+
+    #[test]
+    fn test_classify_env_file_local() {
+        assert_eq!(classify_env_file(".env.local"), "local");
+    }
+
+    #[test]
+    fn test_classify_env_file_development() {
+        assert_eq!(classify_env_file(".env.development"), "development");
+        assert_eq!(classify_env_file(".env.dev"), "development");
+    }
+
+    #[test]
+    fn test_classify_env_file_staging() {
+        assert_eq!(classify_env_file(".env.staging"), "staging");
+    }
+
+    #[test]
+    fn test_classify_env_file_production() {
+        assert_eq!(classify_env_file(".env.production"), "production");
+        assert_eq!(classify_env_file(".env.prod"), "production");
+    }
+
+    #[test]
+    fn test_classify_env_file_example() {
+        assert_eq!(classify_env_file(".env.example"), "example");
+        assert_eq!(classify_env_file(".env.sample"), "example");
+    }
+
+    #[test]
+    fn test_classify_env_file_test() {
+        assert_eq!(classify_env_file(".env.test"), "test");
+    }
+
+    #[test]
+    fn test_classify_env_file_unknown_falls_to_root() {
+        assert_eq!(classify_env_file(".env.custom"), "root");
+    }
+
+    // ── detect_framework ──────────────────────────────────────
+
+    #[test]
+    fn test_detect_framework_next() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(
+            dir.path().join("package.json"),
+            r#"{"dependencies": {"next": "14.0.0"}}"#,
+        ).unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("next".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_react() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(
+            dir.path().join("package.json"),
+            r#"{"dependencies": {"react": "18.0.0"}}"#,
+        ).unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("react".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_vue() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(
+            dir.path().join("package.json"),
+            r#"{"dependencies": {"vue": "3.0.0"}}"#,
+        ).unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("vue".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_angular() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(
+            dir.path().join("package.json"),
+            r#"{"dependencies": {"@angular/core": "17.0.0"}}"#,
+        ).unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("angular".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_express() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(
+            dir.path().join("package.json"),
+            r#"{"dependencies": {"express": "4.0.0"}}"#,
+        ).unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("express".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_rails() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(dir.path().join("Gemfile"), "source 'https://rubygems.org'").unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("rails".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_python() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(dir.path().join("requirements.txt"), "flask\n").unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("python".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_rust() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(dir.path().join("Cargo.toml"), "[package]\nname = \"test\"").unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("rust".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_go() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(dir.path().join("go.mod"), "module example.com/test").unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("go".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_laravel() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(dir.path().join("composer.json"), "{}").unwrap();
+        assert_eq!(detect_framework(dir.path()), Some("laravel".to_string()));
+    }
+
+    #[test]
+    fn test_detect_framework_none() {
+        let dir = TempDir::new().unwrap();
+        assert_eq!(detect_framework(dir.path()), None);
+    }
+}

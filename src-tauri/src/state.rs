@@ -117,4 +117,152 @@ impl AppState {
             std::fs::write(path, json).ok();
         }
     }
+
+    /// Create an AppState with a custom stash_dir (for testing).
+    #[cfg(test)]
+    pub fn new_with_dir(stash_dir: &str) -> Self {
+        std::fs::create_dir_all(stash_dir).ok();
+
+        let projects_path = format!("{}/projects.json", stash_dir);
+        let projects: Vec<Project> = if std::path::Path::new(&projects_path).exists() {
+            std::fs::read_to_string(&projects_path)
+                .ok()
+                .and_then(|s| serde_json::from_str(&s).ok())
+                .unwrap_or_default()
+        } else {
+            Vec::new()
+        };
+
+        let rotation_path = format!("{}/rotation.json", stash_dir);
+        let rotation: std::collections::HashMap<String, u64> =
+            if std::path::Path::new(&rotation_path).exists() {
+                std::fs::read_to_string(&rotation_path)
+                    .ok()
+                    .and_then(|s| serde_json::from_str(&s).ok())
+                    .unwrap_or_default()
+            } else {
+                std::collections::HashMap::new()
+            };
+
+        Self {
+            scan_running: Arc::new(AtomicBool::new(false)),
+            scan_results: Arc::new(Mutex::new(Vec::new())),
+            projects: Arc::new(Mutex::new(projects)),
+            vault_key: Arc::new(Mutex::new(None)),
+            rotation: Arc::new(Mutex::new(rotation)),
+            stash_dir: stash_dir.to_string(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── AppState::new_with_dir ────────────────────────────────
+
+    #[test]
+    fn test_appstate_new_creates_stash_dir() {
+        let dir = TempDir::new().unwrap();
+        let stash = dir.path().join("stash_test");
+        let _state = AppState::new_with_dir(stash.to_str().unwrap());
+        assert!(stash.exists(), "stash dir should be created");
+    }
+
+    // ── is_unlocked ───────────────────────────────────────────
+
+    #[test]
+    fn test_is_unlocked_false_initially() {
+        let dir = TempDir::new().unwrap();
+        let state = AppState::new_with_dir(dir.path().to_str().unwrap());
+        assert!(!state.is_unlocked());
+    }
+
+    #[test]
+    fn test_is_unlocked_true_after_setting_key() {
+        let dir = TempDir::new().unwrap();
+        let state = AppState::new_with_dir(dir.path().to_str().unwrap());
+        {
+            let mut vk = state.vault_key.lock().unwrap();
+            *vk = Some([1u8; 32]);
+        }
+        assert!(state.is_unlocked());
+    }
+
+    // ── save_projects / load round-trip ───────────────────────
+
+    #[test]
+    fn test_save_and_load_projects_round_trip() {
+        let dir = TempDir::new().unwrap();
+        let stash_path = dir.path().to_str().unwrap();
+
+        // Create state and add a project
+        let state = AppState::new_with_dir(stash_path);
+        {
+            let mut projects = state.projects.lock().unwrap();
+            projects.push(Project {
+                id: "proj1".to_string(),
+                name: "My Project".to_string(),
+                path: "/tmp/myproject".to_string(),
+                framework: Some("react".to_string()),
+                active_profile: "default".to_string(),
+                profiles: vec!["default".to_string(), "production".to_string()],
+            });
+        }
+        state.save_projects();
+
+        // Load into a new state
+        let state2 = AppState::new_with_dir(stash_path);
+        let projects = state2.projects.lock().unwrap();
+        assert_eq!(projects.len(), 1);
+        assert_eq!(projects[0].name, "My Project");
+        assert_eq!(projects[0].framework, Some("react".to_string()));
+        assert_eq!(projects[0].profiles.len(), 2);
+    }
+
+    // ── record_rotation / get_rotation ────────────────────────
+
+    #[test]
+    fn test_record_and_get_rotation() {
+        let dir = TempDir::new().unwrap();
+        let state = AppState::new_with_dir(dir.path().to_str().unwrap());
+
+        assert!(state.get_rotation("proj1", "API_KEY").is_none());
+
+        state.record_rotation("proj1", "API_KEY");
+        let ts = state.get_rotation("proj1", "API_KEY");
+        assert!(ts.is_some(), "rotation should be recorded");
+
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        // Timestamp should be within 2 seconds of now
+        assert!(ts.unwrap().abs_diff(now) < 2, "rotation timestamp should be recent");
+    }
+
+    #[test]
+    fn test_rotation_persists_to_disk() {
+        let dir = TempDir::new().unwrap();
+        let stash_path = dir.path().to_str().unwrap();
+
+        let state = AppState::new_with_dir(stash_path);
+        state.record_rotation("proj1", "SECRET");
+
+        // Load into new state
+        let state2 = AppState::new_with_dir(stash_path);
+        assert!(state2.get_rotation("proj1", "SECRET").is_some());
+    }
+
+    #[test]
+    fn test_rotation_different_keys_independent() {
+        let dir = TempDir::new().unwrap();
+        let state = AppState::new_with_dir(dir.path().to_str().unwrap());
+
+        state.record_rotation("proj1", "KEY_A");
+        assert!(state.get_rotation("proj1", "KEY_A").is_some());
+        assert!(state.get_rotation("proj1", "KEY_B").is_none());
+        assert!(state.get_rotation("proj2", "KEY_A").is_none());
+    }
 }

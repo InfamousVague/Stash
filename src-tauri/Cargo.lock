@@ -4066,6 +4066,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-log",
  "tauri-plugin-opener",
+ "tempfile",
  "uuid",
  "walkdir",
  "x25519-dalek",

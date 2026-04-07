@@ -126,3 +126,135 @@ pub fn write_lock_file(project_path: &str, lock: &LockFile) -> Result<(), String
     std::fs::write(&path, json)
         .map_err(|e| format!("Can't write .stash.lock: {}", e))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    // ── generate_keypair ──────────────────────────────────────
+
+    #[test]
+    fn test_generate_keypair_produces_valid_base64() {
+        let (private_b64, public_b64) = generate_keypair();
+        let private_bytes = B64.decode(&private_b64).unwrap();
+        let public_bytes = B64.decode(&public_b64).unwrap();
+        assert_eq!(private_bytes.len(), 32, "private key should be 32 bytes");
+        assert_eq!(public_bytes.len(), 32, "public key should be 32 bytes");
+    }
+
+    #[test]
+    fn test_generate_keypair_unique_each_call() {
+        let (priv1, pub1) = generate_keypair();
+        let (priv2, pub2) = generate_keypair();
+        assert_ne!(priv1, priv2, "two keypairs should have different private keys");
+        assert_ne!(pub1, pub2, "two keypairs should have different public keys");
+    }
+
+    // ── encrypt / decrypt round-trip ──────────────────────────
+
+    #[test]
+    fn test_encrypt_decrypt_round_trip() {
+        let (private_b64, public_b64) = generate_keypair();
+        let plaintext = "super-secret-api-key-12345";
+
+        let encrypted = encrypt_for_recipient(plaintext, &public_b64).unwrap();
+        let decrypted = decrypt_with_private_key(&encrypted, &private_b64).unwrap();
+
+        assert_eq!(decrypted, plaintext);
+    }
+
+    #[test]
+    fn test_encrypt_decrypt_empty_string() {
+        let (private_b64, public_b64) = generate_keypair();
+        let encrypted = encrypt_for_recipient("", &public_b64).unwrap();
+        let decrypted = decrypt_with_private_key(&encrypted, &private_b64).unwrap();
+        assert_eq!(decrypted, "");
+    }
+
+    #[test]
+    fn test_decrypt_with_wrong_key_fails() {
+        let (_priv1, pub1) = generate_keypair();
+        let (priv2, _pub2) = generate_keypair();
+
+        let encrypted = encrypt_for_recipient("secret", &pub1).unwrap();
+        let result = decrypt_with_private_key(&encrypted, &priv2);
+        assert!(result.is_err(), "decryption with wrong key should fail");
+    }
+
+    #[test]
+    fn test_encrypt_each_call_produces_different_ciphertext() {
+        let (_priv, pub_key) = generate_keypair();
+        let ct1 = encrypt_for_recipient("same", &pub_key).unwrap();
+        let ct2 = encrypt_for_recipient("same", &pub_key).unwrap();
+        assert_ne!(ct1, ct2, "ephemeral keys should produce different ciphertexts");
+    }
+
+    #[test]
+    fn test_encrypt_invalid_public_key() {
+        let result = encrypt_for_recipient("val", "not-valid-base64!!!");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_decrypt_ciphertext_too_short() {
+        let (priv_b64, _) = generate_keypair();
+        let short = B64.encode(&[0u8; 10]);
+        let result = decrypt_with_private_key(&short, &priv_b64);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("too short"));
+    }
+
+    // ── lock file read / write ────────────────────────────────
+
+    #[test]
+    fn test_write_and_read_lock_file_round_trip() {
+        let dir = TempDir::new().unwrap();
+        let p = dir.path().to_str().unwrap();
+
+        let mut variables = HashMap::new();
+        let mut inner = HashMap::new();
+        inner.insert("alice".to_string(), "encrypted_val".to_string());
+        variables.insert("API_KEY".to_string(), inner);
+
+        let lock = LockFile {
+            version: 1,
+            members: vec![TeamMember {
+                name: "alice".to_string(),
+                public_key: "AAAA".to_string(),
+            }],
+            variables,
+            profile: "production".to_string(),
+        };
+
+        write_lock_file(p, &lock).unwrap();
+        let read_back = read_lock_file(p).unwrap();
+
+        assert_eq!(read_back.version, 1);
+        assert_eq!(read_back.profile, "production");
+        assert_eq!(read_back.members.len(), 1);
+        assert_eq!(read_back.members[0].name, "alice");
+        assert!(read_back.variables.contains_key("API_KEY"));
+    }
+
+    #[test]
+    fn test_read_lock_file_not_found() {
+        let dir = TempDir::new().unwrap();
+        let result = read_lock_file(dir.path().to_str().unwrap());
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_lock_file_serialization_contains_expected_fields() {
+        let lock = LockFile {
+            version: 2,
+            members: vec![],
+            variables: HashMap::new(),
+            profile: "dev".to_string(),
+        };
+        let json = serde_json::to_string(&lock).unwrap();
+        assert!(json.contains("\"version\":2"));
+        assert!(json.contains("\"profile\":\"dev\""));
+        assert!(json.contains("\"members\":[]"));
+    }
+}

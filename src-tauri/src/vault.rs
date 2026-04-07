@@ -77,3 +77,101 @@ pub fn unlock_vault(password: &str, stash_dir: &str) -> Result<[u8; KEY_LEN], St
     log::info!("Vault unlocked");
     Ok(key)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    #[test]
+    fn test_is_vault_initialized_false_when_empty() {
+        let dir = TempDir::new().unwrap();
+        assert!(!is_vault_initialized(dir.path().to_str().unwrap()));
+    }
+
+    #[test]
+    fn test_init_vault_creates_files() {
+        let dir = TempDir::new().unwrap();
+        let stash = dir.path().to_str().unwrap();
+        let _key = init_vault("testpass", stash).unwrap();
+
+        assert!(dir.path().join("salt").exists(), "salt file should exist");
+        assert!(dir.path().join("vault.enc").exists(), "vault.enc file should exist");
+    }
+
+    #[test]
+    fn test_is_vault_initialized_true_after_init() {
+        let dir = TempDir::new().unwrap();
+        let stash = dir.path().to_str().unwrap();
+        init_vault("testpass", stash).unwrap();
+        assert!(is_vault_initialized(stash));
+    }
+
+    #[test]
+    fn test_unlock_vault_correct_password() {
+        let dir = TempDir::new().unwrap();
+        let stash = dir.path().to_str().unwrap();
+        let init_key = init_vault("mypassword", stash).unwrap();
+        let unlock_key = unlock_vault("mypassword", stash).unwrap();
+        assert_eq!(init_key, unlock_key, "init and unlock should derive the same key");
+    }
+
+    #[test]
+    fn test_unlock_vault_wrong_password() {
+        let dir = TempDir::new().unwrap();
+        let stash = dir.path().to_str().unwrap();
+        init_vault("correct", stash).unwrap();
+        let result = unlock_vault("wrong", stash);
+        assert!(result.is_err(), "wrong password should fail");
+        assert!(result.unwrap_err().contains("Incorrect password"));
+    }
+
+    #[test]
+    fn test_unlock_vault_no_vault_files() {
+        let dir = TempDir::new().unwrap();
+        let result = unlock_vault("any", dir.path().to_str().unwrap());
+        assert!(result.is_err(), "should fail when no vault files exist");
+    }
+
+    #[test]
+    fn test_derive_key_deterministic() {
+        let salt = [1u8; SALT_LEN];
+        let key1 = derive_key("password", &salt).unwrap();
+        let key2 = derive_key("password", &salt).unwrap();
+        assert_eq!(key1, key2, "same password + salt should produce same key");
+    }
+
+    #[test]
+    fn test_derive_key_different_passwords() {
+        let salt = [1u8; SALT_LEN];
+        let key1 = derive_key("password1", &salt).unwrap();
+        let key2 = derive_key("password2", &salt).unwrap();
+        assert_ne!(key1, key2, "different passwords should produce different keys");
+    }
+
+    #[test]
+    fn test_encrypt_decrypt_round_trip() {
+        let key = [42u8; KEY_LEN];
+        let plaintext = b"hello vault";
+        let encrypted = encrypt(plaintext, &key).unwrap();
+        let decrypted = decrypt(&encrypted, &key).unwrap();
+        assert_eq!(decrypted, plaintext);
+    }
+
+    #[test]
+    fn test_decrypt_wrong_key_fails() {
+        let key1 = [1u8; KEY_LEN];
+        let key2 = [2u8; KEY_LEN];
+        let encrypted = encrypt(b"secret", &key1).unwrap();
+        let result = decrypt(&encrypted, &key2);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_decrypt_data_too_short() {
+        let key = [1u8; KEY_LEN];
+        let result = decrypt(&[0u8; 5], &key);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("too short"));
+    }
+}
