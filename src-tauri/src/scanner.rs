@@ -84,10 +84,12 @@ pub fn start_scan(
         r.clear();
     }
 
+    let running_clone = Arc::clone(&running);
     std::thread::spawn(move || {
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
         let home = dirs::home_dir().unwrap_or_default();
         let scan_dirs = [
-            "Development", "Projects", "code", "Desktop", "Documents",
+            "Development", "Projects", "code",
             "repos", "work", "src",
         ];
 
@@ -103,6 +105,7 @@ pub fn start_scan(
             }
 
             let walker = WalkDir::new(&root)
+                .max_depth(8)
                 .follow_links(false)
                 .into_iter()
                 .filter_entry(|e| {
@@ -196,5 +199,11 @@ pub fn start_scan(
         };
         let _ = app_handle.emit("scan-progress", &progress);
         let _ = app_handle.emit("scan-complete", ());
+        })); // end catch_unwind
+
+        if result.is_err() {
+            log::error!("Scanner thread panicked");
+        }
+        running_clone.store(false, Ordering::SeqCst);
     });
 }
