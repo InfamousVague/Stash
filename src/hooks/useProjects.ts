@@ -6,6 +6,7 @@ export function useProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [vars, setVars] = useState<EnvVar[]>([]);
+  const [rotation, setRotation] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const loadProjects = useCallback(async () => {
@@ -36,9 +37,12 @@ export function useProjects() {
       try {
         const result = await invoke<EnvVar[]>('get_project_vars', { projectId: id });
         setVars(result);
+        const rot = await invoke<Record<string, number>>('get_rotation_info', { projectId: id });
+        setRotation(rot);
       } catch (err) {
         console.error('Failed to load project vars:', err);
         setVars([]);
+        setRotation({});
       }
     } else {
       setVars([]);
@@ -91,6 +95,7 @@ export function useProjects() {
     projects,
     activeProject,
     vars,
+    rotation,
     loading,
     loadProjects,
     importProject,

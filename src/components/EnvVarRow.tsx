@@ -16,11 +16,21 @@ interface EnvVarRowProps {
   envKey: string;
   value: string;
   matchedService?: ApiService | null;
+  lastChanged?: number; // unix timestamp
   onUpdate: (key: string, value: string) => void;
   onDelete: (key: string) => void;
 }
 
-export function EnvVarRow({ envKey, value, matchedService, onUpdate, onDelete }: EnvVarRowProps) {
+function getStaleStatus(lastChanged?: number): 'fresh' | 'aging' | 'stale' | 'unknown' {
+  if (!lastChanged) return 'unknown';
+  const now = Date.now() / 1000;
+  const days = (now - lastChanged) / 86400;
+  if (days > 90) return 'stale';
+  if (days > 30) return 'aging';
+  return 'fresh';
+}
+
+export function EnvVarRow({ envKey, value, matchedService, lastChanged, onUpdate, onDelete }: EnvVarRowProps) {
   const [visible, setVisible] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -48,6 +58,7 @@ export function EnvVarRow({ envKey, value, matchedService, onUpdate, onDelete }:
   }, []);
 
   const showGetKey = matchedService && !value.trim();
+  const stale = getStaleStatus(lastChanged);
 
   return (
     <div className="env-var-row">
@@ -57,6 +68,12 @@ export function EnvVarRow({ envKey, value, matchedService, onUpdate, onDelete }:
           <Badge variant="subtle" size="sm" color="accent">
             {matchedService.name}
           </Badge>
+        )}
+        {stale === 'stale' && (
+          <Badge variant="subtle" size="sm" color="error">90d+ stale</Badge>
+        )}
+        {stale === 'aging' && (
+          <Badge variant="subtle" size="sm" color="warning">30d+</Badge>
         )}
       </div>
       <div className="env-var-row__value">

@@ -24,7 +24,7 @@ import './VaultsPage.css';
 export function VaultsPage() {
   const { scanning, progress, results, startScan, dismiss } = useScanner();
   const {
-    projects, activeProject, vars,
+    projects, activeProject, vars, rotation,
     loadProjects, importProject, selectProject,
     updateVar, addVar, deleteVar, deleteProject,
   } = useProjects();
@@ -152,6 +152,7 @@ export function VaultsPage() {
                       onAdd={addVar}
                       onDelete={deleteVar}
                       matchEnvKey={matchEnvKey}
+                      rotation={rotation}
                     />
                   </>
                 )}

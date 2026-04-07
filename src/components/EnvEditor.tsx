@@ -15,9 +15,10 @@ interface EnvEditorProps {
   onAdd: (key: string, value: string) => void;
   onDelete: (key: string) => void;
   matchEnvKey: (key: string) => ApiService | null;
+  rotation?: Record<string, number>;
 }
 
-export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey }: EnvEditorProps) {
+export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotation }: EnvEditorProps) {
   const [filter, setFilter] = useState('');
   const [newKey, setNewKey] = useState('');
   const [newValue, setNewValue] = useState('');
@@ -65,6 +66,7 @@ export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey }: EnvE
               envKey={v.key}
               value={v.value}
               matchedService={matchEnvKey(v.key)}
+              lastChanged={rotation?.[v.key]}
               onUpdate={onUpdate}
               onDelete={onDelete}
             />

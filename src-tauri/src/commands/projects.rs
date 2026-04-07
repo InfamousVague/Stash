@@ -85,7 +85,10 @@ pub fn update_var(
         .ok_or("Project not found")?;
 
     let env_path = Path::new(&project.path).join(".env");
-    env_parser::update_var_in_file(&env_path.to_string_lossy(), &key, &value)
+    env_parser::update_var_in_file(&env_path.to_string_lossy(), &key, &value)?;
+    drop(projects);
+    state.record_rotation(&project_id, &key);
+    Ok(())
 }
 
 #[tauri::command]
@@ -101,7 +104,10 @@ pub fn add_var(
         .ok_or("Project not found")?;
 
     let env_path = Path::new(&project.path).join(".env");
-    env_parser::add_var_to_file(&env_path.to_string_lossy(), &key, &value)
+    env_parser::add_var_to_file(&env_path.to_string_lossy(), &key, &value)?;
+    drop(projects);
+    state.record_rotation(&project_id, &key);
+    Ok(())
 }
 
 #[tauri::command]
@@ -135,6 +141,19 @@ pub fn delete_project(
 
     state.save_projects();
     Ok(())
+}
+
+#[tauri::command]
+pub fn get_rotation_info(
+    state: tauri::State<'_, AppState>,
+    project_id: String,
+) -> std::collections::HashMap<String, u64> {
+    let rotation = state.rotation.lock().unwrap();
+    let prefix = format!("{}:", project_id);
+    rotation.iter()
+        .filter(|(k, _)| k.starts_with(&prefix))
+        .map(|(k, v)| (k[prefix.len()..].to_string(), *v))
+        .collect()
 }
 
 fn detect_framework_for_project(path: &Path) -> Option<String> {

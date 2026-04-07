@@ -26,6 +26,7 @@ pub fn run() {
             commands::projects::add_var,
             commands::projects::delete_var,
             commands::projects::delete_project,
+            commands::projects::get_rotation_info,
             // Profile commands
             commands::profiles::list_profiles,
             commands::profiles::get_active_profile,
