@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@base/primitives/button';
 import '@base/primitives/button/button.css';
 import { Badge } from '@base/primitives/badge';
@@ -12,6 +12,7 @@ import { trash2 } from '@base/primitives/icon/icons/trash-2';
 import { ScanBanner } from '../components/ScanBanner';
 import { ProfileSwitcher } from '../components/ProfileSwitcher';
 import { EnvEditor } from '../components/EnvEditor';
+import { DiffView } from '../components/DiffView';
 import { useScanner } from '../hooks/useScanner';
 import { useProjects } from '../hooks/useProjects';
 import { useProfiles } from '../hooks/useProfiles';
@@ -29,6 +30,7 @@ export function VaultsPage() {
   } = useProjects();
   const { profiles, activeProfile, loadProfiles, switchProfile, createProfile } = useProfiles();
   const { matchEnvKey } = useDirectory();
+  const [detailTab, setDetailTab] = useState<'editor' | 'diff'>('editor');
 
   useEffect(() => { loadProjects(); }, [loadProjects]);
   useEffect(() => {
@@ -118,25 +120,44 @@ export function VaultsPage() {
               <>
                 <div className="vaults-page__detail-header">
                   <h2 className="vaults-page__detail-title">{activeProject.name}</h2>
+                  <div className="vaults-page__detail-tabs">
+                    <button
+                      className={`vaults-page__tab ${detailTab === 'editor' ? 'vaults-page__tab--active' : ''}`}
+                      onClick={() => setDetailTab('editor')}
+                    >Editor</button>
+                    {profiles.length >= 2 && (
+                      <button
+                        className={`vaults-page__tab ${detailTab === 'diff' ? 'vaults-page__tab--active' : ''}`}
+                        onClick={() => setDetailTab('diff')}
+                      >Diff</button>
+                    )}
+                  </div>
                   <Button
                     variant="ghost" size="sm" iconOnly icon={trash2}
                     onClick={() => deleteProject(activeProject.id)}
                     aria-label="Delete project"
                   />
                 </div>
-                <ProfileSwitcher
-                  profiles={profiles}
-                  activeProfile={activeProfile}
-                  onSwitch={(name) => activeProject && switchProfile(activeProject.id, name)}
-                  onCreate={(name, copyFrom) => activeProject && createProfile(activeProject.id, name, copyFrom)}
-                />
-                <EnvEditor
-                  vars={vars}
-                  onUpdate={updateVar}
-                  onAdd={addVar}
-                  onDelete={deleteVar}
-                  matchEnvKey={matchEnvKey}
-                />
+                {detailTab === 'editor' && (
+                  <>
+                    <ProfileSwitcher
+                      profiles={profiles}
+                      activeProfile={activeProfile}
+                      onSwitch={(name) => activeProject && switchProfile(activeProject.id, name)}
+                      onCreate={(name, copyFrom) => activeProject && createProfile(activeProject.id, name, copyFrom)}
+                    />
+                    <EnvEditor
+                      vars={vars}
+                      onUpdate={updateVar}
+                      onAdd={addVar}
+                      onDelete={deleteVar}
+                      matchEnvKey={matchEnvKey}
+                    />
+                  </>
+                )}
+                {detailTab === 'diff' && (
+                  <DiffView projectId={activeProject.id} profiles={profiles} />
+                )}
               </>
             ) : (
               <div className="vaults-page__detail-empty">

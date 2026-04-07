@@ -32,6 +32,7 @@ pub fn run() {
             commands::profiles::switch_profile,
             commands::profiles::create_profile,
             commands::profiles::delete_profile,
+            commands::profiles::diff_profiles,
             // Vault commands
             commands::vault::check_vault_initialized,
             commands::vault::check_vault_unlocked,

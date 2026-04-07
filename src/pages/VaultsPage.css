@@ -231,6 +231,37 @@
   color: var(--color-text-primary);
 }
 
+.vaults-page__detail-tabs {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.vaults-page__tab {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vaults-page__tab:hover {
+  color: var(--color-text-primary);
+  background: var(--color-accent-subtle);
+}
+
+.vaults-page__tab--active {
+  color: var(--color-text-primary);
+  background: var(--color-accent-subtle);
+  font-weight: 600;
+}
+
 .vaults-page__detail-empty {
   flex: 1;
   display: flex;
