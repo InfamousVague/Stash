@@ -5,7 +5,10 @@ import { Button } from '@base/primitives/button';
 import '@base/primitives/button/button.css';
 import { search } from '@base/primitives/icon/icons/search';
 import { plus } from '@base/primitives/icon/icons/plus';
+import { Badge } from '@base/primitives/badge';
+import '@base/primitives/badge/badge.css';
 import { EnvVarRow } from './EnvVarRow';
+import { getSuggestions } from '../data/framework-suggestions';
 import type { EnvVar, ApiService } from '../types';
 import './EnvEditor.css';
 
@@ -16,9 +19,10 @@ interface EnvEditorProps {
   onDelete: (key: string) => void;
   matchEnvKey: (key: string) => ApiService | null;
   rotation?: Record<string, number>;
+  framework?: string | null;
 }
 
-export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotation }: EnvEditorProps) {
+export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotation, framework }: EnvEditorProps) {
   const [filter, setFilter] = useState('');
   const [newKey, setNewKey] = useState('');
   const [newValue, setNewValue] = useState('');
@@ -73,6 +77,29 @@ export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotati
           ))
         )}
       </div>
+
+      {/* Framework suggestions */}
+      {(() => {
+        const suggestions = getSuggestions(framework ?? null, vars.map((v) => v.key));
+        if (suggestions.length === 0) return null;
+        return (
+          <div className="env-editor__suggestions">
+            <span className="env-editor__suggestions-label">Suggested for {framework}:</span>
+            <div className="env-editor__suggestions-list">
+              {suggestions.map((key) => (
+                <button
+                  key={key}
+                  className="env-editor__suggestion"
+                  onClick={() => { onAdd(key, ''); }}
+                >
+                  <code>{key}</code>
+                  <Badge variant="subtle" size="sm" color="accent">+ add</Badge>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="env-editor__add">
         <Input

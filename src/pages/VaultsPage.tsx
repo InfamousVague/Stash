@@ -165,6 +165,7 @@ export function VaultsPage() {
                       onDelete={deleteVar}
                       matchEnvKey={matchEnvKey}
                       rotation={rotation}
+                      framework={activeProject.framework}
                     />
                   </>
                 )}
