@@ -1,5 +1,4 @@
 import stashIcon from "./assets/stash-icon.png";
-import stashBg from "./assets/stashbg.png";
 import "./App.css";
 
 function App() {
@@ -22,13 +21,9 @@ function App() {
           <p className="stash__subtitle">No vaults yet. Create one to get started.</p>
         </header>
         <div className="stash__empty">
-          <div className="stash__empty-bg-wrap">
-            <img src={stashBg} alt="" className="stash__empty-bg" />
-          </div>
-          <div className="stash__empty-content">
-            <p className="stash__empty-text">Your environment secrets live here.</p>
-            <button className="stash__btn stash__btn--primary">New Vault</button>
-          </div>
+          <img src={stashIcon} alt="" className="stash__empty-img" />
+          <p className="stash__empty-text">Your environment secrets live here.</p>
+          <button className="stash__btn stash__btn--primary">New Vault</button>
         </div>
       </main>
     </div>

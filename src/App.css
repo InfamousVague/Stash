@@ -116,37 +116,16 @@ html, body, #root {
 .stash__empty {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.stash__empty-bg-wrap {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.stash__empty-bg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.18;
-  filter: blur(20px);
-  transform: scale(1.1);
-  user-select: none;
-  pointer-events: none;
-}
-
-.stash__empty-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
+}
+
+.stash__empty-img {
+  width: 64px;
+  height: 64px;
+  opacity: 0.3;
 }
 
 .stash__empty-text {
