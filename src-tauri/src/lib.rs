@@ -2,6 +2,7 @@ mod scanner;
 mod env_parser;
 mod profile_manager;
 mod vault;
+mod team;
 mod state;
 mod commands;
 
@@ -40,6 +41,14 @@ pub fn run() {
             commands::vault::init_vault_cmd,
             commands::vault::unlock_vault_cmd,
             commands::vault::lock_vault,
+            // Team commands
+            commands::team::generate_team_key,
+            commands::team::get_public_key,
+            commands::team::push_lock,
+            commands::team::pull_lock,
+            commands::team::add_team_member,
+            commands::team::remove_team_member,
+            commands::team::list_team_members,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

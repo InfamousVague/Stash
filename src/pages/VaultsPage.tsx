@@ -13,6 +13,7 @@ import { ScanBanner } from '../components/ScanBanner';
 import { ProfileSwitcher } from '../components/ProfileSwitcher';
 import { EnvEditor } from '../components/EnvEditor';
 import { DiffView } from '../components/DiffView';
+import { TeamPanel } from '../components/TeamPanel';
 import { useScanner } from '../hooks/useScanner';
 import { useProjects } from '../hooks/useProjects';
 import { useProfiles } from '../hooks/useProfiles';
@@ -33,7 +34,7 @@ export function VaultsPage() {
   const { profiles, activeProfile, loadProfiles, switchProfile, createProfile } = useProfiles();
   const { matchEnvKey } = useDirectory();
   const toast = useToastContext();
-  const [detailTab, setDetailTab] = useState<'editor' | 'diff'>('editor');
+  const [detailTab, setDetailTab] = useState<'editor' | 'diff' | 'team'>('editor');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => { loadProjects(); }, [loadProjects]);
@@ -143,6 +144,10 @@ export function VaultsPage() {
                         onClick={() => setDetailTab('diff')}
                       >Diff</button>
                     )}
+                    <button
+                      className={`vaults-page__tab ${detailTab === 'team' ? 'vaults-page__tab--active' : ''}`}
+                      onClick={() => setDetailTab('team')}
+                    >Team</button>
                   </div>
                   <Button
                     variant="ghost" size="sm" iconOnly icon={trash2}
@@ -171,6 +176,9 @@ export function VaultsPage() {
                 )}
                 {detailTab === 'diff' && (
                   <DiffView projectId={activeProject.id} profiles={profiles} />
+                )}
+                {detailTab === 'team' && (
+                  <TeamPanel projectId={activeProject.id} />
                 )}
               </>
             ) : (

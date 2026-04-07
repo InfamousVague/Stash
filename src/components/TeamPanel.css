@@ -1,0 +1,99 @@
+.team-panel {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.team-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.team-panel__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.team-panel__section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-panel__hint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
+}
+
+.team-panel__key-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-panel__key {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-inset, var(--color-bg-secondary));
+  padding: 6px 10px;
+  border-radius: 6px;
+  flex: 1;
+}
+
+.team-panel__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.team-panel__add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default);
+}
+
+.team-panel__members {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.team-panel__member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border-default);
+}
+
+.team-panel__member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.team-panel__member-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.team-panel__member-key {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+}
