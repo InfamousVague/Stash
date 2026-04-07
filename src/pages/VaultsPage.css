@@ -89,6 +89,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
 }
 
 .vaults-page__scan-card-count {
@@ -206,6 +208,8 @@
   color: var(--color-text-tertiary);
   white-space: nowrap;
   overflow: hidden;
+  direction: rtl;
+  text-align: left;
   text-overflow: ellipsis;
 }
 

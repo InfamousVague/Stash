@@ -1,74 +1,157 @@
 [
   {
-    "id": "openai",
-    "name": "OpenAI",
-    "category": "AI & ML",
-    "description": "GPT-4, DALL-E, Whisper, and embeddings APIs",
-    "envKeys": ["OPENAI_API_KEY", "OPENAI_ORG_ID"],
-    "portalUrl": "https://platform.openai.com/api-keys"
-  },
-  {
     "id": "anthropic",
     "name": "Anthropic",
     "category": "AI & ML",
     "description": "Claude language models and AI assistants API",
-    "envKeys": ["ANTHROPIC_API_KEY"],
+    "envKeys": [
+      "ANTHROPIC_API_KEY"
+    ],
     "portalUrl": "https://console.anthropic.com/settings/keys"
   },
   {
-    "id": "google-ai",
-    "name": "Google AI (Gemini)",
+    "id": "assemblyai",
+    "name": "AssemblyAI",
     "category": "AI & ML",
-    "description": "Gemini models, PaLM, and Google AI Studio",
-    "envKeys": ["GOOGLE_AI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY"],
-    "portalUrl": "https://aistudio.google.com/app/apikey"
+    "description": "Speech-to-text, speaker diarization, and audio intelligence",
+    "envKeys": [
+      "ASSEMBLYAI_API_KEY"
+    ],
+    "portalUrl": "https://www.assemblyai.com/app/account"
   },
   {
     "id": "cohere",
     "name": "Cohere",
     "category": "AI & ML",
     "description": "NLP models for text generation, classification, and embeddings",
-    "envKeys": ["COHERE_API_KEY"],
+    "envKeys": [
+      "COHERE_API_KEY"
+    ],
     "portalUrl": "https://dashboard.cohere.com/api-keys"
   },
   {
-    "id": "huggingface",
-    "name": "Hugging Face",
+    "id": "deepseek",
+    "name": "DeepSeek",
     "category": "AI & ML",
-    "description": "Open-source ML models, inference API, and model hosting",
-    "envKeys": ["HUGGINGFACE_API_KEY", "HF_TOKEN"],
-    "portalUrl": "https://huggingface.co/settings/tokens"
+    "description": "DeepSeek language models and code generation API",
+    "envKeys": [
+      "DEEPSEEK_API_KEY"
+    ],
+    "portalUrl": "https://platform.deepseek.com/api_keys"
   },
   {
-    "id": "replicate",
-    "name": "Replicate",
+    "id": "elevenlabs",
+    "name": "ElevenLabs",
     "category": "AI & ML",
-    "description": "Run open-source ML models in the cloud via API",
-    "envKeys": ["REPLICATE_API_TOKEN"],
-    "portalUrl": "https://replicate.com/account/api-tokens"
+    "description": "AI voice generation, text-to-speech, and voice cloning",
+    "envKeys": [
+      "ELEVENLABS_API_KEY"
+    ],
+    "portalUrl": "https://elevenlabs.io/app/settings/api-keys"
+  },
+  {
+    "id": "fireworks-ai",
+    "name": "Fireworks AI",
+    "category": "AI & ML",
+    "description": "Fast generative AI inference for open-source models",
+    "envKeys": [
+      "FIREWORKS_API_KEY"
+    ],
+    "portalUrl": "https://fireworks.ai/account/api-keys"
+  },
+  {
+    "id": "google-ai",
+    "name": "Google AI (Gemini)",
+    "category": "AI & ML",
+    "description": "Gemini models, PaLM, and Google AI Studio",
+    "envKeys": [
+      "GOOGLE_AI_API_KEY",
+      "GOOGLE_GENERATIVE_AI_API_KEY"
+    ],
+    "portalUrl": "https://aistudio.google.com/app/apikey"
   },
   {
     "id": "groq",
     "name": "Groq",
     "category": "AI & ML",
     "description": "Ultra-fast LLM inference with LPU hardware",
-    "envKeys": ["GROQ_API_KEY"],
+    "envKeys": [
+      "GROQ_API_KEY"
+    ],
     "portalUrl": "https://console.groq.com/keys"
+  },
+  {
+    "id": "huggingface",
+    "name": "Hugging Face",
+    "category": "AI & ML",
+    "description": "Open-source ML models, inference API, and model hosting",
+    "envKeys": [
+      "HUGGINGFACE_API_KEY",
+      "HF_TOKEN"
+    ],
+    "portalUrl": "https://huggingface.co/settings/tokens"
+  },
+  {
+    "id": "langsmith",
+    "name": "LangSmith",
+    "category": "AI & ML",
+    "description": "LLM application tracing, evaluation, and monitoring by LangChain",
+    "envKeys": [
+      "LANGCHAIN_API_KEY",
+      "LANGCHAIN_TRACING_V2",
+      "LANGCHAIN_PROJECT"
+    ],
+    "portalUrl": "https://smith.langchain.com/settings"
   },
   {
     "id": "mistral",
     "name": "Mistral AI",
     "category": "AI & ML",
     "description": "Mistral and Mixtral language models API",
-    "envKeys": ["MISTRAL_API_KEY"],
+    "envKeys": [
+      "MISTRAL_API_KEY"
+    ],
     "portalUrl": "https://console.mistral.ai/api-keys"
+  },
+  {
+    "id": "openai",
+    "name": "OpenAI",
+    "category": "AI & ML",
+    "description": "GPT-4, DALL-E, Whisper, and embeddings APIs",
+    "envKeys": [
+      "OPENAI_API_KEY",
+      "OPENAI_ORG_ID"
+    ],
+    "portalUrl": "https://platform.openai.com/api-keys"
+  },
+  {
+    "id": "whisper-api",
+    "name": "OpenAI Whisper API",
+    "category": "AI & ML",
+    "description": "Speech recognition and transcription via OpenAI",
+    "envKeys": [
+      "OPENAI_API_KEY"
+    ],
+    "portalUrl": "https://platform.openai.com/api-keys"
+  },
+  {
+    "id": "openrouter",
+    "name": "OpenRouter",
+    "category": "AI & ML",
+    "description": "Unified API gateway for multiple LLM providers",
+    "envKeys": [
+      "OPENROUTER_API_KEY"
+    ],
+    "portalUrl": "https://openrouter.ai/settings/keys"
   },
   {
     "id": "perplexity",
     "name": "Perplexity",
     "category": "AI & ML",
     "description": "AI-powered search and conversational answer engine API",
-    "envKeys": ["PERPLEXITY_API_KEY"],
+    "envKeys": [
+      "PERPLEXITY_API_KEY"
+    ],
     "portalUrl": "https://www.perplexity.ai/settings/api"
   },
   {
@@ -76,535 +159,159 @@
     "name": "Pinecone",
     "category": "AI & ML",
     "description": "Managed vector database for similarity search and AI applications",
-    "envKeys": ["PINECONE_API_KEY", "PINECONE_ENVIRONMENT"],
+    "envKeys": [
+      "PINECONE_API_KEY",
+      "PINECONE_ENVIRONMENT"
+    ],
     "portalUrl": "https://app.pinecone.io/organizations/-/projects/-/keys"
-  },
-  {
-    "id": "weaviate",
-    "name": "Weaviate",
-    "category": "AI & ML",
-    "description": "Open-source vector database for AI-native applications",
-    "envKeys": ["WEAVIATE_API_KEY", "WEAVIATE_URL"],
-    "portalUrl": "https://console.weaviate.cloud/dashboard"
   },
   {
     "id": "qdrant",
     "name": "Qdrant",
     "category": "AI & ML",
     "description": "High-performance vector similarity search engine",
-    "envKeys": ["QDRANT_API_KEY", "QDRANT_URL"],
+    "envKeys": [
+      "QDRANT_API_KEY",
+      "QDRANT_URL"
+    ],
     "portalUrl": "https://cloud.qdrant.io/accounts/-/clusters"
   },
   {
-    "id": "together-ai",
-    "name": "Together AI",
+    "id": "replicate",
+    "name": "Replicate",
     "category": "AI & ML",
-    "description": "Open-source model inference, fine-tuning, and training",
-    "envKeys": ["TOGETHER_API_KEY"],
-    "portalUrl": "https://api.together.xyz/settings/api-keys"
-  },
-  {
-    "id": "fireworks-ai",
-    "name": "Fireworks AI",
-    "category": "AI & ML",
-    "description": "Fast generative AI inference for open-source models",
-    "envKeys": ["FIREWORKS_API_KEY"],
-    "portalUrl": "https://fireworks.ai/account/api-keys"
-  },
-  {
-    "id": "deepseek",
-    "name": "DeepSeek",
-    "category": "AI & ML",
-    "description": "DeepSeek language models and code generation API",
-    "envKeys": ["DEEPSEEK_API_KEY"],
-    "portalUrl": "https://platform.deepseek.com/api_keys"
+    "description": "Run open-source ML models in the cloud via API",
+    "envKeys": [
+      "REPLICATE_API_TOKEN"
+    ],
+    "portalUrl": "https://replicate.com/account/api-tokens"
   },
   {
     "id": "stability-ai",
     "name": "Stability AI",
     "category": "AI & ML",
     "description": "Stable Diffusion image generation and editing API",
-    "envKeys": ["STABILITY_API_KEY"],
+    "envKeys": [
+      "STABILITY_API_KEY"
+    ],
     "portalUrl": "https://platform.stability.ai/account/keys"
   },
   {
-    "id": "elevenlabs",
-    "name": "ElevenLabs",
+    "id": "together-ai",
+    "name": "Together AI",
     "category": "AI & ML",
-    "description": "AI voice generation, text-to-speech, and voice cloning",
-    "envKeys": ["ELEVENLABS_API_KEY"],
-    "portalUrl": "https://elevenlabs.io/app/settings/api-keys"
+    "description": "Open-source model inference, fine-tuning, and training",
+    "envKeys": [
+      "TOGETHER_API_KEY"
+    ],
+    "portalUrl": "https://api.together.xyz/settings/api-keys"
   },
   {
     "id": "voyage-ai",
     "name": "Voyage AI",
     "category": "AI & ML",
     "description": "State-of-the-art embedding models for search and RAG",
-    "envKeys": ["VOYAGE_API_KEY"],
+    "envKeys": [
+      "VOYAGE_API_KEY"
+    ],
     "portalUrl": "https://dash.voyageai.com/api-keys"
   },
   {
-    "id": "openrouter",
-    "name": "OpenRouter",
+    "id": "weaviate",
+    "name": "Weaviate",
     "category": "AI & ML",
-    "description": "Unified API gateway for multiple LLM providers",
-    "envKeys": ["OPENROUTER_API_KEY"],
-    "portalUrl": "https://openrouter.ai/settings/keys"
+    "description": "Open-source vector database for AI-native applications",
+    "envKeys": [
+      "WEAVIATE_API_KEY",
+      "WEAVIATE_URL"
+    ],
+    "portalUrl": "https://console.weaviate.cloud/dashboard"
   },
   {
-    "id": "langsmith",
-    "name": "LangSmith",
-    "category": "AI & ML",
-    "description": "LLM application tracing, evaluation, and monitoring by LangChain",
-    "envKeys": ["LANGCHAIN_API_KEY", "LANGCHAIN_TRACING_V2", "LANGCHAIN_PROJECT"],
-    "portalUrl": "https://smith.langchain.com/settings"
+    "id": "amplitude",
+    "name": "Amplitude",
+    "category": "Analytics",
+    "description": "Digital analytics platform for product and growth teams",
+    "envKeys": [
+      "AMPLITUDE_API_KEY",
+      "AMPLITUDE_SECRET_KEY"
+    ],
+    "portalUrl": "https://app.amplitude.com/settings/projects/-/general"
   },
   {
-    "id": "aws",
-    "name": "Amazon Web Services",
-    "category": "Cloud Infrastructure",
-    "description": "AWS cloud services including EC2, S3, Lambda, and 200+ services",
-    "envKeys": ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"],
-    "portalUrl": "https://console.aws.amazon.com/iam/home#/security_credentials"
+    "id": "june",
+    "name": "June",
+    "category": "Analytics",
+    "description": "Product analytics built for B2B SaaS companies",
+    "envKeys": [
+      "JUNE_WRITE_KEY"
+    ],
+    "portalUrl": "https://app.june.so/settings/integrations"
   },
   {
-    "id": "gcp",
-    "name": "Google Cloud Platform",
-    "category": "Cloud Infrastructure",
-    "description": "Google Cloud compute, storage, networking, and managed services",
-    "envKeys": ["GOOGLE_CLOUD_PROJECT", "GOOGLE_APPLICATION_CREDENTIALS", "GCP_API_KEY"],
-    "portalUrl": "https://console.cloud.google.com/apis/credentials"
+    "id": "mixpanel",
+    "name": "Mixpanel",
+    "category": "Analytics",
+    "description": "Product analytics for tracking user behavior and engagement",
+    "envKeys": [
+      "MIXPANEL_TOKEN",
+      "MIXPANEL_API_SECRET"
+    ],
+    "portalUrl": "https://mixpanel.com/settings/project/-/app-settings"
   },
   {
-    "id": "azure",
-    "name": "Microsoft Azure",
-    "category": "Cloud Infrastructure",
-    "description": "Azure cloud computing, AI, and enterprise services",
-    "envKeys": ["AZURE_SUBSCRIPTION_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET", "AZURE_TENANT_ID"],
-    "portalUrl": "https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps"
+    "id": "plausible",
+    "name": "Plausible",
+    "category": "Analytics",
+    "description": "Privacy-friendly, lightweight web analytics without cookies",
+    "envKeys": [
+      "PLAUSIBLE_API_KEY",
+      "PLAUSIBLE_DOMAIN"
+    ],
+    "portalUrl": "https://plausible.io/settings/api-keys"
   },
   {
-    "id": "digitalocean",
-    "name": "DigitalOcean",
-    "category": "Cloud Infrastructure",
-    "description": "Cloud hosting, managed databases, Kubernetes, and app platform",
-    "envKeys": ["DIGITALOCEAN_TOKEN", "DIGITALOCEAN_SPACES_KEY", "DIGITALOCEAN_SPACES_SECRET"],
-    "portalUrl": "https://cloud.digitalocean.com/account/api/tokens"
+    "id": "posthog",
+    "name": "PostHog",
+    "category": "Analytics",
+    "description": "Open-source product analytics, feature flags, and session replay",
+    "envKeys": [
+      "NEXT_PUBLIC_POSTHOG_KEY",
+      "POSTHOG_API_KEY",
+      "POSTHOG_HOST"
+    ],
+    "portalUrl": "https://app.posthog.com/settings/project#variables"
   },
   {
-    "id": "linode",
-    "name": "Linode (Akamai)",
-    "category": "Cloud Infrastructure",
-    "description": "Cloud computing, VPS hosting, and managed services",
-    "envKeys": ["LINODE_API_TOKEN"],
-    "portalUrl": "https://cloud.linode.com/profile/tokens"
+    "id": "segment",
+    "name": "Segment",
+    "category": "Analytics",
+    "description": "Customer data platform for collecting and routing analytics events",
+    "envKeys": [
+      "SEGMENT_WRITE_KEY"
+    ],
+    "portalUrl": "https://app.segment.com/goto-my-workspace/sources"
   },
   {
-    "id": "vultr",
-    "name": "Vultr",
-    "category": "Cloud Infrastructure",
-    "description": "High-performance cloud compute and bare metal servers",
-    "envKeys": ["VULTR_API_KEY"],
-    "portalUrl": "https://my.vultr.com/settings/#settingsapi"
-  },
-  {
-    "id": "cloudflare",
-    "name": "Cloudflare",
-    "category": "Cloud Infrastructure",
-    "description": "CDN, DNS, Workers, R2 storage, and security services",
-    "envKeys": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_ZONE_ID"],
-    "portalUrl": "https://dash.cloudflare.com/profile/api-tokens"
-  },
-  {
-    "id": "vercel",
-    "name": "Vercel",
-    "category": "Cloud Infrastructure",
-    "description": "Frontend deployment platform with serverless functions and edge network",
-    "envKeys": ["VERCEL_TOKEN", "VERCEL_ORG_ID", "VERCEL_PROJECT_ID"],
-    "portalUrl": "https://vercel.com/account/tokens"
-  },
-  {
-    "id": "netlify",
-    "name": "Netlify",
-    "category": "Cloud Infrastructure",
-    "description": "Web hosting, serverless functions, and deployment platform",
-    "envKeys": ["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"],
-    "portalUrl": "https://app.netlify.com/user/applications#personal-access-tokens"
-  },
-  {
-    "id": "railway",
-    "name": "Railway",
-    "category": "Cloud Infrastructure",
-    "description": "Infrastructure platform for deploying apps, databases, and services",
-    "envKeys": ["RAILWAY_TOKEN"],
-    "portalUrl": "https://railway.app/account/tokens"
-  },
-  {
-    "id": "flyio",
-    "name": "Fly.io",
-    "category": "Cloud Infrastructure",
-    "description": "Deploy full-stack apps and databases close to users globally",
-    "envKeys": ["FLY_API_TOKEN"],
-    "portalUrl": "https://fly.io/user/personal_access_tokens"
-  },
-  {
-    "id": "render",
-    "name": "Render",
-    "category": "Cloud Infrastructure",
-    "description": "Managed cloud hosting for web apps, APIs, and databases",
-    "envKeys": ["RENDER_API_KEY"],
-    "portalUrl": "https://dashboard.render.com/u/settings#api-keys"
-  },
-  {
-    "id": "hetzner",
-    "name": "Hetzner",
-    "category": "Cloud Infrastructure",
-    "description": "European cloud servers, dedicated hosting, and storage",
-    "envKeys": ["HETZNER_API_TOKEN"],
-    "portalUrl": "https://console.hetzner.cloud/projects/-/security/tokens"
-  },
-  {
-    "id": "appwrite",
-    "name": "Appwrite",
-    "category": "Cloud Infrastructure",
-    "description": "Open-source backend-as-a-service with auth, databases, and functions",
-    "envKeys": ["APPWRITE_ENDPOINT", "APPWRITE_PROJECT_ID", "APPWRITE_API_KEY"],
-    "portalUrl": "https://cloud.appwrite.io/console/project/-/settings"
-  },
-  {
-    "id": "deno-deploy",
-    "name": "Deno Deploy",
-    "category": "Cloud Infrastructure",
-    "description": "Serverless edge hosting for Deno and Fresh applications",
-    "envKeys": ["DENO_DEPLOY_TOKEN"],
-    "portalUrl": "https://dash.deno.com/account#access-tokens"
-  },
-  {
-    "id": "supabase",
-    "name": "Supabase",
-    "category": "Database",
-    "description": "Open-source Firebase alternative with Postgres, auth, and realtime",
-    "envKeys": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"],
-    "portalUrl": "https://supabase.com/dashboard/project/_/settings/api"
-  },
-  {
-    "id": "planetscale",
-    "name": "PlanetScale",
-    "category": "Database",
-    "description": "Serverless MySQL platform with branching and zero-downtime migrations",
-    "envKeys": ["DATABASE_URL", "PLANETSCALE_SERVICE_TOKEN", "PLANETSCALE_SERVICE_TOKEN_NAME"],
-    "portalUrl": "https://app.planetscale.com/settings/service-tokens"
-  },
-  {
-    "id": "neon",
-    "name": "Neon",
-    "category": "Database",
-    "description": "Serverless Postgres with branching, autoscaling, and bottomless storage",
-    "envKeys": ["DATABASE_URL", "NEON_API_KEY"],
-    "portalUrl": "https://console.neon.tech/app/settings/api-keys"
-  },
-  {
-    "id": "turso",
-    "name": "Turso",
-    "category": "Database",
-    "description": "Edge-hosted distributed SQLite database built on libSQL",
-    "envKeys": ["TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN"],
-    "portalUrl": "https://turso.tech/app/-/settings/api-tokens"
-  },
-  {
-    "id": "mongodb-atlas",
-    "name": "MongoDB Atlas",
-    "category": "Database",
-    "description": "Managed MongoDB cloud database with search and vector capabilities",
-    "envKeys": ["MONGODB_URI", "MONGODB_API_KEY"],
-    "portalUrl": "https://cloud.mongodb.com/v2/-#/access/apiKeys"
-  },
-  {
-    "id": "redis-cloud",
-    "name": "Redis Cloud",
-    "category": "Database",
-    "description": "Managed Redis with JSON, search, and time series modules",
-    "envKeys": ["REDIS_URL", "REDIS_HOST", "REDIS_PASSWORD"],
-    "portalUrl": "https://app.redislabs.com/#/account/api-keys"
-  },
-  {
-    "id": "upstash",
-    "name": "Upstash",
-    "category": "Database",
-    "description": "Serverless Redis, Kafka, and QStash for edge and serverless apps",
-    "envKeys": ["UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"],
-    "portalUrl": "https://console.upstash.com/redis"
-  },
-  {
-    "id": "cockroachdb",
-    "name": "CockroachDB",
-    "category": "Database",
-    "description": "Distributed SQL database for cloud-native applications",
-    "envKeys": ["DATABASE_URL", "COCKROACH_API_KEY"],
-    "portalUrl": "https://cockroachlabs.cloud/cluster/-/settings/api-keys"
-  },
-  {
-    "id": "faunadb",
-    "name": "Fauna",
-    "category": "Database",
-    "description": "Distributed document-relational database for modern applications",
-    "envKeys": ["FAUNA_SECRET", "FAUNA_ENDPOINT"],
-    "portalUrl": "https://dashboard.fauna.com/keys"
-  },
-  {
-    "id": "xata",
-    "name": "Xata",
-    "category": "Database",
-    "description": "Serverless database platform with full-text search and file attachments",
-    "envKeys": ["XATA_API_KEY", "XATA_BRANCH"],
-    "portalUrl": "https://app.xata.io/settings"
-  },
-  {
-    "id": "convex",
-    "name": "Convex",
-    "category": "Database",
-    "description": "Reactive backend-as-a-service with realtime database and functions",
-    "envKeys": ["CONVEX_DEPLOYMENT", "CONVEX_URL"],
-    "portalUrl": "https://dashboard.convex.dev/deployment/settings"
-  },
-  {
-    "id": "clickhouse",
-    "name": "ClickHouse Cloud",
-    "category": "Database",
-    "description": "Fast open-source columnar database for analytics workloads",
-    "envKeys": ["CLICKHOUSE_HOST", "CLICKHOUSE_USER", "CLICKHOUSE_PASSWORD"],
-    "portalUrl": "https://clickhouse.cloud/services/-/settings"
-  },
-  {
-    "id": "vercel-kv",
-    "name": "Vercel KV",
-    "category": "Database",
-    "description": "Serverless Redis-compatible key-value store on Vercel",
-    "envKeys": ["KV_REST_API_URL", "KV_REST_API_TOKEN"],
-    "portalUrl": "https://vercel.com/dashboard/stores"
-  },
-  {
-    "id": "stripe",
-    "name": "Stripe",
-    "category": "Payment",
-    "description": "Payment processing, subscriptions, invoicing, and financial infrastructure",
-    "envKeys": ["STRIPE_SECRET_KEY", "STRIPE_PUBLISHABLE_KEY", "STRIPE_WEBHOOK_SECRET"],
-    "portalUrl": "https://dashboard.stripe.com/apikeys"
-  },
-  {
-    "id": "paypal",
-    "name": "PayPal",
-    "category": "Payment",
-    "description": "Online payments, checkout, and payouts platform",
-    "envKeys": ["PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"],
-    "portalUrl": "https://developer.paypal.com/dashboard/applications/live"
-  },
-  {
-    "id": "square",
-    "name": "Square",
-    "category": "Payment",
-    "description": "Payment processing, POS, invoices, and commerce platform",
-    "envKeys": ["SQUARE_ACCESS_TOKEN", "SQUARE_APPLICATION_ID"],
-    "portalUrl": "https://developer.squareup.com/apps"
-  },
-  {
-    "id": "braintree",
-    "name": "Braintree",
-    "category": "Payment",
-    "description": "Full-stack payment platform by PayPal for cards and digital wallets",
-    "envKeys": ["BRAINTREE_MERCHANT_ID", "BRAINTREE_PUBLIC_KEY", "BRAINTREE_PRIVATE_KEY"],
-    "portalUrl": "https://www.braintreegateway.com/merchants/-/api_keys"
-  },
-  {
-    "id": "paddle",
-    "name": "Paddle",
-    "category": "Payment",
-    "description": "Merchant of record for SaaS with subscriptions and tax handling",
-    "envKeys": ["PADDLE_API_KEY", "PADDLE_WEBHOOK_SECRET"],
-    "portalUrl": "https://vendors.paddle.com/authentication"
-  },
-  {
-    "id": "lemonsqueezy",
-    "name": "Lemon Squeezy",
-    "category": "Payment",
-    "description": "All-in-one payments, tax, and subscriptions for digital products",
-    "envKeys": ["LEMONSQUEEZY_API_KEY", "LEMONSQUEEZY_WEBHOOK_SECRET"],
-    "portalUrl": "https://app.lemonsqueezy.com/settings/api"
-  },
-  {
-    "id": "coinbase-commerce",
-    "name": "Coinbase Commerce",
-    "category": "Payment",
-    "description": "Accept cryptocurrency payments for businesses",
-    "envKeys": ["COINBASE_COMMERCE_API_KEY", "COINBASE_COMMERCE_WEBHOOK_SECRET"],
-    "portalUrl": "https://beta.commerce.coinbase.com/settings/security"
-  },
-  {
-    "id": "polar",
-    "name": "Polar",
-    "category": "Payment",
-    "description": "Monetization platform for open-source and digital products",
-    "envKeys": ["POLAR_ACCESS_TOKEN"],
-    "portalUrl": "https://dashboard.polar.sh/settings"
-  },
-  {
-    "id": "twilio",
-    "name": "Twilio",
-    "category": "Communication",
-    "description": "SMS, voice, video, and WhatsApp communication APIs",
-    "envKeys": ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER"],
-    "portalUrl": "https://console.twilio.com/us1/account/keys-credentials/api-keys"
-  },
-  {
-    "id": "sendgrid",
-    "name": "SendGrid",
-    "category": "Communication",
-    "description": "Email delivery and marketing campaigns platform by Twilio",
-    "envKeys": ["SENDGRID_API_KEY"],
-    "portalUrl": "https://app.sendgrid.com/settings/api_keys"
-  },
-  {
-    "id": "resend",
-    "name": "Resend",
-    "category": "Communication",
-    "description": "Modern email API built for developers with React Email support",
-    "envKeys": ["RESEND_API_KEY"],
-    "portalUrl": "https://resend.com/api-keys"
-  },
-  {
-    "id": "postmark",
-    "name": "Postmark",
-    "category": "Communication",
-    "description": "Transactional email delivery with high deliverability",
-    "envKeys": ["POSTMARK_API_TOKEN", "POSTMARK_SERVER_TOKEN"],
-    "portalUrl": "https://account.postmarkapp.com/api_tokens"
-  },
-  {
-    "id": "mailgun",
-    "name": "Mailgun",
-    "category": "Communication",
-    "description": "Email sending, receiving, and tracking API by Sinch",
-    "envKeys": ["MAILGUN_API_KEY", "MAILGUN_DOMAIN"],
-    "portalUrl": "https://app.mailgun.com/settings/api_security"
-  },
-  {
-    "id": "plivo",
-    "name": "Plivo",
-    "category": "Communication",
-    "description": "Cloud communication platform for voice and SMS",
-    "envKeys": ["PLIVO_AUTH_ID", "PLIVO_AUTH_TOKEN"],
-    "portalUrl": "https://console.plivo.com/dashboard"
-  },
-  {
-    "id": "vonage",
-    "name": "Vonage",
-    "category": "Communication",
-    "description": "SMS, voice, video, and messaging communication APIs",
-    "envKeys": ["VONAGE_API_KEY", "VONAGE_API_SECRET"],
-    "portalUrl": "https://dashboard.nexmo.com/settings"
-  },
-  {
-    "id": "pusher",
-    "name": "Pusher",
-    "category": "Communication",
-    "description": "Realtime websocket channels and push notification infrastructure",
-    "envKeys": ["PUSHER_APP_ID", "PUSHER_KEY", "PUSHER_SECRET", "PUSHER_CLUSTER"],
-    "portalUrl": "https://dashboard.pusher.com/apps/-/keys"
-  },
-  {
-    "id": "ably",
-    "name": "Ably",
-    "category": "Communication",
-    "description": "Realtime messaging and data synchronization platform",
-    "envKeys": ["ABLY_API_KEY"],
-    "portalUrl": "https://ably.com/accounts/-/apps/-/api-keys"
-  },
-  {
-    "id": "stream",
-    "name": "Stream",
-    "category": "Communication",
-    "description": "Chat messaging and activity feed APIs for apps",
-    "envKeys": ["STREAM_API_KEY", "STREAM_API_SECRET"],
-    "portalUrl": "https://dashboard.getstream.io/app/-/chat/overview"
-  },
-  {
-    "id": "messagebird",
-    "name": "MessageBird",
-    "category": "Communication",
-    "description": "Omnichannel messaging for SMS, WhatsApp, and voice",
-    "envKeys": ["MESSAGEBIRD_API_KEY"],
-    "portalUrl": "https://dashboard.messagebird.com/en/developers/access"
-  },
-  {
-    "id": "novu",
-    "name": "Novu",
-    "category": "Communication",
-    "description": "Open-source notification infrastructure for in-app, email, SMS, and push",
-    "envKeys": ["NOVU_API_KEY"],
-    "portalUrl": "https://web.novu.co/settings"
-  },
-  {
-    "id": "knock",
-    "name": "Knock",
-    "category": "Communication",
-    "description": "Notification infrastructure for in-app, email, push, and SMS",
-    "envKeys": ["KNOCK_API_KEY", "KNOCK_SIGNING_KEY"],
-    "portalUrl": "https://dashboard.knock.app/settings/api-keys"
-  },
-  {
-    "id": "courier",
-    "name": "Courier",
-    "category": "Communication",
-    "description": "Multi-channel notification orchestration and delivery",
-    "envKeys": ["COURIER_AUTH_TOKEN"],
-    "portalUrl": "https://app.courier.com/settings/api-keys"
-  },
-  {
-    "id": "livekit",
-    "name": "LiveKit",
-    "category": "Communication",
-    "description": "Open-source WebRTC platform for real-time video, audio, and data",
-    "envKeys": ["LIVEKIT_API_KEY", "LIVEKIT_API_SECRET", "LIVEKIT_URL"],
-    "portalUrl": "https://cloud.livekit.io/projects/-/settings"
-  },
-  {
-    "id": "intercom",
-    "name": "Intercom",
-    "category": "Communication",
-    "description": "Customer messaging platform with chat, bots, and help center",
-    "envKeys": ["INTERCOM_ACCESS_TOKEN", "INTERCOM_APP_ID"],
-    "portalUrl": "https://app.intercom.com/a/developer-hub/app-packages/-/auth"
-  },
-  {
-    "id": "zendesk",
-    "name": "Zendesk",
-    "category": "Communication",
-    "description": "Customer service and engagement platform with ticketing",
-    "envKeys": ["ZENDESK_SUBDOMAIN", "ZENDESK_API_TOKEN", "ZENDESK_EMAIL"],
-    "portalUrl": "https://YOUR_SUBDOMAIN.zendesk.com/admin/apps-integrations/apis/zendesk-api/settings"
-  },
-  {
-    "id": "crisp",
-    "name": "Crisp",
-    "category": "Communication",
-    "description": "Business messaging platform with live chat and chatbots",
-    "envKeys": ["CRISP_WEBSITE_ID", "CRISP_TOKEN_ID", "CRISP_TOKEN_KEY"],
-    "portalUrl": "https://app.crisp.chat/settings/token/"
-  },
-  {
-    "id": "loops",
-    "name": "Loops",
-    "category": "Communication",
-    "description": "Email platform for SaaS with transactional and marketing emails",
-    "envKeys": ["LOOPS_API_KEY"],
-    "portalUrl": "https://app.loops.so/settings?page=api"
+    "id": "tinybird",
+    "name": "Tinybird",
+    "category": "Analytics",
+    "description": "Real-time analytics API built on ClickHouse",
+    "envKeys": [
+      "TINYBIRD_API_KEY"
+    ],
+    "portalUrl": "https://app.tinybird.co/tokens"
   },
   {
     "id": "auth0",
     "name": "Auth0",
     "category": "Authentication",
     "description": "Identity platform for authentication and authorization",
-    "envKeys": ["AUTH0_DOMAIN", "AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET"],
+    "envKeys": [
+      "AUTH0_DOMAIN",
+      "AUTH0_CLIENT_ID",
+      "AUTH0_CLIENT_SECRET"
+    ],
     "portalUrl": "https://manage.auth0.com/dashboard/-/applications"
   },
   {
@@ -612,463 +319,156 @@
     "name": "Clerk",
     "category": "Authentication",
     "description": "User management, authentication, and session handling for modern apps",
-    "envKeys": ["CLERK_SECRET_KEY", "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
+    "envKeys": [
+      "CLERK_SECRET_KEY",
+      "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"
+    ],
     "portalUrl": "https://dashboard.clerk.com/apps/-/instances/-/api-keys"
-  },
-  {
-    "id": "firebase",
-    "name": "Firebase",
-    "category": "Authentication",
-    "description": "Google app platform with auth, database, hosting, and analytics",
-    "envKeys": ["FIREBASE_API_KEY", "FIREBASE_PROJECT_ID", "FIREBASE_PRIVATE_KEY"],
-    "portalUrl": "https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk"
-  },
-  {
-    "id": "stytch",
-    "name": "Stytch",
-    "category": "Authentication",
-    "description": "Passwordless authentication with magic links, OTP, and OAuth",
-    "envKeys": ["STYTCH_PROJECT_ID", "STYTCH_SECRET"],
-    "portalUrl": "https://stytch.com/dashboard/api-keys"
-  },
-  {
-    "id": "workos",
-    "name": "WorkOS",
-    "category": "Authentication",
-    "description": "Enterprise SSO, directory sync, and admin portal",
-    "envKeys": ["WORKOS_API_KEY", "WORKOS_CLIENT_ID"],
-    "portalUrl": "https://dashboard.workos.com/api-keys"
-  },
-  {
-    "id": "kinde",
-    "name": "Kinde",
-    "category": "Authentication",
-    "description": "Authentication and user management with feature flags",
-    "envKeys": ["KINDE_CLIENT_ID", "KINDE_CLIENT_SECRET", "KINDE_ISSUER_URL"],
-    "portalUrl": "https://app.kinde.com/admin/settings/api"
   },
   {
     "id": "descope",
     "name": "Descope",
     "category": "Authentication",
     "description": "Drag-and-drop authentication and user management flows",
-    "envKeys": ["DESCOPE_PROJECT_ID", "DESCOPE_MANAGEMENT_KEY"],
+    "envKeys": [
+      "DESCOPE_PROJECT_ID",
+      "DESCOPE_MANAGEMENT_KEY"
+    ],
     "portalUrl": "https://app.descope.com/settings/project"
+  },
+  {
+    "id": "firebase",
+    "name": "Firebase",
+    "category": "Authentication",
+    "description": "Google app platform with auth, database, hosting, and analytics",
+    "envKeys": [
+      "FIREBASE_API_KEY",
+      "FIREBASE_PROJECT_ID",
+      "FIREBASE_PRIVATE_KEY"
+    ],
+    "portalUrl": "https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk"
   },
   {
     "id": "google-oauth",
     "name": "Google OAuth",
     "category": "Authentication",
     "description": "Google sign-in and API access via OAuth 2.0",
-    "envKeys": ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
+    "envKeys": [
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET"
+    ],
     "portalUrl": "https://console.cloud.google.com/apis/credentials"
   },
   {
-    "id": "segment",
-    "name": "Segment",
-    "category": "Analytics",
-    "description": "Customer data platform for collecting and routing analytics events",
-    "envKeys": ["SEGMENT_WRITE_KEY"],
-    "portalUrl": "https://app.segment.com/goto-my-workspace/sources"
+    "id": "kinde",
+    "name": "Kinde",
+    "category": "Authentication",
+    "description": "Authentication and user management with feature flags",
+    "envKeys": [
+      "KINDE_CLIENT_ID",
+      "KINDE_CLIENT_SECRET",
+      "KINDE_ISSUER_URL"
+    ],
+    "portalUrl": "https://app.kinde.com/admin/settings/api"
   },
   {
-    "id": "mixpanel",
-    "name": "Mixpanel",
-    "category": "Analytics",
-    "description": "Product analytics for tracking user behavior and engagement",
-    "envKeys": ["MIXPANEL_TOKEN", "MIXPANEL_API_SECRET"],
-    "portalUrl": "https://mixpanel.com/settings/project/-/app-settings"
+    "id": "okta",
+    "name": "Okta",
+    "category": "Authentication",
+    "description": "Enterprise identity and access management",
+    "envKeys": [
+      "OKTA_DOMAIN",
+      "OKTA_CLIENT_ID",
+      "OKTA_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://developer.okta.com/signup/"
   },
   {
-    "id": "amplitude",
-    "name": "Amplitude",
-    "category": "Analytics",
-    "description": "Digital analytics platform for product and growth teams",
-    "envKeys": ["AMPLITUDE_API_KEY", "AMPLITUDE_SECRET_KEY"],
-    "portalUrl": "https://app.amplitude.com/settings/projects/-/general"
+    "id": "stytch",
+    "name": "Stytch",
+    "category": "Authentication",
+    "description": "Passwordless authentication with magic links, OTP, and OAuth",
+    "envKeys": [
+      "STYTCH_PROJECT_ID",
+      "STYTCH_SECRET"
+    ],
+    "portalUrl": "https://stytch.com/dashboard/api-keys"
   },
   {
-    "id": "posthog",
-    "name": "PostHog",
-    "category": "Analytics",
-    "description": "Open-source product analytics, feature flags, and session replay",
-    "envKeys": ["NEXT_PUBLIC_POSTHOG_KEY", "POSTHOG_API_KEY", "POSTHOG_HOST"],
-    "portalUrl": "https://app.posthog.com/settings/project#variables"
+    "id": "supertokens",
+    "name": "SuperTokens",
+    "category": "Authentication",
+    "description": "Open source authentication and session management",
+    "envKeys": [
+      "SUPERTOKENS_CONNECTION_URI",
+      "SUPERTOKENS_API_KEY"
+    ],
+    "portalUrl": "https://supertokens.com/dashboard"
   },
   {
-    "id": "plausible",
-    "name": "Plausible",
-    "category": "Analytics",
-    "description": "Privacy-friendly, lightweight web analytics without cookies",
-    "envKeys": ["PLAUSIBLE_API_KEY", "PLAUSIBLE_DOMAIN"],
-    "portalUrl": "https://plausible.io/settings/api-keys"
+    "id": "workos",
+    "name": "WorkOS",
+    "category": "Authentication",
+    "description": "Enterprise SSO, directory sync, and admin portal",
+    "envKeys": [
+      "WORKOS_API_KEY",
+      "WORKOS_CLIENT_ID"
+    ],
+    "portalUrl": "https://dashboard.workos.com/api-keys"
   },
   {
-    "id": "june",
-    "name": "June",
-    "category": "Analytics",
-    "description": "Product analytics built for B2B SaaS companies",
-    "envKeys": ["JUNE_WRITE_KEY"],
-    "portalUrl": "https://app.june.so/settings/integrations"
-  },
-  {
-    "id": "tinybird",
-    "name": "Tinybird",
-    "category": "Analytics",
-    "description": "Real-time analytics API built on ClickHouse",
-    "envKeys": ["TINYBIRD_API_KEY"],
-    "portalUrl": "https://app.tinybird.co/tokens"
-  },
-  {
-    "id": "sentry",
-    "name": "Sentry",
-    "category": "Monitoring",
-    "description": "Application monitoring, error tracking, and performance insights",
-    "envKeys": ["SENTRY_DSN", "SENTRY_AUTH_TOKEN", "SENTRY_ORG"],
-    "portalUrl": "https://sentry.io/settings/account/api/auth-tokens"
-  },
-  {
-    "id": "datadog",
-    "name": "Datadog",
-    "category": "Monitoring",
-    "description": "Infrastructure monitoring, APM, logs, and security platform",
-    "envKeys": ["DD_API_KEY", "DD_APP_KEY", "DD_SITE"],
-    "portalUrl": "https://app.datadoghq.com/organization-settings/api-keys"
-  },
-  {
-    "id": "newrelic",
-    "name": "New Relic",
-    "category": "Monitoring",
-    "description": "Full-stack observability with APM, infrastructure, and logs",
-    "envKeys": ["NEW_RELIC_API_KEY", "NEW_RELIC_ACCOUNT_ID", "NEW_RELIC_LICENSE_KEY"],
-    "portalUrl": "https://one.newrelic.com/admin-portal/api-keys/home"
-  },
-  {
-    "id": "logrocket",
-    "name": "LogRocket",
-    "category": "Monitoring",
-    "description": "Frontend monitoring with session replay and error tracking",
-    "envKeys": ["LOGROCKET_APP_ID"],
-    "portalUrl": "https://app.logrocket.com/settings/setup"
-  },
-  {
-    "id": "axiom",
-    "name": "Axiom",
-    "category": "Monitoring",
-    "description": "Log management and observability platform for modern applications",
-    "envKeys": ["AXIOM_TOKEN", "AXIOM_DATASET", "AXIOM_ORG_ID"],
-    "portalUrl": "https://app.axiom.co/settings/api-tokens"
-  },
-  {
-    "id": "betterstack",
-    "name": "Better Stack",
-    "category": "Monitoring",
-    "description": "Uptime monitoring, on-call alerts, and log management",
-    "envKeys": ["BETTERSTACK_API_TOKEN", "LOGTAIL_SOURCE_TOKEN"],
-    "portalUrl": "https://uptime.betterstack.com/team/-/api-tokens"
-  },
-  {
-    "id": "grafana-cloud",
-    "name": "Grafana Cloud",
-    "category": "Monitoring",
-    "description": "Metrics, logs, and traces visualization and alerting platform",
-    "envKeys": ["GRAFANA_API_KEY", "GRAFANA_CLOUD_URL"],
-    "portalUrl": "https://grafana.com/orgs/-/api-keys"
-  },
-  {
-    "id": "pagerduty",
-    "name": "PagerDuty",
-    "category": "Monitoring",
-    "description": "Incident management, on-call scheduling, and alerting",
-    "envKeys": ["PAGERDUTY_API_KEY", "PAGERDUTY_ROUTING_KEY"],
-    "portalUrl": "https://app.pagerduty.com/developer/api-keys"
-  },
-  {
-    "id": "cronitor",
-    "name": "Cronitor",
-    "category": "Monitoring",
-    "description": "Cron job, background task, and heartbeat monitoring",
-    "envKeys": ["CRONITOR_API_KEY"],
-    "portalUrl": "https://cronitor.io/app/settings/api"
-  },
-  {
-    "id": "checkly",
-    "name": "Checkly",
-    "category": "Monitoring",
-    "description": "Synthetic monitoring for APIs and web apps with Playwright",
-    "envKeys": ["CHECKLY_API_KEY", "CHECKLY_ACCOUNT_ID"],
-    "portalUrl": "https://app.checklyhq.com/settings/user/api-keys"
-  },
-  {
-    "id": "highlight",
-    "name": "Highlight",
-    "category": "Monitoring",
-    "description": "Open-source session replay, error monitoring, and logging",
-    "envKeys": ["HIGHLIGHT_PROJECT_ID"],
-    "portalUrl": "https://app.highlight.io/settings/projects"
-  },
-  {
-    "id": "algolia",
-    "name": "Algolia",
-    "category": "Search",
-    "description": "Search and discovery API with typo tolerance and instant results",
-    "envKeys": ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY", "ALGOLIA_ADMIN_KEY"],
-    "portalUrl": "https://dashboard.algolia.com/account/api-keys"
-  },
-  {
-    "id": "elasticsearch",
-    "name": "Elastic Cloud",
-    "category": "Search",
-    "description": "Managed Elasticsearch for full-text search and analytics",
-    "envKeys": ["ELASTICSEARCH_URL", "ELASTICSEARCH_API_KEY"],
-    "portalUrl": "https://cloud.elastic.co/deployments/-/security"
-  },
-  {
-    "id": "meilisearch",
-    "name": "Meilisearch",
-    "category": "Search",
-    "description": "Open-source lightning-fast search engine with typo tolerance",
-    "envKeys": ["MEILISEARCH_HOST", "MEILISEARCH_API_KEY"],
-    "portalUrl": "https://cloud.meilisearch.com/projects/-/settings/api-keys"
-  },
-  {
-    "id": "typesense",
-    "name": "Typesense",
-    "category": "Search",
-    "description": "Open-source typo-tolerant search engine optimized for speed",
-    "envKeys": ["TYPESENSE_HOST", "TYPESENSE_API_KEY"],
-    "portalUrl": "https://cloud.typesense.org/clusters"
-  },
-  {
-    "id": "orama",
-    "name": "Orama",
-    "category": "Search",
-    "description": "Full-text and vector search engine that runs everywhere",
-    "envKeys": ["ORAMA_API_KEY", "ORAMA_ENDPOINT"],
-    "portalUrl": "https://cloud.orama.com/indexes"
-  },
-  {
-    "id": "aws-s3",
-    "name": "AWS S3",
-    "category": "Storage",
-    "description": "Scalable object storage for files, backups, and static assets",
-    "envKeys": ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_S3_BUCKET", "AWS_REGION"],
-    "portalUrl": "https://console.aws.amazon.com/iam/home#/security_credentials"
-  },
-  {
-    "id": "cloudinary",
-    "name": "Cloudinary",
-    "category": "Storage",
-    "description": "Image and video management, optimization, and transformation",
-    "envKeys": ["CLOUDINARY_URL", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"],
-    "portalUrl": "https://console.cloudinary.com/settings/api-keys"
-  },
-  {
-    "id": "uploadthing",
-    "name": "UploadThing",
-    "category": "Storage",
-    "description": "File uploads made simple for full-stack TypeScript apps",
-    "envKeys": ["UPLOADTHING_TOKEN"],
-    "portalUrl": "https://uploadthing.com/dashboard/-/api-keys"
-  },
-  {
-    "id": "imagekit",
-    "name": "ImageKit",
-    "category": "Storage",
-    "description": "Real-time image and video optimization, transformation, and CDN",
-    "envKeys": ["IMAGEKIT_PUBLIC_KEY", "IMAGEKIT_PRIVATE_KEY", "IMAGEKIT_URL_ENDPOINT"],
-    "portalUrl": "https://imagekit.io/dashboard/developer/api-keys"
-  },
-  {
-    "id": "bunny-cdn",
-    "name": "Bunny CDN",
-    "category": "Storage",
-    "description": "Content delivery network with storage and video streaming",
-    "envKeys": ["BUNNY_API_KEY", "BUNNY_STORAGE_API_KEY", "BUNNY_PULL_ZONE"],
-    "portalUrl": "https://panel.bunny.net/account"
-  },
-  {
-    "id": "backblaze-b2",
-    "name": "Backblaze B2",
-    "category": "Storage",
-    "description": "S3-compatible cloud storage at a fraction of the cost",
-    "envKeys": ["B2_APPLICATION_KEY_ID", "B2_APPLICATION_KEY", "B2_BUCKET_ID"],
-    "portalUrl": "https://secure.backblaze.com/app_keys.htm"
-  },
-  {
-    "id": "mux",
-    "name": "Mux",
-    "category": "Storage",
-    "description": "Video streaming, encoding, and analytics infrastructure",
-    "envKeys": ["MUX_TOKEN_ID", "MUX_TOKEN_SECRET"],
-    "portalUrl": "https://dashboard.mux.com/organizations/-/settings/access-tokens"
-  },
-  {
-    "id": "cloudflare-r2",
-    "name": "Cloudflare R2",
-    "category": "Storage",
-    "description": "S3-compatible object storage with zero egress fees",
-    "envKeys": ["R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET_NAME", "R2_ENDPOINT"],
-    "portalUrl": "https://dash.cloudflare.com/-/r2/api-tokens"
-  },
-  {
-    "id": "vercel-blob",
-    "name": "Vercel Blob",
-    "category": "Storage",
-    "description": "File storage and serving optimized for Vercel deployments",
-    "envKeys": ["BLOB_READ_WRITE_TOKEN"],
-    "portalUrl": "https://vercel.com/dashboard/stores"
-  },
-  {
-    "id": "mapbox",
-    "name": "Mapbox",
-    "category": "Maps & Location",
-    "description": "Custom maps, geocoding, navigation, and location search",
-    "envKeys": ["MAPBOX_ACCESS_TOKEN"],
-    "portalUrl": "https://account.mapbox.com/access-tokens"
-  },
-  {
-    "id": "google-maps",
-    "name": "Google Maps",
-    "category": "Maps & Location",
-    "description": "Maps, geocoding, directions, and places APIs",
-    "envKeys": ["GOOGLE_MAPS_API_KEY"],
-    "portalUrl": "https://console.cloud.google.com/apis/credentials"
-  },
-  {
-    "id": "here",
-    "name": "HERE",
-    "category": "Maps & Location",
-    "description": "Location services, mapping, routing, and geocoding platform",
-    "envKeys": ["HERE_API_KEY"],
-    "portalUrl": "https://platform.here.com/admin/apps"
-  },
-  {
-    "id": "opencage",
-    "name": "OpenCage",
-    "category": "Maps & Location",
-    "description": "Forward and reverse geocoding API using open data",
-    "envKeys": ["OPENCAGE_API_KEY"],
-    "portalUrl": "https://opencagedata.com/dashboard#api-keys"
-  },
-  {
-    "id": "github",
-    "name": "GitHub",
-    "category": "Social & Platform",
-    "description": "Code hosting, collaboration, and developer platform APIs",
-    "envKeys": ["GITHUB_TOKEN", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
-    "portalUrl": "https://github.com/settings/tokens"
-  },
-  {
-    "id": "discord",
-    "name": "Discord",
-    "category": "Social & Platform",
-    "description": "Bot API, webhooks, and OAuth for Discord communities",
-    "envKeys": ["DISCORD_BOT_TOKEN", "DISCORD_CLIENT_ID", "DISCORD_CLIENT_SECRET", "DISCORD_WEBHOOK_URL"],
-    "portalUrl": "https://discord.com/developers/applications"
-  },
-  {
-    "id": "slack",
-    "name": "Slack",
-    "category": "Social & Platform",
-    "description": "Messaging, bot, and workflow APIs for team collaboration",
-    "envKeys": ["SLACK_BOT_TOKEN", "SLACK_SIGNING_SECRET", "SLACK_WEBHOOK_URL"],
-    "portalUrl": "https://api.slack.com/apps"
-  },
-  {
-    "id": "twitter",
-    "name": "Twitter / X",
-    "category": "Social & Platform",
-    "description": "Tweets, timelines, and user data via the X API",
-    "envKeys": ["TWITTER_API_KEY", "TWITTER_API_SECRET", "TWITTER_BEARER_TOKEN", "TWITTER_ACCESS_TOKEN"],
-    "portalUrl": "https://developer.x.com/en/portal/projects-and-apps"
-  },
-  {
-    "id": "facebook",
-    "name": "Facebook / Meta",
-    "category": "Social & Platform",
-    "description": "Graph API for pages, ads, Instagram, and WhatsApp Business",
-    "envKeys": ["FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET", "FACEBOOK_ACCESS_TOKEN"],
-    "portalUrl": "https://developers.facebook.com/apps"
-  },
-  {
-    "id": "linkedin",
-    "name": "LinkedIn",
-    "category": "Social & Platform",
-    "description": "Professional network API for profiles, posts, and company data",
-    "envKeys": ["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"],
-    "portalUrl": "https://www.linkedin.com/developers/apps"
-  },
-  {
-    "id": "telegram",
-    "name": "Telegram",
-    "category": "Social & Platform",
-    "description": "Bot API for messaging, groups, and inline commands",
-    "envKeys": ["TELEGRAM_BOT_TOKEN"],
-    "portalUrl": "https://t.me/BotFather"
-  },
-  {
-    "id": "twitch",
-    "name": "Twitch",
-    "category": "Social & Platform",
-    "description": "Live streaming platform API for chat, events, and channel data",
-    "envKeys": ["TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET", "TWITCH_ACCESS_TOKEN"],
-    "portalUrl": "https://dev.twitch.tv/console/apps"
-  },
-  {
-    "id": "spotify",
-    "name": "Spotify",
-    "category": "Social & Platform",
-    "description": "Music streaming API for tracks, playlists, and user data",
-    "envKeys": ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
-    "portalUrl": "https://developer.spotify.com/dashboard"
+    "id": "butter-cms",
+    "name": "ButterCMS",
+    "category": "CMS",
+    "description": "Headless CMS with blog, pages, and content modeling",
+    "envKeys": [
+      "BUTTERCMS_API_TOKEN"
+    ],
+    "portalUrl": "https://buttercms.com/settings/"
   },
   {
     "id": "contentful",
     "name": "Contentful",
     "category": "CMS",
     "description": "Headless CMS with content modeling, APIs, and media management",
-    "envKeys": ["CONTENTFUL_SPACE_ID", "CONTENTFUL_ACCESS_TOKEN", "CONTENTFUL_MANAGEMENT_TOKEN"],
+    "envKeys": [
+      "CONTENTFUL_SPACE_ID",
+      "CONTENTFUL_ACCESS_TOKEN",
+      "CONTENTFUL_MANAGEMENT_TOKEN"
+    ],
     "portalUrl": "https://app.contentful.com/spaces/-/api/keys"
   },
   {
-    "id": "sanity",
-    "name": "Sanity",
+    "id": "datocms",
+    "name": "DatoCMS",
     "category": "CMS",
-    "description": "Composable content platform with real-time collaboration",
-    "envKeys": ["SANITY_PROJECT_ID", "SANITY_DATASET", "SANITY_API_TOKEN"],
-    "portalUrl": "https://www.sanity.io/manage/project/-/api"
+    "description": "Headless CMS with GraphQL API and real-time updates",
+    "envKeys": [
+      "DATOCMS_API_TOKEN",
+      "DATOCMS_ENVIRONMENT"
+    ],
+    "portalUrl": "https://www.datocms.com/docs/content-management-api/authentication"
   },
   {
-    "id": "strapi",
-    "name": "Strapi Cloud",
+    "id": "ghost",
+    "name": "Ghost",
     "category": "CMS",
-    "description": "Open-source headless CMS with managed cloud hosting",
-    "envKeys": ["STRAPI_URL", "STRAPI_API_TOKEN"],
-    "portalUrl": "https://cloud.strapi.io/projects/-/settings/api-tokens"
-  },
-  {
-    "id": "prismic",
-    "name": "Prismic",
-    "category": "CMS",
-    "description": "Headless page builder and CMS for component-driven websites",
-    "envKeys": ["PRISMIC_REPOSITORY", "PRISMIC_ACCESS_TOKEN"],
-    "portalUrl": "https://prismic.io/dashboard/-/settings/api"
-  },
-  {
-    "id": "storyblok",
-    "name": "Storyblok",
-    "category": "CMS",
-    "description": "Visual headless CMS with real-time preview and collaboration",
-    "envKeys": ["STORYBLOK_API_TOKEN"],
-    "portalUrl": "https://app.storyblok.com/#!/me/spaces/-/settings"
+    "description": "Open source headless CMS for publishing",
+    "envKeys": [
+      "GHOST_API_KEY",
+      "GHOST_API_URL"
+    ],
+    "portalUrl": "https://ghost.org/docs/content-api/"
   },
   {
     "id": "hygraph",
     "name": "Hygraph",
     "category": "CMS",
     "description": "Federated content platform with GraphQL API (formerly GraphCMS)",
-    "envKeys": ["HYGRAPH_URL", "HYGRAPH_TOKEN"],
+    "envKeys": [
+      "HYGRAPH_URL",
+      "HYGRAPH_TOKEN"
+    ],
     "portalUrl": "https://app.hygraph.com/project/-/settings/api-access"
   },
   {
@@ -1076,135 +476,544 @@
     "name": "Payload CMS",
     "category": "CMS",
     "description": "Open-source TypeScript headless CMS and application framework",
-    "envKeys": ["PAYLOAD_SECRET", "PAYLOAD_PUBLIC_SERVER_URL"],
+    "envKeys": [
+      "PAYLOAD_SECRET",
+      "PAYLOAD_PUBLIC_SERVER_URL"
+    ],
     "portalUrl": "https://cloud.payloadcms.com/projects"
   },
   {
-    "id": "github-actions",
-    "name": "GitHub Actions",
-    "category": "DevOps",
-    "description": "CI/CD workflows triggered by repository events",
-    "envKeys": ["GITHUB_TOKEN", "ACTIONS_RUNNER_DEBUG"],
-    "portalUrl": "https://github.com/settings/tokens"
+    "id": "prismic",
+    "name": "Prismic",
+    "category": "CMS",
+    "description": "Headless page builder and CMS for component-driven websites",
+    "envKeys": [
+      "PRISMIC_REPOSITORY",
+      "PRISMIC_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://prismic.io/dashboard/-/settings/api"
   },
   {
-    "id": "circleci",
-    "name": "CircleCI",
-    "category": "DevOps",
-    "description": "Continuous integration and delivery platform",
-    "envKeys": ["CIRCLECI_TOKEN"],
-    "portalUrl": "https://app.circleci.com/settings/user/tokens"
+    "id": "sanity",
+    "name": "Sanity",
+    "category": "CMS",
+    "description": "Composable content platform with real-time collaboration",
+    "envKeys": [
+      "SANITY_PROJECT_ID",
+      "SANITY_DATASET",
+      "SANITY_API_TOKEN"
+    ],
+    "portalUrl": "https://www.sanity.io/manage/project/-/api"
   },
   {
-    "id": "docker-hub",
-    "name": "Docker Hub",
-    "category": "DevOps",
-    "description": "Container image registry and build platform",
-    "envKeys": ["DOCKER_USERNAME", "DOCKER_PASSWORD", "DOCKER_REGISTRY_TOKEN"],
-    "portalUrl": "https://hub.docker.com/settings/security"
+    "id": "storyblok",
+    "name": "Storyblok",
+    "category": "CMS",
+    "description": "Visual headless CMS with real-time preview and collaboration",
+    "envKeys": [
+      "STORYBLOK_API_TOKEN"
+    ],
+    "portalUrl": "https://app.storyblok.com/#!/me/spaces/-/settings"
   },
   {
-    "id": "terraform-cloud",
-    "name": "Terraform Cloud",
-    "category": "DevOps",
-    "description": "Infrastructure as code collaboration and automation by HashiCorp",
-    "envKeys": ["TF_API_TOKEN", "TF_CLOUD_ORGANIZATION"],
-    "portalUrl": "https://app.terraform.io/app/settings/tokens"
+    "id": "strapi",
+    "name": "Strapi Cloud",
+    "category": "CMS",
+    "description": "Open-source headless CMS with managed cloud hosting",
+    "envKeys": [
+      "STRAPI_URL",
+      "STRAPI_API_TOKEN"
+    ],
+    "portalUrl": "https://cloud.strapi.io/projects/-/settings/api-tokens"
   },
   {
-    "id": "pulumi",
-    "name": "Pulumi",
-    "category": "DevOps",
-    "description": "Infrastructure as code using general-purpose programming languages",
-    "envKeys": ["PULUMI_ACCESS_TOKEN"],
-    "portalUrl": "https://app.pulumi.com/account/tokens"
+    "id": "aws",
+    "name": "Amazon Web Services",
+    "category": "Cloud Infrastructure",
+    "description": "AWS cloud services including EC2, S3, Lambda, and 200+ services",
+    "envKeys": [
+      "AWS_ACCESS_KEY_ID",
+      "AWS_SECRET_ACCESS_KEY",
+      "AWS_REGION"
+    ],
+    "portalUrl": "https://console.aws.amazon.com/iam/home#/security_credentials"
   },
   {
-    "id": "gitlab",
-    "name": "GitLab",
-    "category": "DevOps",
-    "description": "DevOps platform with source control, CI/CD, and container registry",
-    "envKeys": ["GITLAB_TOKEN", "GITLAB_URL"],
-    "portalUrl": "https://gitlab.com/-/user_settings/personal_access_tokens"
+    "id": "appwrite",
+    "name": "Appwrite",
+    "category": "Cloud Infrastructure",
+    "description": "Open-source backend-as-a-service with auth, databases, and functions",
+    "envKeys": [
+      "APPWRITE_ENDPOINT",
+      "APPWRITE_PROJECT_ID",
+      "APPWRITE_API_KEY"
+    ],
+    "portalUrl": "https://cloud.appwrite.io/console/project/-/settings"
   },
   {
-    "id": "sonarcloud",
-    "name": "SonarCloud",
-    "category": "DevOps",
-    "description": "Code quality and security analysis for cloud-hosted projects",
-    "envKeys": ["SONAR_TOKEN", "SONAR_ORGANIZATION"],
-    "portalUrl": "https://sonarcloud.io/account/security"
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "category": "Cloud Infrastructure",
+    "description": "CDN, DNS, Workers, R2 storage, and security services",
+    "envKeys": [
+      "CLOUDFLARE_API_TOKEN",
+      "CLOUDFLARE_ACCOUNT_ID",
+      "CLOUDFLARE_ZONE_ID"
+    ],
+    "portalUrl": "https://dash.cloudflare.com/profile/api-tokens"
   },
   {
-    "id": "inngest",
-    "name": "Inngest",
-    "category": "DevOps",
-    "description": "Durable workflow engine for background jobs and event-driven functions",
-    "envKeys": ["INNGEST_EVENT_KEY", "INNGEST_SIGNING_KEY"],
-    "portalUrl": "https://app.inngest.com/env/production/manage/keys"
+    "id": "deno-deploy",
+    "name": "Deno Deploy",
+    "category": "Cloud Infrastructure",
+    "description": "Serverless edge hosting for Deno and Fresh applications",
+    "envKeys": [
+      "DENO_DEPLOY_TOKEN"
+    ],
+    "portalUrl": "https://dash.deno.com/account#access-tokens"
   },
   {
-    "id": "trigger-dev",
-    "name": "Trigger.dev",
-    "category": "DevOps",
-    "description": "Open-source background job platform for serverless and long-running tasks",
-    "envKeys": ["TRIGGER_API_KEY", "TRIGGER_API_URL"],
-    "portalUrl": "https://cloud.trigger.dev/orgs/-/projects/-/apikeys"
+    "id": "digitalocean",
+    "name": "DigitalOcean",
+    "category": "Cloud Infrastructure",
+    "description": "Cloud hosting, managed databases, Kubernetes, and app platform",
+    "envKeys": [
+      "DIGITALOCEAN_TOKEN",
+      "DIGITALOCEAN_SPACES_KEY",
+      "DIGITALOCEAN_SPACES_SECRET"
+    ],
+    "portalUrl": "https://cloud.digitalocean.com/account/api/tokens"
   },
   {
-    "id": "qstash",
-    "name": "QStash (Upstash)",
-    "category": "DevOps",
-    "description": "Serverless messaging and task scheduling via HTTP",
-    "envKeys": ["QSTASH_TOKEN", "QSTASH_CURRENT_SIGNING_KEY", "QSTASH_NEXT_SIGNING_KEY"],
-    "portalUrl": "https://console.upstash.com/qstash"
+    "id": "flyio",
+    "name": "Fly.io",
+    "category": "Cloud Infrastructure",
+    "description": "Deploy full-stack apps and databases close to users globally",
+    "envKeys": [
+      "FLY_API_TOKEN"
+    ],
+    "portalUrl": "https://fly.io/user/personal_access_tokens"
   },
   {
-    "id": "doppler",
-    "name": "Doppler",
-    "category": "DevOps",
-    "description": "Universal secrets manager for environment variables and configs",
-    "envKeys": ["DOPPLER_TOKEN"],
-    "portalUrl": "https://dashboard.doppler.com/workplace/tokens"
+    "id": "godaddy",
+    "name": "GoDaddy",
+    "category": "Cloud Infrastructure",
+    "description": "Domain registration and DNS management API",
+    "envKeys": [
+      "GODADDY_API_KEY",
+      "GODADDY_API_SECRET"
+    ],
+    "portalUrl": "https://developer.godaddy.com/keys"
   },
   {
-    "id": "vault",
-    "name": "HashiCorp Vault",
-    "category": "DevOps",
-    "description": "Secrets management, encryption, and identity-based access",
-    "envKeys": ["VAULT_ADDR", "VAULT_TOKEN"],
-    "portalUrl": "https://portal.cloud.hashicorp.com/services/vault"
+    "id": "gcp",
+    "name": "Google Cloud Platform",
+    "category": "Cloud Infrastructure",
+    "description": "Google Cloud compute, storage, networking, and managed services",
+    "envKeys": [
+      "GOOGLE_CLOUD_PROJECT",
+      "GOOGLE_APPLICATION_CREDENTIALS",
+      "GCP_API_KEY"
+    ],
+    "portalUrl": "https://console.cloud.google.com/apis/credentials"
   },
   {
-    "id": "unkey",
-    "name": "Unkey",
-    "category": "DevOps",
-    "description": "Open-source API key management and rate limiting",
-    "envKeys": ["UNKEY_ROOT_KEY", "UNKEY_API_ID"],
-    "portalUrl": "https://app.unkey.com/settings/root-keys"
+    "id": "hetzner",
+    "name": "Hetzner",
+    "category": "Cloud Infrastructure",
+    "description": "European cloud servers, dedicated hosting, and storage",
+    "envKeys": [
+      "HETZNER_API_TOKEN"
+    ],
+    "portalUrl": "https://console.hetzner.cloud/projects/-/security/tokens"
   },
   {
-    "id": "arcjet",
-    "name": "Arcjet",
-    "category": "DevOps",
-    "description": "Security layer for rate limiting, bot protection, and email validation",
-    "envKeys": ["ARCJET_KEY"],
-    "portalUrl": "https://app.arcjet.com/teams/-/sites"
+    "id": "linode",
+    "name": "Linode (Akamai)",
+    "category": "Cloud Infrastructure",
+    "description": "Cloud computing, VPS hosting, and managed services",
+    "envKeys": [
+      "LINODE_API_TOKEN"
+    ],
+    "portalUrl": "https://cloud.linode.com/profile/tokens"
+  },
+  {
+    "id": "azure",
+    "name": "Microsoft Azure",
+    "category": "Cloud Infrastructure",
+    "description": "Azure cloud computing, AI, and enterprise services",
+    "envKeys": [
+      "AZURE_SUBSCRIPTION_ID",
+      "AZURE_CLIENT_ID",
+      "AZURE_CLIENT_SECRET",
+      "AZURE_TENANT_ID"
+    ],
+    "portalUrl": "https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps"
+  },
+  {
+    "id": "namecheap",
+    "name": "Namecheap",
+    "category": "Cloud Infrastructure",
+    "description": "Domain registration and DNS management",
+    "envKeys": [
+      "NAMECHEAP_API_KEY",
+      "NAMECHEAP_USERNAME"
+    ],
+    "portalUrl": "https://ap.www.namecheap.com/settings/tools/apiaccess/"
+  },
+  {
+    "id": "netlify",
+    "name": "Netlify",
+    "category": "Cloud Infrastructure",
+    "description": "Web hosting, serverless functions, and deployment platform",
+    "envKeys": [
+      "NETLIFY_AUTH_TOKEN",
+      "NETLIFY_SITE_ID"
+    ],
+    "portalUrl": "https://app.netlify.com/user/applications#personal-access-tokens"
+  },
+  {
+    "id": "railway",
+    "name": "Railway",
+    "category": "Cloud Infrastructure",
+    "description": "Infrastructure platform for deploying apps, databases, and services",
+    "envKeys": [
+      "RAILWAY_TOKEN"
+    ],
+    "portalUrl": "https://railway.app/account/tokens"
+  },
+  {
+    "id": "render",
+    "name": "Render",
+    "category": "Cloud Infrastructure",
+    "description": "Managed cloud hosting for web apps, APIs, and databases",
+    "envKeys": [
+      "RENDER_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.render.com/u/settings#api-keys"
+  },
+  {
+    "id": "val-town",
+    "name": "Val Town",
+    "category": "Cloud Infrastructure",
+    "description": "Social website for writing and deploying serverless functions",
+    "envKeys": [
+      "VALTOWN_API_KEY"
+    ],
+    "portalUrl": "https://www.val.town/settings/api"
+  },
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "category": "Cloud Infrastructure",
+    "description": "Frontend deployment platform with serverless functions and edge network",
+    "envKeys": [
+      "VERCEL_TOKEN",
+      "VERCEL_ORG_ID",
+      "VERCEL_PROJECT_ID"
+    ],
+    "portalUrl": "https://vercel.com/account/tokens"
+  },
+  {
+    "id": "vultr",
+    "name": "Vultr",
+    "category": "Cloud Infrastructure",
+    "description": "High-performance cloud compute and bare metal servers",
+    "envKeys": [
+      "VULTR_API_KEY"
+    ],
+    "portalUrl": "https://my.vultr.com/settings/#settingsapi"
+  },
+  {
+    "id": "ably",
+    "name": "Ably",
+    "category": "Communication",
+    "description": "Realtime messaging and data synchronization platform",
+    "envKeys": [
+      "ABLY_API_KEY"
+    ],
+    "portalUrl": "https://ably.com/accounts/-/apps/-/api-keys"
+  },
+  {
+    "id": "courier",
+    "name": "Courier",
+    "category": "Communication",
+    "description": "Multi-channel notification orchestration and delivery",
+    "envKeys": [
+      "COURIER_AUTH_TOKEN"
+    ],
+    "portalUrl": "https://app.courier.com/settings/api-keys"
+  },
+  {
+    "id": "crisp",
+    "name": "Crisp",
+    "category": "Communication",
+    "description": "Business messaging platform with live chat and chatbots",
+    "envKeys": [
+      "CRISP_WEBSITE_ID",
+      "CRISP_TOKEN_ID",
+      "CRISP_TOKEN_KEY"
+    ],
+    "portalUrl": "https://app.crisp.chat/settings/token/"
+  },
+  {
+    "id": "firebase-messaging",
+    "name": "Firebase Cloud Messaging",
+    "category": "Communication",
+    "description": "Cross-platform push notification delivery",
+    "envKeys": [
+      "FCM_SERVER_KEY",
+      "FCM_SENDER_ID"
+    ],
+    "portalUrl": "https://console.firebase.google.com/project/_/settings/cloudmessaging"
+  },
+  {
+    "id": "intercom",
+    "name": "Intercom",
+    "category": "Communication",
+    "description": "Customer messaging platform with chat, bots, and help center",
+    "envKeys": [
+      "INTERCOM_ACCESS_TOKEN",
+      "INTERCOM_APP_ID"
+    ],
+    "portalUrl": "https://app.intercom.com/a/developer-hub/app-packages/-/auth"
+  },
+  {
+    "id": "knock",
+    "name": "Knock",
+    "category": "Communication",
+    "description": "Notification infrastructure for in-app, email, push, and SMS",
+    "envKeys": [
+      "KNOCK_API_KEY",
+      "KNOCK_SIGNING_KEY"
+    ],
+    "portalUrl": "https://dashboard.knock.app/settings/api-keys"
+  },
+  {
+    "id": "livekit",
+    "name": "LiveKit",
+    "category": "Communication",
+    "description": "Open-source WebRTC platform for real-time video, audio, and data",
+    "envKeys": [
+      "LIVEKIT_API_KEY",
+      "LIVEKIT_API_SECRET",
+      "LIVEKIT_URL"
+    ],
+    "portalUrl": "https://cloud.livekit.io/projects/-/settings"
+  },
+  {
+    "id": "loops",
+    "name": "Loops",
+    "category": "Communication",
+    "description": "Email platform for SaaS with transactional and marketing emails",
+    "envKeys": [
+      "LOOPS_API_KEY"
+    ],
+    "portalUrl": "https://app.loops.so/settings?page=api"
+  },
+  {
+    "id": "mailgun",
+    "name": "Mailgun",
+    "category": "Communication",
+    "description": "Email sending, receiving, and tracking API by Sinch",
+    "envKeys": [
+      "MAILGUN_API_KEY",
+      "MAILGUN_DOMAIN"
+    ],
+    "portalUrl": "https://app.mailgun.com/settings/api_security"
+  },
+  {
+    "id": "messagebird",
+    "name": "MessageBird",
+    "category": "Communication",
+    "description": "Omnichannel messaging for SMS, WhatsApp, and voice",
+    "envKeys": [
+      "MESSAGEBIRD_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.messagebird.com/en/developers/access"
+  },
+  {
+    "id": "messagebird-verify",
+    "name": "MessageBird Verify",
+    "category": "Communication",
+    "description": "Phone number verification and OTP delivery",
+    "envKeys": [
+      "MESSAGEBIRD_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.messagebird.com/en/developers/access"
+  },
+  {
+    "id": "novu",
+    "name": "Novu",
+    "category": "Communication",
+    "description": "Open-source notification infrastructure for in-app, email, SMS, and push",
+    "envKeys": [
+      "NOVU_API_KEY"
+    ],
+    "portalUrl": "https://web.novu.co/settings"
+  },
+  {
+    "id": "onesignal",
+    "name": "OneSignal",
+    "category": "Communication",
+    "description": "Push notifications, email, SMS, and in-app messaging",
+    "envKeys": [
+      "ONESIGNAL_APP_ID",
+      "ONESIGNAL_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.onesignal.com/apps"
+  },
+  {
+    "id": "plivo",
+    "name": "Plivo",
+    "category": "Communication",
+    "description": "Cloud communication platform for voice and SMS",
+    "envKeys": [
+      "PLIVO_AUTH_ID",
+      "PLIVO_AUTH_TOKEN"
+    ],
+    "portalUrl": "https://console.plivo.com/dashboard"
+  },
+  {
+    "id": "postmark",
+    "name": "Postmark",
+    "category": "Communication",
+    "description": "Transactional email delivery with high deliverability",
+    "envKeys": [
+      "POSTMARK_API_TOKEN",
+      "POSTMARK_SERVER_TOKEN"
+    ],
+    "portalUrl": "https://account.postmarkapp.com/api_tokens"
+  },
+  {
+    "id": "pusher",
+    "name": "Pusher",
+    "category": "Communication",
+    "description": "Realtime websocket channels and push notification infrastructure",
+    "envKeys": [
+      "PUSHER_APP_ID",
+      "PUSHER_KEY",
+      "PUSHER_SECRET",
+      "PUSHER_CLUSTER"
+    ],
+    "portalUrl": "https://dashboard.pusher.com/apps/-/keys"
+  },
+  {
+    "id": "resend",
+    "name": "Resend",
+    "category": "Communication",
+    "description": "Modern email API built for developers with React Email support",
+    "envKeys": [
+      "RESEND_API_KEY"
+    ],
+    "portalUrl": "https://resend.com/api-keys"
+  },
+  {
+    "id": "sendgrid",
+    "name": "SendGrid",
+    "category": "Communication",
+    "description": "Email delivery and marketing campaigns platform by Twilio",
+    "envKeys": [
+      "SENDGRID_API_KEY"
+    ],
+    "portalUrl": "https://app.sendgrid.com/settings/api_keys"
+  },
+  {
+    "id": "socket-io",
+    "name": "Socket.IO",
+    "category": "Communication",
+    "description": "Real-time bidirectional event-based communication",
+    "envKeys": [
+      "SOCKETIO_SERVER_URL"
+    ],
+    "portalUrl": "https://socket.io/docs/v4/"
+  },
+  {
+    "id": "stream",
+    "name": "Stream",
+    "category": "Communication",
+    "description": "Chat messaging and activity feed APIs for apps",
+    "envKeys": [
+      "STREAM_API_KEY",
+      "STREAM_API_SECRET"
+    ],
+    "portalUrl": "https://dashboard.getstream.io/app/-/chat/overview"
+  },
+  {
+    "id": "twilio",
+    "name": "Twilio",
+    "category": "Communication",
+    "description": "SMS, voice, video, and WhatsApp communication APIs",
+    "envKeys": [
+      "TWILIO_ACCOUNT_SID",
+      "TWILIO_AUTH_TOKEN",
+      "TWILIO_PHONE_NUMBER"
+    ],
+    "portalUrl": "https://console.twilio.com/us1/account/keys-credentials/api-keys"
+  },
+  {
+    "id": "vonage",
+    "name": "Vonage",
+    "category": "Communication",
+    "description": "SMS, voice, video, and messaging communication APIs",
+    "envKeys": [
+      "VONAGE_API_KEY",
+      "VONAGE_API_SECRET"
+    ],
+    "portalUrl": "https://dashboard.nexmo.com/settings"
+  },
+  {
+    "id": "zendesk",
+    "name": "Zendesk",
+    "category": "Communication",
+    "description": "Customer service and engagement platform with ticketing",
+    "envKeys": [
+      "ZENDESK_SUBDOMAIN",
+      "ZENDESK_API_TOKEN",
+      "ZENDESK_EMAIL"
+    ],
+    "portalUrl": "https://YOUR_SUBDOMAIN.zendesk.com/admin/apps-integrations/apis/zendesk-api/settings"
   },
   {
     "id": "alchemy",
     "name": "Alchemy",
     "category": "Crypto & Web3",
     "description": "Ethereum and multi-chain node infrastructure and Web3 APIs",
-    "envKeys": ["ALCHEMY_API_KEY", "ALCHEMY_NETWORK"],
+    "envKeys": [
+      "ALCHEMY_API_KEY",
+      "ALCHEMY_NETWORK"
+    ],
     "portalUrl": "https://dashboard.alchemy.com/apps"
+  },
+  {
+    "id": "etherscan",
+    "name": "Etherscan",
+    "category": "Crypto & Web3",
+    "description": "Ethereum blockchain explorer and analytics API",
+    "envKeys": [
+      "ETHERSCAN_API_KEY"
+    ],
+    "portalUrl": "https://etherscan.io/myapikey"
+  },
+  {
+    "id": "helius",
+    "name": "Helius",
+    "category": "Crypto & Web3",
+    "description": "Solana RPC nodes, webhooks, and enhanced APIs",
+    "envKeys": [
+      "HELIUS_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.helius.dev/api-keys"
   },
   {
     "id": "infura",
     "name": "Infura",
     "category": "Crypto & Web3",
     "description": "Ethereum and IPFS node infrastructure by ConsenSys",
-    "envKeys": ["INFURA_API_KEY", "INFURA_API_SECRET"],
+    "envKeys": [
+      "INFURA_API_KEY",
+      "INFURA_API_SECRET"
+    ],
     "portalUrl": "https://app.infura.io/dashboard"
   },
   {
@@ -1212,119 +1021,529 @@
     "name": "Moralis",
     "category": "Crypto & Web3",
     "description": "Web3 data APIs for NFTs, tokens, DeFi, and wallet activity",
-    "envKeys": ["MORALIS_API_KEY"],
+    "envKeys": [
+      "MORALIS_API_KEY"
+    ],
     "portalUrl": "https://admin.moralis.io/settings"
+  },
+  {
+    "id": "opensea",
+    "name": "OpenSea",
+    "category": "Crypto & Web3",
+    "description": "NFT marketplace data and trading API",
+    "envKeys": [
+      "OPENSEA_API_KEY"
+    ],
+    "portalUrl": "https://docs.opensea.io/reference/api-keys"
   },
   {
     "id": "quicknode",
     "name": "QuickNode",
     "category": "Crypto & Web3",
     "description": "Multi-chain blockchain node infrastructure and APIs",
-    "envKeys": ["QUICKNODE_HTTP_URL", "QUICKNODE_WSS_URL"],
+    "envKeys": [
+      "QUICKNODE_HTTP_URL",
+      "QUICKNODE_WSS_URL"
+    ],
     "portalUrl": "https://dashboard.quicknode.com/endpoints"
-  },
-  {
-    "id": "helius",
-    "name": "Helius",
-    "category": "Crypto & Web3",
-    "description": "Solana RPC nodes, webhooks, and enhanced APIs",
-    "envKeys": ["HELIUS_API_KEY"],
-    "portalUrl": "https://dashboard.helius.dev/api-keys"
-  },
-  {
-    "id": "thirdweb",
-    "name": "thirdweb",
-    "category": "Crypto & Web3",
-    "description": "Web3 development platform for smart contracts and dApps",
-    "envKeys": ["THIRDWEB_SECRET_KEY", "THIRDWEB_CLIENT_ID"],
-    "portalUrl": "https://thirdweb.com/dashboard/settings/api-keys"
   },
   {
     "id": "walletconnect",
     "name": "WalletConnect",
     "category": "Crypto & Web3",
     "description": "Web3 wallet connection protocol for dApps",
-    "envKeys": ["WALLETCONNECT_PROJECT_ID"],
+    "envKeys": [
+      "WALLETCONNECT_PROJECT_ID"
+    ],
     "portalUrl": "https://cloud.walletconnect.com/app/-/settings"
   },
   {
-    "id": "notion",
-    "name": "Notion",
-    "category": "Productivity",
-    "description": "Workspace API for databases, pages, and content management",
-    "envKeys": ["NOTION_API_KEY", "NOTION_DATABASE_ID"],
-    "portalUrl": "https://www.notion.so/my-integrations"
+    "id": "thirdweb",
+    "name": "thirdweb",
+    "category": "Crypto & Web3",
+    "description": "Web3 development platform for smart contracts and dApps",
+    "envKeys": [
+      "THIRDWEB_SECRET_KEY",
+      "THIRDWEB_CLIENT_ID"
+    ],
+    "portalUrl": "https://thirdweb.com/dashboard/settings/api-keys"
   },
   {
-    "id": "airtable",
-    "name": "Airtable",
-    "category": "Productivity",
-    "description": "Low-code platform with spreadsheet-database hybrid API",
-    "envKeys": ["AIRTABLE_API_KEY", "AIRTABLE_BASE_ID"],
-    "portalUrl": "https://airtable.com/create/tokens"
+    "id": "abstract-api",
+    "name": "Abstract API",
+    "category": "Data & APIs",
+    "description": "Suite of utility APIs for email validation, geolocation, and more",
+    "envKeys": [
+      "ABSTRACT_API_KEY"
+    ],
+    "portalUrl": "https://app.abstractapi.com/api"
   },
   {
-    "id": "linear",
-    "name": "Linear",
-    "category": "Productivity",
-    "description": "Project management and issue tracking for software teams",
-    "envKeys": ["LINEAR_API_KEY"],
-    "portalUrl": "https://linear.app/settings/api"
+    "id": "clearbit",
+    "name": "Clearbit",
+    "category": "Data & APIs",
+    "description": "Business intelligence and company/person enrichment data",
+    "envKeys": [
+      "CLEARBIT_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.clearbit.com/api"
   },
   {
-    "id": "jira",
-    "name": "Jira (Atlassian)",
-    "category": "Productivity",
-    "description": "Project tracking, agile boards, and issue management",
-    "envKeys": ["JIRA_API_TOKEN", "JIRA_HOST", "JIRA_EMAIL"],
-    "portalUrl": "https://id.atlassian.com/manage-profile/security/api-tokens"
+    "id": "docspring",
+    "name": "DocSpring",
+    "category": "Data & APIs",
+    "description": "PDF generation from templates API",
+    "envKeys": [
+      "DOCSPRING_TOKEN_ID",
+      "DOCSPRING_TOKEN_SECRET"
+    ],
+    "portalUrl": "https://app.docspring.com/api_tokens"
   },
   {
-    "id": "asana",
-    "name": "Asana",
-    "category": "Productivity",
-    "description": "Work management, task tracking, and project collaboration",
-    "envKeys": ["ASANA_ACCESS_TOKEN"],
-    "portalUrl": "https://app.asana.com/0/developer-console"
+    "id": "dub",
+    "name": "Dub",
+    "category": "Data & APIs",
+    "description": "Open-source link management and analytics platform",
+    "envKeys": [
+      "DUB_API_KEY"
+    ],
+    "portalUrl": "https://app.dub.co/settings/tokens"
   },
   {
-    "id": "google-sheets",
-    "name": "Google Sheets",
-    "category": "Productivity",
-    "description": "Spreadsheet API for reading, writing, and managing data",
-    "envKeys": ["GOOGLE_SHEETS_API_KEY", "GOOGLE_SERVICE_ACCOUNT_KEY"],
-    "portalUrl": "https://console.cloud.google.com/apis/credentials"
+    "id": "exchangerate-api",
+    "name": "ExchangeRate-API",
+    "category": "Data & APIs",
+    "description": "Real-time and historical currency exchange rate data",
+    "envKeys": [
+      "EXCHANGERATE_API_KEY"
+    ],
+    "portalUrl": "https://app.exchangerate-api.com/dashboard"
   },
   {
-    "id": "canny",
-    "name": "Canny",
-    "category": "Productivity",
-    "description": "User feedback management and feature request tracking",
-    "envKeys": ["CANNY_API_KEY"],
-    "portalUrl": "https://YOUR_COMPANY.canny.io/admin/settings/api"
+    "id": "ip-geolocation",
+    "name": "IPGeolocation",
+    "category": "Data & APIs",
+    "description": "IP address geolocation, timezone, and currency data",
+    "envKeys": [
+      "IPGEOLOCATION_API_KEY"
+    ],
+    "portalUrl": "https://app.ipgeolocation.io/"
   },
   {
-    "id": "shopify",
-    "name": "Shopify",
-    "category": "E-Commerce",
-    "description": "E-commerce platform with storefront, admin, and checkout APIs",
-    "envKeys": ["SHOPIFY_API_KEY", "SHOPIFY_API_SECRET", "SHOPIFY_STORE_DOMAIN", "SHOPIFY_ACCESS_TOKEN"],
-    "portalUrl": "https://partners.shopify.com/organizations/-/apps"
+    "id": "ipinfo",
+    "name": "IPinfo",
+    "category": "Data & APIs",
+    "description": "IP address geolocation, ASN, and company data",
+    "envKeys": [
+      "IPINFO_TOKEN"
+    ],
+    "portalUrl": "https://ipinfo.io/account/token"
   },
   {
-    "id": "woocommerce",
-    "name": "WooCommerce",
-    "category": "E-Commerce",
-    "description": "WordPress e-commerce plugin with REST API for store management",
-    "envKeys": ["WC_CONSUMER_KEY", "WC_CONSUMER_SECRET", "WC_STORE_URL"],
-    "portalUrl": "https://YOUR_STORE/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys"
+    "id": "newsapi",
+    "name": "NewsAPI",
+    "category": "Data & APIs",
+    "description": "JSON API for live news articles from sources worldwide",
+    "envKeys": [
+      "NEWS_API_KEY"
+    ],
+    "portalUrl": "https://newsapi.org/account"
+  },
+  {
+    "id": "openweathermap",
+    "name": "OpenWeatherMap",
+    "category": "Data & APIs",
+    "description": "Weather data, forecasts, and historical weather API",
+    "envKeys": [
+      "OPENWEATHERMAP_API_KEY"
+    ],
+    "portalUrl": "https://home.openweathermap.org/api_keys"
+  },
+  {
+    "id": "weatherapi",
+    "name": "WeatherAPI",
+    "category": "Data & APIs",
+    "description": "Real-time weather, forecast, and historical weather data",
+    "envKeys": [
+      "WEATHERAPI_KEY"
+    ],
+    "portalUrl": "https://www.weatherapi.com/my/"
+  },
+  {
+    "id": "clickhouse",
+    "name": "ClickHouse Cloud",
+    "category": "Database",
+    "description": "Fast open-source columnar database for analytics workloads",
+    "envKeys": [
+      "CLICKHOUSE_HOST",
+      "CLICKHOUSE_USER",
+      "CLICKHOUSE_PASSWORD"
+    ],
+    "portalUrl": "https://clickhouse.cloud/services/-/settings"
+  },
+  {
+    "id": "cockroachdb",
+    "name": "CockroachDB",
+    "category": "Database",
+    "description": "Distributed SQL database for cloud-native applications",
+    "envKeys": [
+      "DATABASE_URL",
+      "COCKROACH_API_KEY"
+    ],
+    "portalUrl": "https://cockroachlabs.cloud/cluster/-/settings/api-keys"
+  },
+  {
+    "id": "convex",
+    "name": "Convex",
+    "category": "Database",
+    "description": "Reactive backend-as-a-service with realtime database and functions",
+    "envKeys": [
+      "CONVEX_DEPLOYMENT",
+      "CONVEX_URL"
+    ],
+    "portalUrl": "https://dashboard.convex.dev/deployment/settings"
+  },
+  {
+    "id": "faunadb",
+    "name": "Fauna",
+    "category": "Database",
+    "description": "Distributed document-relational database for modern applications",
+    "envKeys": [
+      "FAUNA_SECRET",
+      "FAUNA_ENDPOINT"
+    ],
+    "portalUrl": "https://dashboard.fauna.com/keys"
+  },
+  {
+    "id": "memcachier",
+    "name": "MemCachier",
+    "category": "Database",
+    "description": "Managed Memcached service for application caching",
+    "envKeys": [
+      "MEMCACHIER_SERVERS",
+      "MEMCACHIER_USERNAME",
+      "MEMCACHIER_PASSWORD"
+    ],
+    "portalUrl": "https://www.memcachier.com/caches"
+  },
+  {
+    "id": "mongodb-atlas",
+    "name": "MongoDB Atlas",
+    "category": "Database",
+    "description": "Managed MongoDB cloud database with search and vector capabilities",
+    "envKeys": [
+      "MONGODB_URI",
+      "MONGODB_API_KEY"
+    ],
+    "portalUrl": "https://cloud.mongodb.com/v2/-#/access/apiKeys"
+  },
+  {
+    "id": "neon",
+    "name": "Neon",
+    "category": "Database",
+    "description": "Serverless Postgres with branching, autoscaling, and bottomless storage",
+    "envKeys": [
+      "DATABASE_URL",
+      "NEON_API_KEY"
+    ],
+    "portalUrl": "https://console.neon.tech/app/settings/api-keys"
+  },
+  {
+    "id": "planetscale",
+    "name": "PlanetScale",
+    "category": "Database",
+    "description": "Serverless MySQL platform with branching and zero-downtime migrations",
+    "envKeys": [
+      "DATABASE_URL",
+      "PLANETSCALE_SERVICE_TOKEN",
+      "PLANETSCALE_SERVICE_TOKEN_NAME"
+    ],
+    "portalUrl": "https://app.planetscale.com/settings/service-tokens"
+  },
+  {
+    "id": "redis-cloud",
+    "name": "Redis Cloud",
+    "category": "Database",
+    "description": "Managed Redis with JSON, search, and time series modules",
+    "envKeys": [
+      "REDIS_URL",
+      "REDIS_HOST",
+      "REDIS_PASSWORD"
+    ],
+    "portalUrl": "https://app.redislabs.com/#/account/api-keys"
+  },
+  {
+    "id": "supabase",
+    "name": "Supabase",
+    "category": "Database",
+    "description": "Open-source Firebase alternative with Postgres, auth, and realtime",
+    "envKeys": [
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY"
+    ],
+    "portalUrl": "https://supabase.com/dashboard/project/_/settings/api"
+  },
+  {
+    "id": "turso",
+    "name": "Turso",
+    "category": "Database",
+    "description": "Edge-hosted distributed SQLite database built on libSQL",
+    "envKeys": [
+      "TURSO_DATABASE_URL",
+      "TURSO_AUTH_TOKEN"
+    ],
+    "portalUrl": "https://turso.tech/app/-/settings/api-tokens"
+  },
+  {
+    "id": "upstash",
+    "name": "Upstash",
+    "category": "Database",
+    "description": "Serverless Redis, Kafka, and QStash for edge and serverless apps",
+    "envKeys": [
+      "UPSTASH_REDIS_REST_URL",
+      "UPSTASH_REDIS_REST_TOKEN"
+    ],
+    "portalUrl": "https://console.upstash.com/redis"
+  },
+  {
+    "id": "vercel-kv",
+    "name": "Vercel KV",
+    "category": "Database",
+    "description": "Serverless Redis-compatible key-value store on Vercel",
+    "envKeys": [
+      "KV_REST_API_URL",
+      "KV_REST_API_TOKEN"
+    ],
+    "portalUrl": "https://vercel.com/dashboard/stores"
+  },
+  {
+    "id": "xata",
+    "name": "Xata",
+    "category": "Database",
+    "description": "Serverless database platform with full-text search and file attachments",
+    "envKeys": [
+      "XATA_API_KEY",
+      "XATA_BRANCH"
+    ],
+    "portalUrl": "https://app.xata.io/settings"
+  },
+  {
+    "id": "1password",
+    "name": "1Password",
+    "category": "DevOps",
+    "description": "Secrets automation and password management for teams",
+    "envKeys": [
+      "OP_SERVICE_ACCOUNT_TOKEN"
+    ],
+    "portalUrl": "https://my.1password.com/developer-tools/infrastructure-secrets/serviceaccounts"
+  },
+  {
+    "id": "arcjet",
+    "name": "Arcjet",
+    "category": "DevOps",
+    "description": "Security layer for rate limiting, bot protection, and email validation",
+    "envKeys": [
+      "ARCJET_KEY"
+    ],
+    "portalUrl": "https://app.arcjet.com/teams/-/sites"
+  },
+  {
+    "id": "browserstack",
+    "name": "BrowserStack",
+    "category": "DevOps",
+    "description": "Cross-browser testing and mobile app testing platform",
+    "envKeys": [
+      "BROWSERSTACK_USERNAME",
+      "BROWSERSTACK_ACCESS_KEY"
+    ],
+    "portalUrl": "https://www.browserstack.com/accounts/settings"
+  },
+  {
+    "id": "circleci",
+    "name": "CircleCI",
+    "category": "DevOps",
+    "description": "Continuous integration and delivery platform",
+    "envKeys": [
+      "CIRCLECI_TOKEN"
+    ],
+    "portalUrl": "https://app.circleci.com/settings/user/tokens"
+  },
+  {
+    "id": "docker-hub",
+    "name": "Docker Hub",
+    "category": "DevOps",
+    "description": "Container image registry and build platform",
+    "envKeys": [
+      "DOCKER_USERNAME",
+      "DOCKER_PASSWORD",
+      "DOCKER_REGISTRY_TOKEN"
+    ],
+    "portalUrl": "https://hub.docker.com/settings/security"
+  },
+  {
+    "id": "doppler",
+    "name": "Doppler",
+    "category": "DevOps",
+    "description": "Universal secrets manager for environment variables and configs",
+    "envKeys": [
+      "DOPPLER_TOKEN"
+    ],
+    "portalUrl": "https://dashboard.doppler.com/workplace/tokens"
+  },
+  {
+    "id": "github-actions",
+    "name": "GitHub Actions",
+    "category": "DevOps",
+    "description": "CI/CD workflows triggered by repository events",
+    "envKeys": [
+      "GITHUB_TOKEN",
+      "ACTIONS_RUNNER_DEBUG"
+    ],
+    "portalUrl": "https://github.com/settings/tokens"
+  },
+  {
+    "id": "gitlab",
+    "name": "GitLab",
+    "category": "DevOps",
+    "description": "DevOps platform with source control, CI/CD, and container registry",
+    "envKeys": [
+      "GITLAB_TOKEN",
+      "GITLAB_URL"
+    ],
+    "portalUrl": "https://gitlab.com/-/user_settings/personal_access_tokens"
+  },
+  {
+    "id": "vault",
+    "name": "HashiCorp Vault",
+    "category": "DevOps",
+    "description": "Secrets management, encryption, and identity-based access",
+    "envKeys": [
+      "VAULT_ADDR",
+      "VAULT_TOKEN"
+    ],
+    "portalUrl": "https://portal.cloud.hashicorp.com/services/vault"
+  },
+  {
+    "id": "inngest",
+    "name": "Inngest",
+    "category": "DevOps",
+    "description": "Durable workflow engine for background jobs and event-driven functions",
+    "envKeys": [
+      "INNGEST_EVENT_KEY",
+      "INNGEST_SIGNING_KEY"
+    ],
+    "portalUrl": "https://app.inngest.com/env/production/manage/keys"
+  },
+  {
+    "id": "netlify-deploy",
+    "name": "Netlify Deploy",
+    "category": "DevOps",
+    "description": "Build hooks and deploy notifications",
+    "envKeys": [
+      "NETLIFY_AUTH_TOKEN",
+      "NETLIFY_SITE_ID"
+    ],
+    "portalUrl": "https://app.netlify.com/user/applications#personal-access-tokens"
+  },
+  {
+    "id": "pulumi",
+    "name": "Pulumi",
+    "category": "DevOps",
+    "description": "Infrastructure as code using general-purpose programming languages",
+    "envKeys": [
+      "PULUMI_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://app.pulumi.com/account/tokens"
+  },
+  {
+    "id": "qstash",
+    "name": "QStash (Upstash)",
+    "category": "DevOps",
+    "description": "Serverless messaging and task scheduling via HTTP",
+    "envKeys": [
+      "QSTASH_TOKEN",
+      "QSTASH_CURRENT_SIGNING_KEY",
+      "QSTASH_NEXT_SIGNING_KEY"
+    ],
+    "portalUrl": "https://console.upstash.com/qstash"
+  },
+  {
+    "id": "sauce-labs",
+    "name": "Sauce Labs",
+    "category": "DevOps",
+    "description": "Automated testing, cross-browser testing, and mobile testing",
+    "envKeys": [
+      "SAUCE_USERNAME",
+      "SAUCE_ACCESS_KEY"
+    ],
+    "portalUrl": "https://app.saucelabs.com/user-settings"
+  },
+  {
+    "id": "sonarcloud",
+    "name": "SonarCloud",
+    "category": "DevOps",
+    "description": "Code quality and security analysis for cloud-hosted projects",
+    "envKeys": [
+      "SONAR_TOKEN",
+      "SONAR_ORGANIZATION"
+    ],
+    "portalUrl": "https://sonarcloud.io/account/security"
+  },
+  {
+    "id": "terraform-cloud",
+    "name": "Terraform Cloud",
+    "category": "DevOps",
+    "description": "Infrastructure as code collaboration and automation by HashiCorp",
+    "envKeys": [
+      "TF_API_TOKEN",
+      "TF_CLOUD_ORGANIZATION"
+    ],
+    "portalUrl": "https://app.terraform.io/app/settings/tokens"
+  },
+  {
+    "id": "trigger-dev",
+    "name": "Trigger.dev",
+    "category": "DevOps",
+    "description": "Open-source background job platform for serverless and long-running tasks",
+    "envKeys": [
+      "TRIGGER_API_KEY",
+      "TRIGGER_API_URL"
+    ],
+    "portalUrl": "https://cloud.trigger.dev/orgs/-/projects/-/apikeys"
+  },
+  {
+    "id": "unkey",
+    "name": "Unkey",
+    "category": "DevOps",
+    "description": "Open-source API key management and rate limiting",
+    "envKeys": [
+      "UNKEY_ROOT_KEY",
+      "UNKEY_API_ID"
+    ],
+    "portalUrl": "https://app.unkey.com/settings/root-keys"
+  },
+  {
+    "id": "vercel-deploy",
+    "name": "Vercel Deploy Hooks",
+    "category": "DevOps",
+    "description": "Trigger deployments via webhook URLs",
+    "envKeys": [
+      "VERCEL_DEPLOY_HOOK_URL",
+      "VERCEL_TOKEN"
+    ],
+    "portalUrl": "https://vercel.com/account/tokens"
   },
   {
     "id": "bigcommerce",
     "name": "BigCommerce",
     "category": "E-Commerce",
     "description": "Enterprise e-commerce platform with headless commerce API",
-    "envKeys": ["BIGCOMMERCE_STORE_HASH", "BIGCOMMERCE_ACCESS_TOKEN", "BIGCOMMERCE_CLIENT_ID"],
+    "envKeys": [
+      "BIGCOMMERCE_STORE_HASH",
+      "BIGCOMMERCE_ACCESS_TOKEN",
+      "BIGCOMMERCE_CLIENT_ID"
+    ],
     "portalUrl": "https://store-HASH.mybigcommerce.com/manage/settings/api-accounts"
   },
   {
@@ -1332,103 +1551,930 @@
     "name": "Saleor",
     "category": "E-Commerce",
     "description": "Open-source headless commerce platform with GraphQL API",
-    "envKeys": ["SALEOR_API_URL", "SALEOR_APP_TOKEN"],
+    "envKeys": [
+      "SALEOR_API_URL",
+      "SALEOR_APP_TOKEN"
+    ],
     "portalUrl": "https://cloud.saleor.io/dashboard/apps"
   },
   {
-    "id": "launchdarkly",
-    "name": "LaunchDarkly",
-    "category": "Feature Flags",
-    "description": "Feature management and experimentation platform",
-    "envKeys": ["LAUNCHDARKLY_SDK_KEY", "LAUNCHDARKLY_CLIENT_SIDE_ID"],
-    "portalUrl": "https://app.launchdarkly.com/settings/authorization"
+    "id": "shopify",
+    "name": "Shopify",
+    "category": "E-Commerce",
+    "description": "E-commerce platform with storefront, admin, and checkout APIs",
+    "envKeys": [
+      "SHOPIFY_API_KEY",
+      "SHOPIFY_API_SECRET",
+      "SHOPIFY_STORE_DOMAIN",
+      "SHOPIFY_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://partners.shopify.com/organizations/-/apps"
+  },
+  {
+    "id": "woocommerce",
+    "name": "WooCommerce",
+    "category": "E-Commerce",
+    "description": "WordPress e-commerce plugin with REST API for store management",
+    "envKeys": [
+      "WC_CONSUMER_KEY",
+      "WC_CONSUMER_SECRET",
+      "WC_STORE_URL"
+    ],
+    "portalUrl": "https://YOUR_STORE/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys"
   },
   {
     "id": "flagsmith",
     "name": "Flagsmith",
     "category": "Feature Flags",
     "description": "Open-source feature flags, remote config, and A/B testing",
-    "envKeys": ["FLAGSMITH_ENVIRONMENT_KEY"],
+    "envKeys": [
+      "FLAGSMITH_ENVIRONMENT_KEY"
+    ],
     "portalUrl": "https://app.flagsmith.com/project/-/settings"
+  },
+  {
+    "id": "launchdarkly",
+    "name": "LaunchDarkly",
+    "category": "Feature Flags",
+    "description": "Feature management and experimentation platform",
+    "envKeys": [
+      "LAUNCHDARKLY_SDK_KEY",
+      "LAUNCHDARKLY_CLIENT_SIDE_ID"
+    ],
+    "portalUrl": "https://app.launchdarkly.com/settings/authorization"
   },
   {
     "id": "split",
     "name": "Split",
     "category": "Feature Flags",
     "description": "Feature delivery platform with experimentation and targeting",
-    "envKeys": ["SPLIT_API_KEY"],
+    "envKeys": [
+      "SPLIT_API_KEY"
+    ],
     "portalUrl": "https://app.split.io/org/-/admin/api-keys"
   },
   {
-    "id": "openweathermap",
-    "name": "OpenWeatherMap",
-    "category": "Data & APIs",
-    "description": "Weather data, forecasts, and historical weather API",
-    "envKeys": ["OPENWEATHERMAP_API_KEY"],
-    "portalUrl": "https://home.openweathermap.org/api_keys"
+    "id": "google-maps",
+    "name": "Google Maps",
+    "category": "Maps & Location",
+    "description": "Maps, geocoding, directions, and places APIs",
+    "envKeys": [
+      "GOOGLE_MAPS_API_KEY"
+    ],
+    "portalUrl": "https://console.cloud.google.com/apis/credentials"
   },
   {
-    "id": "newsapi",
-    "name": "NewsAPI",
-    "category": "Data & APIs",
-    "description": "JSON API for live news articles from sources worldwide",
-    "envKeys": ["NEWS_API_KEY"],
-    "portalUrl": "https://newsapi.org/account"
+    "id": "here",
+    "name": "HERE",
+    "category": "Maps & Location",
+    "description": "Location services, mapping, routing, and geocoding platform",
+    "envKeys": [
+      "HERE_API_KEY"
+    ],
+    "portalUrl": "https://platform.here.com/admin/apps"
   },
   {
-    "id": "ipinfo",
-    "name": "IPinfo",
-    "category": "Data & APIs",
-    "description": "IP address geolocation, ASN, and company data",
-    "envKeys": ["IPINFO_TOKEN"],
-    "portalUrl": "https://ipinfo.io/account/token"
+    "id": "mapbox",
+    "name": "Mapbox",
+    "category": "Maps & Location",
+    "description": "Custom maps, geocoding, navigation, and location search",
+    "envKeys": [
+      "MAPBOX_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://account.mapbox.com/access-tokens"
   },
   {
-    "id": "exchangerate-api",
-    "name": "ExchangeRate-API",
-    "category": "Data & APIs",
-    "description": "Real-time and historical currency exchange rate data",
-    "envKeys": ["EXCHANGERATE_API_KEY"],
-    "portalUrl": "https://app.exchangerate-api.com/dashboard"
+    "id": "opencage",
+    "name": "OpenCage",
+    "category": "Maps & Location",
+    "description": "Forward and reverse geocoding API using open data",
+    "envKeys": [
+      "OPENCAGE_API_KEY"
+    ],
+    "portalUrl": "https://opencagedata.com/dashboard#api-keys"
   },
   {
-    "id": "clearbit",
-    "name": "Clearbit",
-    "category": "Data & APIs",
-    "description": "Business intelligence and company/person enrichment data",
-    "envKeys": ["CLEARBIT_API_KEY"],
-    "portalUrl": "https://dashboard.clearbit.com/api"
+    "id": "giphy",
+    "name": "Giphy",
+    "category": "Media & Entertainment",
+    "description": "GIF search, trending, and random GIF APIs",
+    "envKeys": [
+      "GIPHY_API_KEY"
+    ],
+    "portalUrl": "https://developers.giphy.com/dashboard/"
   },
   {
-    "id": "abstract-api",
-    "name": "Abstract API",
-    "category": "Data & APIs",
-    "description": "Suite of utility APIs for email validation, geolocation, and more",
-    "envKeys": ["ABSTRACT_API_KEY"],
-    "portalUrl": "https://app.abstractapi.com/api"
+    "id": "imgur",
+    "name": "Imgur",
+    "category": "Media & Entertainment",
+    "description": "Image hosting and sharing API",
+    "envKeys": [
+      "IMGUR_CLIENT_ID",
+      "IMGUR_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://api.imgur.com/oauth2/addclient"
   },
   {
-    "id": "dub",
-    "name": "Dub",
-    "category": "Data & APIs",
-    "description": "Open-source link management and analytics platform",
-    "envKeys": ["DUB_API_KEY"],
-    "portalUrl": "https://app.dub.co/settings/tokens"
+    "id": "pexels",
+    "name": "Pexels",
+    "category": "Media & Entertainment",
+    "description": "Free stock photos and videos API",
+    "envKeys": [
+      "PEXELS_API_KEY"
+    ],
+    "portalUrl": "https://www.pexels.com/api/new/"
   },
   {
-    "id": "val-town",
-    "name": "Val Town",
-    "category": "Cloud Infrastructure",
-    "description": "Social website for writing and deploying serverless functions",
-    "envKeys": ["VALTOWN_API_KEY"],
-    "portalUrl": "https://www.val.town/settings/api"
+    "id": "soundcloud",
+    "name": "SoundCloud",
+    "category": "Media & Entertainment",
+    "description": "Music streaming and audio sharing platform API",
+    "envKeys": [
+      "SOUNDCLOUD_CLIENT_ID",
+      "SOUNDCLOUD_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://soundcloud.com/you/apps"
   },
   {
-    "id": "1password",
-    "name": "1Password",
-    "category": "DevOps",
-    "description": "Secrets automation and password management for teams",
-    "envKeys": ["OP_SERVICE_ACCOUNT_TOKEN"],
-    "portalUrl": "https://my.1password.com/developer-tools/infrastructure-secrets/serviceaccounts"
+    "id": "spotify-api",
+    "name": "Spotify Web API",
+    "category": "Media & Entertainment",
+    "description": "Music streaming data, playlists, and playback control",
+    "envKeys": [
+      "SPOTIFY_CLIENT_ID",
+      "SPOTIFY_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://developer.spotify.com/dashboard"
+  },
+  {
+    "id": "tmdb",
+    "name": "TMDB",
+    "category": "Media & Entertainment",
+    "description": "Movie and TV show database with images and metadata",
+    "envKeys": [
+      "TMDB_API_KEY",
+      "TMDB_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://www.themoviedb.org/settings/api"
+  },
+  {
+    "id": "unsplash",
+    "name": "Unsplash",
+    "category": "Media & Entertainment",
+    "description": "Free high-resolution photos API",
+    "envKeys": [
+      "UNSPLASH_ACCESS_KEY",
+      "UNSPLASH_SECRET_KEY"
+    ],
+    "portalUrl": "https://unsplash.com/oauth/applications"
+  },
+  {
+    "id": "vimeo",
+    "name": "Vimeo",
+    "category": "Media & Entertainment",
+    "description": "Video hosting, streaming, and player APIs",
+    "envKeys": [
+      "VIMEO_ACCESS_TOKEN",
+      "VIMEO_CLIENT_ID",
+      "VIMEO_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://developer.vimeo.com/apps"
+  },
+  {
+    "id": "youtube",
+    "name": "YouTube Data API",
+    "category": "Media & Entertainment",
+    "description": "Video search, channel data, and playlist management",
+    "envKeys": [
+      "YOUTUBE_API_KEY"
+    ],
+    "portalUrl": "https://console.cloud.google.com/apis/library/youtube.googleapis.com"
+  },
+  {
+    "id": "api-video",
+    "name": "api.video",
+    "category": "Media & Entertainment",
+    "description": "Video hosting, live streaming, and player API",
+    "envKeys": [
+      "APIVIDEO_API_KEY"
+    ],
+    "portalUrl": "https://dashboard.api.video/apikeys"
+  },
+  {
+    "id": "axiom",
+    "name": "Axiom",
+    "category": "Monitoring",
+    "description": "Log management and observability platform for modern applications",
+    "envKeys": [
+      "AXIOM_TOKEN",
+      "AXIOM_DATASET",
+      "AXIOM_ORG_ID"
+    ],
+    "portalUrl": "https://app.axiom.co/settings/api-tokens"
+  },
+  {
+    "id": "betterstack",
+    "name": "Better Stack",
+    "category": "Monitoring",
+    "description": "Uptime monitoring, on-call alerts, and log management",
+    "envKeys": [
+      "BETTERSTACK_API_TOKEN",
+      "LOGTAIL_SOURCE_TOKEN"
+    ],
+    "portalUrl": "https://uptime.betterstack.com/team/-/api-tokens"
+  },
+  {
+    "id": "bugsnag",
+    "name": "Bugsnag",
+    "category": "Monitoring",
+    "description": "Error monitoring and application stability management",
+    "envKeys": [
+      "BUGSNAG_API_KEY"
+    ],
+    "portalUrl": "https://app.bugsnag.com/settings/"
+  },
+  {
+    "id": "checkly",
+    "name": "Checkly",
+    "category": "Monitoring",
+    "description": "Synthetic monitoring for APIs and web apps with Playwright",
+    "envKeys": [
+      "CHECKLY_API_KEY",
+      "CHECKLY_ACCOUNT_ID"
+    ],
+    "portalUrl": "https://app.checklyhq.com/settings/user/api-keys"
+  },
+  {
+    "id": "cronitor",
+    "name": "Cronitor",
+    "category": "Monitoring",
+    "description": "Cron job, background task, and heartbeat monitoring",
+    "envKeys": [
+      "CRONITOR_API_KEY"
+    ],
+    "portalUrl": "https://cronitor.io/app/settings/api"
+  },
+  {
+    "id": "datadog",
+    "name": "Datadog",
+    "category": "Monitoring",
+    "description": "Infrastructure monitoring, APM, logs, and security platform",
+    "envKeys": [
+      "DD_API_KEY",
+      "DD_APP_KEY",
+      "DD_SITE"
+    ],
+    "portalUrl": "https://app.datadoghq.com/organization-settings/api-keys"
+  },
+  {
+    "id": "grafana-cloud",
+    "name": "Grafana Cloud",
+    "category": "Monitoring",
+    "description": "Metrics, logs, and traces visualization and alerting platform",
+    "envKeys": [
+      "GRAFANA_API_KEY",
+      "GRAFANA_CLOUD_URL"
+    ],
+    "portalUrl": "https://grafana.com/orgs/-/api-keys"
+  },
+  {
+    "id": "highlight",
+    "name": "Highlight",
+    "category": "Monitoring",
+    "description": "Open-source session replay, error monitoring, and logging",
+    "envKeys": [
+      "HIGHLIGHT_PROJECT_ID"
+    ],
+    "portalUrl": "https://app.highlight.io/settings/projects"
+  },
+  {
+    "id": "honeybadger",
+    "name": "Honeybadger",
+    "category": "Monitoring",
+    "description": "Exception, uptime, and cron monitoring for developers",
+    "envKeys": [
+      "HONEYBADGER_API_KEY"
+    ],
+    "portalUrl": "https://app.honeybadger.io/users/auth_token"
+  },
+  {
+    "id": "logrocket",
+    "name": "LogRocket",
+    "category": "Monitoring",
+    "description": "Frontend monitoring with session replay and error tracking",
+    "envKeys": [
+      "LOGROCKET_APP_ID"
+    ],
+    "portalUrl": "https://app.logrocket.com/settings/setup"
+  },
+  {
+    "id": "logflare",
+    "name": "Logflare",
+    "category": "Monitoring",
+    "description": "Structured logging and log-based analytics",
+    "envKeys": [
+      "LOGFLARE_API_KEY",
+      "LOGFLARE_SOURCE_TOKEN"
+    ],
+    "portalUrl": "https://logflare.app/account/edit"
+  },
+  {
+    "id": "newrelic",
+    "name": "New Relic",
+    "category": "Monitoring",
+    "description": "Full-stack observability with APM, infrastructure, and logs",
+    "envKeys": [
+      "NEW_RELIC_API_KEY",
+      "NEW_RELIC_ACCOUNT_ID",
+      "NEW_RELIC_LICENSE_KEY"
+    ],
+    "portalUrl": "https://one.newrelic.com/admin-portal/api-keys/home"
+  },
+  {
+    "id": "pagerduty",
+    "name": "PagerDuty",
+    "category": "Monitoring",
+    "description": "Incident management, on-call scheduling, and alerting",
+    "envKeys": [
+      "PAGERDUTY_API_KEY",
+      "PAGERDUTY_ROUTING_KEY"
+    ],
+    "portalUrl": "https://app.pagerduty.com/developer/api-keys"
+  },
+  {
+    "id": "papertrail",
+    "name": "Papertrail",
+    "category": "Monitoring",
+    "description": "Cloud-hosted log management and search",
+    "envKeys": [
+      "PAPERTRAIL_API_TOKEN"
+    ],
+    "portalUrl": "https://papertrailapp.com/account/profile"
+  },
+  {
+    "id": "rollbar",
+    "name": "Rollbar",
+    "category": "Monitoring",
+    "description": "Real-time error tracking and debugging platform",
+    "envKeys": [
+      "ROLLBAR_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://rollbar.com/settings/accounts/"
+  },
+  {
+    "id": "sentry",
+    "name": "Sentry",
+    "category": "Monitoring",
+    "description": "Application monitoring, error tracking, and performance insights",
+    "envKeys": [
+      "SENTRY_DSN",
+      "SENTRY_AUTH_TOKEN",
+      "SENTRY_ORG"
+    ],
+    "portalUrl": "https://sentry.io/settings/account/api/auth-tokens"
+  },
+  {
+    "id": "braintree",
+    "name": "Braintree",
+    "category": "Payment",
+    "description": "Full-stack payment platform by PayPal for cards and digital wallets",
+    "envKeys": [
+      "BRAINTREE_MERCHANT_ID",
+      "BRAINTREE_PUBLIC_KEY",
+      "BRAINTREE_PRIVATE_KEY"
+    ],
+    "portalUrl": "https://www.braintreegateway.com/merchants/-/api_keys"
+  },
+  {
+    "id": "coinbase-commerce",
+    "name": "Coinbase Commerce",
+    "category": "Payment",
+    "description": "Accept cryptocurrency payments for businesses",
+    "envKeys": [
+      "COINBASE_COMMERCE_API_KEY",
+      "COINBASE_COMMERCE_WEBHOOK_SECRET"
+    ],
+    "portalUrl": "https://beta.commerce.coinbase.com/settings/security"
+  },
+  {
+    "id": "lemonsqueezy",
+    "name": "Lemon Squeezy",
+    "category": "Payment",
+    "description": "All-in-one payments, tax, and subscriptions for digital products",
+    "envKeys": [
+      "LEMONSQUEEZY_API_KEY",
+      "LEMONSQUEEZY_WEBHOOK_SECRET"
+    ],
+    "portalUrl": "https://app.lemonsqueezy.com/settings/api"
+  },
+  {
+    "id": "paddle",
+    "name": "Paddle",
+    "category": "Payment",
+    "description": "Merchant of record for SaaS with subscriptions and tax handling",
+    "envKeys": [
+      "PADDLE_API_KEY",
+      "PADDLE_WEBHOOK_SECRET"
+    ],
+    "portalUrl": "https://vendors.paddle.com/authentication"
+  },
+  {
+    "id": "paypal",
+    "name": "PayPal",
+    "category": "Payment",
+    "description": "Online payments, checkout, and payouts platform",
+    "envKeys": [
+      "PAYPAL_CLIENT_ID",
+      "PAYPAL_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://developer.paypal.com/dashboard/applications/live"
+  },
+  {
+    "id": "polar",
+    "name": "Polar",
+    "category": "Payment",
+    "description": "Monetization platform for open-source and digital products",
+    "envKeys": [
+      "POLAR_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://dashboard.polar.sh/settings"
+  },
+  {
+    "id": "square",
+    "name": "Square",
+    "category": "Payment",
+    "description": "Payment processing, POS, invoices, and commerce platform",
+    "envKeys": [
+      "SQUARE_ACCESS_TOKEN",
+      "SQUARE_APPLICATION_ID"
+    ],
+    "portalUrl": "https://developer.squareup.com/apps"
+  },
+  {
+    "id": "stripe",
+    "name": "Stripe",
+    "category": "Payment",
+    "description": "Payment processing, subscriptions, invoicing, and financial infrastructure",
+    "envKeys": [
+      "STRIPE_SECRET_KEY",
+      "STRIPE_PUBLISHABLE_KEY",
+      "STRIPE_WEBHOOK_SECRET"
+    ],
+    "portalUrl": "https://dashboard.stripe.com/apikeys"
+  },
+  {
+    "id": "airtable",
+    "name": "Airtable",
+    "category": "Productivity",
+    "description": "Low-code platform with spreadsheet-database hybrid API",
+    "envKeys": [
+      "AIRTABLE_API_KEY",
+      "AIRTABLE_BASE_ID"
+    ],
+    "portalUrl": "https://airtable.com/create/tokens"
+  },
+  {
+    "id": "asana",
+    "name": "Asana",
+    "category": "Productivity",
+    "description": "Work management, task tracking, and project collaboration",
+    "envKeys": [
+      "ASANA_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://app.asana.com/0/developer-console"
+  },
+  {
+    "id": "bitly",
+    "name": "Bitly",
+    "category": "Productivity",
+    "description": "URL shortening, branded links, and click analytics",
+    "envKeys": [
+      "BITLY_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://app.bitly.com/settings/api/"
+  },
+  {
+    "id": "cal-com",
+    "name": "Cal.com",
+    "category": "Productivity",
+    "description": "Open source scheduling infrastructure",
+    "envKeys": [
+      "CALCOM_API_KEY"
+    ],
+    "portalUrl": "https://app.cal.com/settings/developer/api-keys"
+  },
+  {
+    "id": "calendly",
+    "name": "Calendly",
+    "category": "Productivity",
+    "description": "Scheduling automation and calendar integration API",
+    "envKeys": [
+      "CALENDLY_API_KEY"
+    ],
+    "portalUrl": "https://developer.calendly.com/"
+  },
+  {
+    "id": "canny",
+    "name": "Canny",
+    "category": "Productivity",
+    "description": "User feedback management and feature request tracking",
+    "envKeys": [
+      "CANNY_API_KEY"
+    ],
+    "portalUrl": "https://YOUR_COMPANY.canny.io/admin/settings/api"
+  },
+  {
+    "id": "clickup",
+    "name": "ClickUp",
+    "category": "Productivity",
+    "description": "Project management, docs, and collaboration platform API",
+    "envKeys": [
+      "CLICKUP_API_KEY"
+    ],
+    "portalUrl": "https://app.clickup.com/settings/apps"
+  },
+  {
+    "id": "formspree",
+    "name": "Formspree",
+    "category": "Productivity",
+    "description": "Form backend API for static sites",
+    "envKeys": [
+      "FORMSPREE_FORM_ID"
+    ],
+    "portalUrl": "https://formspree.io/forms"
+  },
+  {
+    "id": "google-sheets",
+    "name": "Google Sheets",
+    "category": "Productivity",
+    "description": "Spreadsheet API for reading, writing, and managing data",
+    "envKeys": [
+      "GOOGLE_SHEETS_API_KEY",
+      "GOOGLE_SERVICE_ACCOUNT_KEY"
+    ],
+    "portalUrl": "https://console.cloud.google.com/apis/credentials"
+  },
+  {
+    "id": "jira",
+    "name": "Jira (Atlassian)",
+    "category": "Productivity",
+    "description": "Project tracking, agile boards, and issue management",
+    "envKeys": [
+      "JIRA_API_TOKEN",
+      "JIRA_HOST",
+      "JIRA_EMAIL"
+    ],
+    "portalUrl": "https://id.atlassian.com/manage-profile/security/api-tokens"
+  },
+  {
+    "id": "linear",
+    "name": "Linear",
+    "category": "Productivity",
+    "description": "Project management and issue tracking for software teams",
+    "envKeys": [
+      "LINEAR_API_KEY"
+    ],
+    "portalUrl": "https://linear.app/settings/api"
+  },
+  {
+    "id": "monday",
+    "name": "Monday.com",
+    "category": "Productivity",
+    "description": "Work management platform API",
+    "envKeys": [
+      "MONDAY_API_TOKEN"
+    ],
+    "portalUrl": "https://monday.com/developers/apps"
+  },
+  {
+    "id": "notion",
+    "name": "Notion",
+    "category": "Productivity",
+    "description": "Workspace API for databases, pages, and content management",
+    "envKeys": [
+      "NOTION_API_KEY",
+      "NOTION_DATABASE_ID"
+    ],
+    "portalUrl": "https://www.notion.so/my-integrations"
+  },
+  {
+    "id": "trello",
+    "name": "Trello",
+    "category": "Productivity",
+    "description": "Kanban board and project management API",
+    "envKeys": [
+      "TRELLO_API_KEY",
+      "TRELLO_TOKEN"
+    ],
+    "portalUrl": "https://trello.com/power-ups/admin"
+  },
+  {
+    "id": "typeform",
+    "name": "Typeform",
+    "category": "Productivity",
+    "description": "Conversational forms, surveys, and quizzes API",
+    "envKeys": [
+      "TYPEFORM_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://admin.typeform.com/account#/section/tokens"
+  },
+  {
+    "id": "algolia",
+    "name": "Algolia",
+    "category": "Search",
+    "description": "Search and discovery API with typo tolerance and instant results",
+    "envKeys": [
+      "ALGOLIA_APP_ID",
+      "ALGOLIA_API_KEY",
+      "ALGOLIA_ADMIN_KEY"
+    ],
+    "portalUrl": "https://dashboard.algolia.com/account/api-keys"
+  },
+  {
+    "id": "elasticsearch",
+    "name": "Elastic Cloud",
+    "category": "Search",
+    "description": "Managed Elasticsearch for full-text search and analytics",
+    "envKeys": [
+      "ELASTICSEARCH_URL",
+      "ELASTICSEARCH_API_KEY"
+    ],
+    "portalUrl": "https://cloud.elastic.co/deployments/-/security"
+  },
+  {
+    "id": "meilisearch",
+    "name": "Meilisearch",
+    "category": "Search",
+    "description": "Open-source lightning-fast search engine with typo tolerance",
+    "envKeys": [
+      "MEILISEARCH_HOST",
+      "MEILISEARCH_API_KEY"
+    ],
+    "portalUrl": "https://cloud.meilisearch.com/projects/-/settings/api-keys"
+  },
+  {
+    "id": "orama",
+    "name": "Orama",
+    "category": "Search",
+    "description": "Full-text and vector search engine that runs everywhere",
+    "envKeys": [
+      "ORAMA_API_KEY",
+      "ORAMA_ENDPOINT"
+    ],
+    "portalUrl": "https://cloud.orama.com/indexes"
+  },
+  {
+    "id": "typesense",
+    "name": "Typesense",
+    "category": "Search",
+    "description": "Open-source typo-tolerant search engine optimized for speed",
+    "envKeys": [
+      "TYPESENSE_HOST",
+      "TYPESENSE_API_KEY"
+    ],
+    "portalUrl": "https://cloud.typesense.org/clusters"
+  },
+  {
+    "id": "discord",
+    "name": "Discord",
+    "category": "Social & Platform",
+    "description": "Bot API, webhooks, and OAuth for Discord communities",
+    "envKeys": [
+      "DISCORD_BOT_TOKEN",
+      "DISCORD_CLIENT_ID",
+      "DISCORD_CLIENT_SECRET",
+      "DISCORD_WEBHOOK_URL"
+    ],
+    "portalUrl": "https://discord.com/developers/applications"
+  },
+  {
+    "id": "facebook",
+    "name": "Facebook / Meta",
+    "category": "Social & Platform",
+    "description": "Graph API for pages, ads, Instagram, and WhatsApp Business",
+    "envKeys": [
+      "FACEBOOK_APP_ID",
+      "FACEBOOK_APP_SECRET",
+      "FACEBOOK_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://developers.facebook.com/apps"
+  },
+  {
+    "id": "github",
+    "name": "GitHub",
+    "category": "Social & Platform",
+    "description": "Code hosting, collaboration, and developer platform APIs",
+    "envKeys": [
+      "GITHUB_TOKEN",
+      "GITHUB_CLIENT_ID",
+      "GITHUB_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://github.com/settings/tokens"
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn",
+    "category": "Social & Platform",
+    "description": "Professional network API for profiles, posts, and company data",
+    "envKeys": [
+      "LINKEDIN_CLIENT_ID",
+      "LINKEDIN_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://www.linkedin.com/developers/apps"
+  },
+  {
+    "id": "slack",
+    "name": "Slack",
+    "category": "Social & Platform",
+    "description": "Messaging, bot, and workflow APIs for team collaboration",
+    "envKeys": [
+      "SLACK_BOT_TOKEN",
+      "SLACK_SIGNING_SECRET",
+      "SLACK_WEBHOOK_URL"
+    ],
+    "portalUrl": "https://api.slack.com/apps"
+  },
+  {
+    "id": "spotify",
+    "name": "Spotify",
+    "category": "Social & Platform",
+    "description": "Music streaming API for tracks, playlists, and user data",
+    "envKeys": [
+      "SPOTIFY_CLIENT_ID",
+      "SPOTIFY_CLIENT_SECRET"
+    ],
+    "portalUrl": "https://developer.spotify.com/dashboard"
+  },
+  {
+    "id": "telegram",
+    "name": "Telegram",
+    "category": "Social & Platform",
+    "description": "Bot API for messaging, groups, and inline commands",
+    "envKeys": [
+      "TELEGRAM_BOT_TOKEN"
+    ],
+    "portalUrl": "https://t.me/BotFather"
+  },
+  {
+    "id": "twitch",
+    "name": "Twitch",
+    "category": "Social & Platform",
+    "description": "Live streaming platform API for chat, events, and channel data",
+    "envKeys": [
+      "TWITCH_CLIENT_ID",
+      "TWITCH_CLIENT_SECRET",
+      "TWITCH_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://dev.twitch.tv/console/apps"
+  },
+  {
+    "id": "twitter",
+    "name": "Twitter / X",
+    "category": "Social & Platform",
+    "description": "Tweets, timelines, and user data via the X API",
+    "envKeys": [
+      "TWITTER_API_KEY",
+      "TWITTER_API_SECRET",
+      "TWITTER_BEARER_TOKEN",
+      "TWITTER_ACCESS_TOKEN"
+    ],
+    "portalUrl": "https://developer.x.com/en/portal/projects-and-apps"
+  },
+  {
+    "id": "aws-s3",
+    "name": "AWS S3",
+    "category": "Storage",
+    "description": "Scalable object storage for files, backups, and static assets",
+    "envKeys": [
+      "AWS_ACCESS_KEY_ID",
+      "AWS_SECRET_ACCESS_KEY",
+      "AWS_S3_BUCKET",
+      "AWS_REGION"
+    ],
+    "portalUrl": "https://console.aws.amazon.com/iam/home#/security_credentials"
+  },
+  {
+    "id": "backblaze-b2",
+    "name": "Backblaze B2",
+    "category": "Storage",
+    "description": "S3-compatible cloud storage at a fraction of the cost",
+    "envKeys": [
+      "B2_APPLICATION_KEY_ID",
+      "B2_APPLICATION_KEY",
+      "B2_BUCKET_ID"
+    ],
+    "portalUrl": "https://secure.backblaze.com/app_keys.htm"
+  },
+  {
+    "id": "bunny-cdn",
+    "name": "Bunny CDN",
+    "category": "Storage",
+    "description": "Content delivery network with storage and video streaming",
+    "envKeys": [
+      "BUNNY_API_KEY",
+      "BUNNY_STORAGE_API_KEY",
+      "BUNNY_PULL_ZONE"
+    ],
+    "portalUrl": "https://panel.bunny.net/account"
+  },
+  {
+    "id": "cloudflare-r2",
+    "name": "Cloudflare R2",
+    "category": "Storage",
+    "description": "S3-compatible object storage with zero egress fees",
+    "envKeys": [
+      "R2_ACCESS_KEY_ID",
+      "R2_SECRET_ACCESS_KEY",
+      "R2_BUCKET_NAME",
+      "R2_ENDPOINT"
+    ],
+    "portalUrl": "https://dash.cloudflare.com/-/r2/api-tokens"
+  },
+  {
+    "id": "cloudflare-stream",
+    "name": "Cloudflare Stream",
+    "category": "Storage",
+    "description": "Video streaming, encoding, and delivery",
+    "envKeys": [
+      "CLOUDFLARE_STREAM_API_TOKEN",
+      "CLOUDFLARE_ACCOUNT_ID"
+    ],
+    "portalUrl": "https://dash.cloudflare.com/profile/api-tokens"
+  },
+  {
+    "id": "cloudinary",
+    "name": "Cloudinary",
+    "category": "Storage",
+    "description": "Image and video management, optimization, and transformation",
+    "envKeys": [
+      "CLOUDINARY_URL",
+      "CLOUDINARY_CLOUD_NAME",
+      "CLOUDINARY_API_KEY",
+      "CLOUDINARY_API_SECRET"
+    ],
+    "portalUrl": "https://console.cloudinary.com/settings/api-keys"
+  },
+  {
+    "id": "imagekit",
+    "name": "ImageKit",
+    "category": "Storage",
+    "description": "Real-time image and video optimization, transformation, and CDN",
+    "envKeys": [
+      "IMAGEKIT_PUBLIC_KEY",
+      "IMAGEKIT_PRIVATE_KEY",
+      "IMAGEKIT_URL_ENDPOINT"
+    ],
+    "portalUrl": "https://imagekit.io/dashboard/developer/api-keys"
+  },
+  {
+    "id": "mux",
+    "name": "Mux",
+    "category": "Storage",
+    "description": "Video streaming, encoding, and analytics infrastructure",
+    "envKeys": [
+      "MUX_TOKEN_ID",
+      "MUX_TOKEN_SECRET"
+    ],
+    "portalUrl": "https://dashboard.mux.com/organizations/-/settings/access-tokens"
+  },
+  {
+    "id": "uploadthing",
+    "name": "UploadThing",
+    "category": "Storage",
+    "description": "File uploads made simple for full-stack TypeScript apps",
+    "envKeys": [
+      "UPLOADTHING_TOKEN"
+    ],
+    "portalUrl": "https://uploadthing.com/dashboard/-/api-keys"
+  },
+  {
+    "id": "vercel-blob",
+    "name": "Vercel Blob",
+    "category": "Storage",
+    "description": "File storage and serving optimized for Vercel deployments",
+    "envKeys": [
+      "BLOB_READ_WRITE_TOKEN"
+    ],
+    "portalUrl": "https://vercel.com/dashboard/stores"
+  },
+  {
+    "id": "deepl",
+    "name": "DeepL",
+    "category": "Translation & Language",
+    "description": "AI-powered translation API supporting 30+ languages",
+    "envKeys": [
+      "DEEPL_API_KEY"
+    ],
+    "portalUrl": "https://www.deepl.com/pro-api"
+  },
+  {
+    "id": "google-translate",
+    "name": "Google Cloud Translation",
+    "category": "Translation & Language",
+    "description": "Neural machine translation for 100+ languages",
+    "envKeys": [
+      "GOOGLE_TRANSLATE_API_KEY"
+    ],
+    "portalUrl": "https://console.cloud.google.com/apis/library/translate.googleapis.com"
   }
 ]
