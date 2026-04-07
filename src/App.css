@@ -16,6 +16,7 @@ html, body, #root {
 .stash {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* Sidebar */
@@ -25,9 +26,19 @@ html, body, #root {
   border-right: 1px solid var(--color-border-default);
   display: flex;
   flex-direction: column;
-  padding: 16px 0;
   flex-shrink: 0;
   -webkit-app-region: drag;
+}
+
+.stash__sidebar-brand {
+  padding: 20px 16px 12px;
+}
+
+.stash__brand-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
 }
 
 .stash__nav {
@@ -39,6 +50,9 @@ html, body, #root {
 }
 
 .stash__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: none;
   border: none;
   color: var(--color-text-secondary);
@@ -68,66 +82,28 @@ html, body, #root {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stash__header {
-  padding: 24px 32px 16px;
+  padding: 20px 24px 12px;
   border-bottom: 1px solid var(--color-border-default);
   -webkit-app-region: drag;
+  flex-shrink: 0;
 }
 
 .stash__title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   color: var(--color-text-primary);
 }
 
-.stash__subtitle {
-  font-size: 13px;
-  color: var(--color-text-tertiary);
-  margin-top: 4px;
-}
-
-/* Empty state */
-.stash__empty {
+.stash__content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.stash__empty-img {
-  width: 96px;
-  height: 96px;
-  opacity: 1;
-}
-
-.stash__empty-text {
-  font-size: 14px;
-  color: var(--color-text-tertiary);
-}
-
-/* Buttons */
-.stash__btn {
-  border: none;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 18px;
-  border-radius: var(--radius-md, 8px);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.stash__btn--primary {
-  background: var(--color-accent);
-  color: var(--color-bg-primary);
-}
-
-.stash__btn--primary:hover {
-  background: var(--color-accent-hover);
+  min-height: 0;
+  overflow: hidden;
 }

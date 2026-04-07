@@ -1,0 +1,30 @@
+.env-var-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-subtle, var(--color-border-default));
+}
+
+.env-var-row:last-child {
+  border-bottom: none;
+}
+
+.env-var-row__key {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.env-var-row__key code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.env-var-row__value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

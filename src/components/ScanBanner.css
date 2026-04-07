@@ -1,0 +1,45 @@
+.scan-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.scan-banner__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.scan-banner__text {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.scan-banner__text strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.scan-banner__path {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scan-banner__actions {
+  flex-shrink: 0;
+}
+
+.scan-banner__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

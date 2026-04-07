@@ -17,6 +17,12 @@ export default defineConfig(async () => ({
     port: 1420,
     strictPort: true,
     host: host || false,
+    fs: {
+      allow: [
+        resolve(__dirname),
+        resolve(__dirname, "../../Libs/base"),
+      ],
+    },
     hmr: host
       ? { protocol: "ws", host, port: 1421 }
       : undefined,

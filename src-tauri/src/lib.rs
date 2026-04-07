@@ -1,14 +1,37 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+mod scanner;
+mod env_parser;
+mod profile_manager;
+mod state;
+mod commands;
+
+use state::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .plugin(tauri_plugin_log::Builder::new().build())
+        .manage(AppState::new())
+        .invoke_handler(tauri::generate_handler![
+            // Scanner commands
+            commands::scanner::start_scan,
+            commands::scanner::get_scan_results,
+            commands::scanner::cancel_scan,
+            // Project commands
+            commands::projects::import_project,
+            commands::projects::list_projects,
+            commands::projects::get_project_vars,
+            commands::projects::update_var,
+            commands::projects::add_var,
+            commands::projects::delete_var,
+            commands::projects::delete_project,
+            // Profile commands
+            commands::profiles::list_profiles,
+            commands::profiles::get_active_profile,
+            commands::profiles::switch_profile,
+            commands::profiles::create_profile,
+            commands::profiles::delete_profile,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
