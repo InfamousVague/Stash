@@ -17,6 +17,8 @@ import { useScanner } from '../hooks/useScanner';
 import { useProjects } from '../hooks/useProjects';
 import { useProfiles } from '../hooks/useProfiles';
 import { useDirectory } from '../hooks/useDirectory';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { useToastContext } from '../contexts/ToastContext';
 import type { EnvFileGroup } from '../types';
 import stashIcon from '../assets/stash-icon.png';
 import './VaultsPage.css';
@@ -30,7 +32,9 @@ export function VaultsPage() {
   } = useProjects();
   const { profiles, activeProfile, loadProfiles, switchProfile, createProfile } = useProfiles();
   const { matchEnvKey } = useDirectory();
+  const toast = useToastContext();
   const [detailTab, setDetailTab] = useState<'editor' | 'diff'>('editor');
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => { loadProjects(); }, [loadProjects]);
   useEffect(() => {
@@ -39,6 +43,14 @@ export function VaultsPage() {
 
   const handleImport = async (group: EnvFileGroup) => {
     await importProject(group.project_path, group.project_name);
+    toast.success(`Imported ${group.project_name}`);
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    const name = projects.find((p) => p.id === id)?.name || 'project';
+    await deleteProject(id);
+    setConfirmDelete(null);
+    toast.info(`Removed ${name}`);
   };
 
   const unimportedResults = results.filter(
@@ -134,7 +146,7 @@ export function VaultsPage() {
                   </div>
                   <Button
                     variant="ghost" size="sm" iconOnly icon={trash2}
-                    onClick={() => deleteProject(activeProject.id)}
+                    onClick={() => setConfirmDelete(activeProject.id)}
                     aria-label="Delete project"
                   />
                 </div>
@@ -168,6 +180,16 @@ export function VaultsPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmDelete !== null}
+        title="Delete Project"
+        message="This will remove the project from Stash. Your .env files on disk will not be deleted."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => confirmDelete && handleDeleteProject(confirmDelete)}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   );
 }

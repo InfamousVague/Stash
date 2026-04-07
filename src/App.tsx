@@ -13,6 +13,7 @@ import { DiscoverPage } from './pages/DiscoverPage';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { UnlockScreen } from './components/UnlockScreen';
+import { ToastProvider } from './contexts/ToastContext';
 import { useVault } from './hooks/useVault';
 import './App.css';
 
@@ -45,6 +46,7 @@ function App() {
   }
 
   return (
+    <ToastProvider>
     <div className="stash">
       <aside className="stash__sidebar">
         <nav className="stash__nav">
@@ -79,6 +81,7 @@ function App() {
         </div>
       </main>
     </div>
+    </ToastProvider>
   );
 }
 
