@@ -8,16 +8,22 @@ use std::collections::HashMap;
 pub fn generate_team_key(state: tauri::State<'_, AppState>) -> Result<String, String> {
     let (private_b64, public_b64) = team::generate_keypair();
 
-    // Store keypair in ~/.stash/
     let key_path = format!("{}/keypair.json", state.stash_dir);
     let keypair = serde_json::json!({
         "private": private_b64,
         "public": public_b64,
     });
-    std::fs::write(&key_path, serde_json::to_string_pretty(&keypair).unwrap())
+    let json = serde_json::to_string_pretty(&keypair).map_err(|e| e.to_string())?;
+    std::fs::write(&key_path, json)
         .map_err(|e| format!("Failed to save keypair: {}", e))?;
 
-    // Also save public key as plain text for easy sharing
+    // Set restrictive permissions on keypair file
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&key_path, std::fs::Permissions::from_mode(0o600)).ok();
+    }
+
     let pub_path = format!("{}/public_key.txt", state.stash_dir);
     std::fs::write(&pub_path, &public_b64).ok();
 
@@ -27,28 +33,8 @@ pub fn generate_team_key(state: tauri::State<'_, AppState>) -> Result<String, St
 
 #[tauri::command]
 pub fn get_public_key(state: tauri::State<'_, AppState>) -> Result<String, String> {
-    let key_path = format!("{}/keypair.json", state.stash_dir);
-    if !Path::new(&key_path).exists() {
-        return Err("No keypair generated yet".to_string());
-    }
-    let content = std::fs::read_to_string(&key_path)
-        .map_err(|e| format!("Failed to read keypair: {}", e))?;
-    let keypair: serde_json::Value = serde_json::from_str(&content)
-        .map_err(|e| format!("Invalid keypair: {}", e))?;
-    keypair["public"].as_str()
-        .map(|s| s.to_string())
-        .ok_or("Missing public key".to_string())
-}
-
-fn get_private_key(stash_dir: &str) -> Result<String, String> {
-    let key_path = format!("{}/keypair.json", stash_dir);
-    let content = std::fs::read_to_string(&key_path)
-        .map_err(|e| format!("Failed to read keypair: {}", e))?;
-    let keypair: serde_json::Value = serde_json::from_str(&content)
-        .map_err(|e| format!("Invalid keypair: {}", e))?;
-    keypair["private"].as_str()
-        .map(|s| s.to_string())
-        .ok_or("Missing private key".to_string())
+    let (_, public) = team::load_keypair(&state.stash_dir)?;
+    Ok(public)
 }
 
 #[tauri::command]
@@ -56,29 +42,29 @@ pub fn push_lock(
     state: tauri::State<'_, AppState>,
     project_id: String,
 ) -> Result<(), String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
+    let active_profile = {
+        let projects = state.projects.lock().map_err(|_| "Lock poisoned".to_string())?;
+        projects.iter().find(|p| p.id == project_id)
+            .map(|p| p.active_profile.clone())
+            .unwrap_or_else(|| "default".to_string())
+    };
 
-    // Read current .env vars
-    let env_path = Path::new(&project.path).join(".env");
+    let env_path = Path::new(&project_path).join(".env");
     let vars = if env_path.exists() {
         env_parser::read_env_file(&env_path.to_string_lossy())?
     } else {
         Vec::new()
     };
 
-    // Read existing lock file or create new one
-    let mut lock = team::read_lock_file(&project.path).unwrap_or(LockFile {
+    let mut lock = team::read_lock_file(&project_path).unwrap_or(LockFile {
         version: 1,
         members: Vec::new(),
         variables: HashMap::new(),
-        profile: project.active_profile.clone(),
+        profile: active_profile.clone(),
     });
 
-    // Get our public key and ensure we're a member
-    let my_public = get_public_key_from_state(&state)?;
+    let (_, my_public) = team::load_keypair(&state.stash_dir)?;
     if !lock.members.iter().any(|m| m.public_key == my_public) {
         lock.members.push(TeamMember {
             name: "Me".to_string(),
@@ -86,7 +72,6 @@ pub fn push_lock(
         });
     }
 
-    // Encrypt each var for each member
     lock.variables.clear();
     for var in &vars {
         let mut encrypted_map = HashMap::new();
@@ -97,9 +82,8 @@ pub fn push_lock(
         lock.variables.insert(var.key.clone(), encrypted_map);
     }
 
-    lock.profile = project.active_profile.clone();
-
-    team::write_lock_file(&project.path, &lock)?;
+    lock.profile = active_profile;
+    team::write_lock_file(&project_path, &lock)?;
     log::info!("Pushed {} vars to .stash.lock for {} members", vars.len(), lock.members.len());
     Ok(())
 }
@@ -109,22 +93,16 @@ pub fn pull_lock(
     state: tauri::State<'_, AppState>,
     project_id: String,
 ) -> Result<Vec<crate::state::EnvVar>, String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    let lock = team::read_lock_file(&project.path)?;
-    let private_key = get_private_key(&state.stash_dir)?;
-    let my_public = get_public_key_from_state(&state)?;
+    let lock = team::read_lock_file(&project_path)?;
+    let (private_key, my_public) = team::load_keypair(&state.stash_dir)?;
 
-    // Find my name in the members list
     let my_name = lock.members.iter()
         .find(|m| m.public_key == my_public)
         .map(|m| m.name.clone())
         .ok_or("You are not a member of this lock file")?;
 
-    // Decrypt each var
     let mut vars = Vec::new();
     for (key, encrypted_map) in &lock.variables {
         if let Some(encrypted) = encrypted_map.get(&my_name) {
@@ -135,8 +113,7 @@ pub fn pull_lock(
         }
     }
 
-    // Write to .env
-    let env_path = Path::new(&project.path).join(".env");
+    let env_path = Path::new(&project_path).join(".env");
     let content = vars.iter()
         .map(|v| format!("{}={}", v.key, v.value))
         .collect::<Vec<_>>()
@@ -155,16 +132,30 @@ pub fn add_team_member(
     name: String,
     public_key: String,
 ) -> Result<(), String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    // Validate inputs
+    if name.is_empty() || name.len() > 100 {
+        return Err("Name must be 1-100 characters".to_string());
+    }
+    // Validate public key is valid 32-byte base64
+    let key_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &public_key)
+        .map_err(|_| "Invalid public key format".to_string())?;
+    if key_bytes.len() != 32 {
+        return Err("Public key must be 32 bytes".to_string());
+    }
 
-    let mut lock = team::read_lock_file(&project.path).unwrap_or(LockFile {
+    let project_path = state.get_project_path(&project_id)?;
+    let active_profile = {
+        let projects = state.projects.lock().map_err(|_| "Lock poisoned".to_string())?;
+        projects.iter().find(|p| p.id == project_id)
+            .map(|p| p.active_profile.clone())
+            .unwrap_or_else(|| "default".to_string())
+    };
+
+    let mut lock = team::read_lock_file(&project_path).unwrap_or(LockFile {
         version: 1,
         members: Vec::new(),
         variables: HashMap::new(),
-        profile: project.active_profile.clone(),
+        profile: active_profile,
     });
 
     if lock.members.iter().any(|m| m.name == name) {
@@ -172,7 +163,7 @@ pub fn add_team_member(
     }
 
     lock.members.push(TeamMember { name, public_key });
-    team::write_lock_file(&project.path, &lock)?;
+    team::write_lock_file(&project_path, &lock)?;
     Ok(())
 }
 
@@ -182,17 +173,14 @@ pub fn remove_team_member(
     project_id: String,
     name: String,
 ) -> Result<(), String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    let mut lock = team::read_lock_file(&project.path)?;
+    let mut lock = team::read_lock_file(&project_path)?;
     lock.members.retain(|m| m.name != name);
     for encrypted_map in lock.variables.values_mut() {
         encrypted_map.remove(&name);
     }
-    team::write_lock_file(&project.path, &lock)?;
+    team::write_lock_file(&project_path, &lock)?;
     Ok(())
 }
 
@@ -201,32 +189,12 @@ pub fn list_team_members(
     state: tauri::State<'_, AppState>,
     project_id: String,
 ) -> Result<Vec<TeamMember>, String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    match team::read_lock_file(&project.path) {
+    match team::read_lock_file(&project_path) {
         Ok(lock) => Ok(lock.members),
         Err(_) => Ok(Vec::new()),
     }
 }
 
-fn get_public_key_from_state(state: &tauri::State<'_, AppState>) -> Result<String, String> {
-    let key_path = format!("{}/keypair.json", state.stash_dir);
-    if !Path::new(&key_path).exists() {
-        // Auto-generate
-        let (private_b64, public_b64) = team::generate_keypair();
-        let keypair = serde_json::json!({ "private": private_b64, "public": public_b64 });
-        std::fs::write(&key_path, serde_json::to_string_pretty(&keypair).unwrap())
-            .map_err(|e| format!("Failed to save keypair: {}", e))?;
-        return Ok(public_b64);
-    }
-    let content = std::fs::read_to_string(&key_path)
-        .map_err(|e| format!("Failed to read keypair: {}", e))?;
-    let keypair: serde_json::Value = serde_json::from_str(&content)
-        .map_err(|e| format!("Invalid keypair: {}", e))?;
-    keypair["public"].as_str()
-        .map(|s| s.to_string())
-        .ok_or("Missing public key".to_string())
-}
+use base64;

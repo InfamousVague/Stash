@@ -32,6 +32,20 @@ pub fn generate_keypair() -> (String, String) {
     (B64.encode(secret_bytes), B64.encode(public.as_bytes()))
 }
 
+/// Load a keypair from the stash directory. Returns (private_b64, public_b64).
+pub fn load_keypair(stash_dir: &str) -> Result<(String, String), String> {
+    let key_path = format!("{}/keypair.json", stash_dir);
+    let content = std::fs::read_to_string(&key_path)
+        .map_err(|_| "No keypair found. Generate one first.".to_string())?;
+    let keypair: serde_json::Value = serde_json::from_str(&content)
+        .map_err(|e| format!("Invalid keypair file: {}", e))?;
+    let private = keypair["private"].as_str()
+        .ok_or("Missing private key in keypair file")?.to_string();
+    let public = keypair["public"].as_str()
+        .ok_or("Missing public key in keypair file")?.to_string();
+    Ok((private, public))
+}
+
 /// Encrypt a value for a recipient using X25519 + AES-256-GCM.
 /// Uses an ephemeral key so each encryption is unique.
 pub fn encrypt_for_recipient(value: &str, recipient_public_key_b64: &str) -> Result<String, String> {

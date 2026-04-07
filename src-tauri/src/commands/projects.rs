@@ -9,6 +9,17 @@ pub fn import_project(
     project_path: String,
     project_name: String,
 ) -> Result<Project, String> {
+    // Validate inputs
+    if project_name.is_empty() {
+        return Err("Project name cannot be empty".to_string());
+    }
+    if project_name.len() > 200 {
+        return Err("Project name must be under 200 characters".to_string());
+    }
+    if project_path.contains("..") {
+        return Err("Project path must not contain '..'".to_string());
+    }
+
     let path = Path::new(&project_path);
     if !path.exists() {
         return Err(format!("Path does not exist: {}", project_path));
@@ -16,7 +27,8 @@ pub fn import_project(
 
     // Check if already imported
     {
-        let projects = state.projects.lock().unwrap();
+        let projects = state.projects.lock()
+            .map_err(|_| "Lock poisoned".to_string())?;
         if projects.iter().any(|p| p.path == project_path) {
             return Err("Project already imported".to_string());
         }
@@ -39,7 +51,8 @@ pub fn import_project(
     };
 
     {
-        let mut projects = state.projects.lock().unwrap();
+        let mut projects = state.projects.lock()
+            .map_err(|_| "Lock poisoned".to_string())?;
         projects.push(project.clone());
     }
 
@@ -50,8 +63,7 @@ pub fn import_project(
 
 #[tauri::command]
 pub fn list_projects(state: tauri::State<'_, AppState>) -> Vec<Project> {
-    let projects = state.projects.lock().unwrap();
-    projects.clone()
+    state.projects.lock().map(|p| p.clone()).unwrap_or_default()
 }
 
 #[tauri::command]
@@ -59,12 +71,9 @@ pub fn get_project_vars(
     state: tauri::State<'_, AppState>,
     project_id: String,
 ) -> Result<Vec<EnvVar>, String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    let env_path = Path::new(&project.path).join(".env");
+    let env_path = Path::new(&project_path).join(".env");
     if !env_path.exists() {
         return Ok(Vec::new());
     }
@@ -79,14 +88,10 @@ pub fn update_var(
     key: String,
     value: String,
 ) -> Result<(), String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    let env_path = Path::new(&project.path).join(".env");
+    let env_path = Path::new(&project_path).join(".env");
     env_parser::update_var_in_file(&env_path.to_string_lossy(), &key, &value)?;
-    drop(projects);
     state.record_rotation(&project_id, &key);
     Ok(())
 }
@@ -98,14 +103,10 @@ pub fn add_var(
     key: String,
     value: String,
 ) -> Result<(), String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    let env_path = Path::new(&project.path).join(".env");
+    let env_path = Path::new(&project_path).join(".env");
     env_parser::add_var_to_file(&env_path.to_string_lossy(), &key, &value)?;
-    drop(projects);
     state.record_rotation(&project_id, &key);
     Ok(())
 }
@@ -116,12 +117,9 @@ pub fn delete_var(
     project_id: String,
     key: String,
 ) -> Result<(), String> {
-    let projects = state.projects.lock().unwrap();
-    let project = projects.iter()
-        .find(|p| p.id == project_id)
-        .ok_or("Project not found")?;
+    let project_path = state.get_project_path(&project_id)?;
 
-    let env_path = Path::new(&project.path).join(".env");
+    let env_path = Path::new(&project_path).join(".env");
     env_parser::remove_var_from_file(&env_path.to_string_lossy(), &key)
 }
 
@@ -131,7 +129,8 @@ pub fn delete_project(
     project_id: String,
 ) -> Result<(), String> {
     {
-        let mut projects = state.projects.lock().unwrap();
+        let mut projects = state.projects.lock()
+            .map_err(|_| "Lock poisoned".to_string())?;
         let original_len = projects.len();
         projects.retain(|p| p.id != project_id);
         if projects.len() == original_len {
@@ -148,7 +147,10 @@ pub fn get_rotation_info(
     state: tauri::State<'_, AppState>,
     project_id: String,
 ) -> std::collections::HashMap<String, u64> {
-    let rotation = state.rotation.lock().unwrap();
+    let rotation = match state.rotation.lock() {
+        Ok(r) => r,
+        Err(_) => return std::collections::HashMap::new(),
+    };
     let prefix = format!("{}:", project_id);
     rotation.iter()
         .filter(|(k, _)| k.starts_with(&prefix))

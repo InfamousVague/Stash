@@ -87,7 +87,7 @@ impl AppState {
     }
 
     pub fn is_unlocked(&self) -> bool {
-        self.vault_key.lock().unwrap().is_some()
+        self.vault_key.lock().map(|vk| vk.is_some()).unwrap_or(false)
     }
 
     pub fn record_rotation(&self, project_id: &str, key: &str) {
@@ -96,25 +96,36 @@ impl AppState {
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
             .as_secs();
-        let mut rotation = self.rotation.lock().unwrap();
-        rotation.insert(composite, now);
-        // Save to disk
-        let path = format!("{}/rotation.json", self.stash_dir);
-        if let Ok(json) = serde_json::to_string(&*rotation) {
-            std::fs::write(path, json).ok();
+        if let Ok(mut rotation) = self.rotation.lock() {
+            rotation.insert(composite, now);
+            // Save to disk
+            let path = format!("{}/rotation.json", self.stash_dir);
+            if let Ok(json) = serde_json::to_string(&*rotation) {
+                std::fs::write(path, json).ok();
+            }
         }
     }
 
     pub fn get_rotation(&self, project_id: &str, key: &str) -> Option<u64> {
         let composite = format!("{}:{}", project_id, key);
-        self.rotation.lock().unwrap().get(&composite).copied()
+        self.rotation.lock().ok()?.get(&composite).copied()
+    }
+
+    pub fn get_project_path(&self, project_id: &str) -> Result<String, String> {
+        let projects = self.projects.lock()
+            .map_err(|_| "Lock poisoned".to_string())?;
+        projects.iter()
+            .find(|p| p.id == project_id)
+            .map(|p| p.path.clone())
+            .ok_or_else(|| "Project not found".to_string())
     }
 
     pub fn save_projects(&self) {
-        let projects = self.projects.lock().unwrap();
-        let path = format!("{}/projects.json", self.stash_dir);
-        if let Ok(json) = serde_json::to_string_pretty(&*projects) {
-            std::fs::write(path, json).ok();
+        if let Ok(projects) = self.projects.lock() {
+            let path = format!("{}/projects.json", self.stash_dir);
+            if let Ok(json) = serde_json::to_string_pretty(&*projects) {
+                std::fs::write(path, json).ok();
+            }
         }
     }
 

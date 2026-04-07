@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use crate::state::{AppState, EnvFileGroup};
 
@@ -17,13 +18,10 @@ pub fn start_scan(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> R
 
 #[tauri::command]
 pub fn get_scan_results(state: tauri::State<'_, AppState>) -> Vec<EnvFileGroup> {
-    let results = state.scan_results.lock().unwrap();
-    results.clone()
+    state.scan_results.lock().map(|r| r.clone()).unwrap_or_default()
 }
 
 #[tauri::command]
 pub fn cancel_scan(state: tauri::State<'_, AppState>) {
     state.scan_running.store(false, Ordering::SeqCst);
 }
-
-use std::sync::Arc;
