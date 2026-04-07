@@ -1,3 +1,4 @@
+import stashIcon from "./assets/stash-icon.png";
 import "./App.css";
 
 function App() {
@@ -5,7 +6,7 @@ function App() {
     <div className="stash">
       <aside className="stash__sidebar">
         <div className="stash__logo">
-          <span className="stash__logo-icon">🥸</span>
+          <img src={stashIcon} alt="Stash" className="stash__logo-icon" />
           <span className="stash__logo-text">Stash</span>
         </div>
         <nav className="stash__nav">
@@ -20,7 +21,7 @@ function App() {
           <p className="stash__subtitle">No vaults yet. Create one to get started.</p>
         </header>
         <div className="stash__empty">
-          <span className="stash__empty-icon">🔐</span>
+          <img src={stashIcon} alt="" className="stash__empty-img" />
           <p className="stash__empty-text">Your environment secrets live here.</p>
           <button className="stash__btn stash__btn--primary">New Vault</button>
         </div>
