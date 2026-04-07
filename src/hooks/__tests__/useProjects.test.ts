@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { invoke } from '@tauri-apps/api/core';
 import { useProjects } from '../useProjects';
 import { mockProjects, mockEnvVars } from '../../test/mocks';

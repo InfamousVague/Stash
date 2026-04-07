@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import type { Project, EnvVar, EnvFileGroup, ApiService, ScanProgress } from '../types';
 
 // --- Sample test data ---
@@ -84,62 +83,3 @@ export const mockApiServices: ApiService[] = [
     portalUrl: 'https://console.aws.amazon.com/iam',
   },
 ];
-
-// --- Mock invoke helper ---
-
-type InvokeHandler = (cmd: string, args?: Record<string, unknown>) => unknown;
-
-const defaultHandlers: Record<string, (...args: unknown[]) => unknown> = {
-  check_vault_initialized: () => true,
-  check_vault_unlocked: () => false,
-  init_vault_cmd: () => undefined,
-  unlock_vault_cmd: () => undefined,
-  lock_vault: () => undefined,
-  list_projects: () => mockProjects,
-  import_project: () => undefined,
-  get_project_vars: () => mockEnvVars,
-  get_rotation_info: () => ({}),
-  update_var: () => undefined,
-  add_var: () => undefined,
-  delete_var: () => undefined,
-  delete_project: () => undefined,
-  list_profiles: () => ['default', 'staging', 'production'],
-  get_active_profile: () => 'default',
-  switch_profile: () => undefined,
-  create_profile: () => undefined,
-  start_scan: () => undefined,
-  get_scan_results: () => mockScanResults,
-  get_public_key: () => 'test-public-key-abc123',
-  generate_team_key: () => 'generated-key-xyz789',
-  list_team_members: () => [{ name: 'Alice', public_key: 'key-alice' }],
-  add_team_member: () => undefined,
-  remove_team_member: () => undefined,
-  push_lock: () => undefined,
-  pull_lock: () => undefined,
-  diff_profiles: () => [],
-  check_cli_installed: () => false,
-  install_cli: () => undefined,
-};
-
-/**
- * Set up the invoke mock with default or custom handlers.
- * Call with overrides to customise specific commands.
- */
-export function setupInvokeMock(overrides: Partial<Record<string, InvokeHandler>> = {}) {
-  const { invoke } = vi.mocked(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('@tauri-apps/api/core') as { invoke: InvokeHandler }
-  );
-
-  const handlers = { ...defaultHandlers, ...overrides };
-
-  (invoke as ReturnType<typeof vi.fn>).mockImplementation(
-    (cmd: string, args?: Record<string, unknown>) => {
-      const handler = handlers[cmd];
-      if (handler) return Promise.resolve(handler(cmd, args));
-      return Promise.reject(new Error(`Unhandled invoke command: ${cmd}`));
-    }
-  );
-
-  return invoke;
-}

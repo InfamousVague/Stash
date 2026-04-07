@@ -4,9 +4,8 @@ import { listen } from '@tauri-apps/api/event';
 import { useScanner } from '../useScanner';
 import { mockScanResults } from '../../test/mocks';
 
-type ListenCallback = (event: { payload: unknown }) => void;
-
-const listeners: Record<string, ListenCallback> = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const listeners: Record<string, (event: any) => void> = {};
 
 beforeEach(() => {
   vi.mocked(invoke).mockImplementation((cmd: string) => {
@@ -15,7 +14,8 @@ beforeEach(() => {
     return Promise.resolve();
   });
 
-  vi.mocked(listen).mockImplementation((event: string, callback: ListenCallback) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (vi.mocked(listen) as any).mockImplementation((event: string, callback: any) => {
     listeners[event] = callback;
     return Promise.resolve(() => {});
   });
@@ -49,17 +49,14 @@ describe('useScanner', () => {
 
     const { result } = renderHook(() => useScanner());
 
-    // Wait for the listen setup
     await waitFor(() => {
       expect(listeners['scan-complete']).toBeDefined();
     });
 
-    // Start scan first
     await act(async () => {
       await result.current.startScan();
     });
 
-    // Simulate scan-complete event
     await act(async () => {
       await listeners['scan-complete']({ payload: undefined });
     });
