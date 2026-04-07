@@ -13,6 +13,7 @@ pub fn check_vault_unlocked(state: tauri::State<'_, AppState>) -> bool {
 #[tauri::command]
 pub fn init_vault_cmd(state: tauri::State<'_, AppState>, password: String) -> Result<(), String> {
     let key = crate::vault::init_vault(&password, &state.stash_dir)?;
+    crate::session::write_session(&key);
     let mut vault_key = state.vault_key.lock().unwrap();
     *vault_key = Some(key);
     Ok(())
@@ -21,6 +22,7 @@ pub fn init_vault_cmd(state: tauri::State<'_, AppState>, password: String) -> Re
 #[tauri::command]
 pub fn unlock_vault_cmd(state: tauri::State<'_, AppState>, password: String) -> Result<(), String> {
     let key = crate::vault::unlock_vault(&password, &state.stash_dir)?;
+    crate::session::write_session(&key);
     let mut vault_key = state.vault_key.lock().unwrap();
     *vault_key = Some(key);
     Ok(())
@@ -30,5 +32,6 @@ pub fn unlock_vault_cmd(state: tauri::State<'_, AppState>, password: String) -> 
 pub fn lock_vault(state: tauri::State<'_, AppState>) {
     let mut vault_key = state.vault_key.lock().unwrap();
     *vault_key = None;
+    crate::session::clear_session();
     log::info!("Vault locked");
 }

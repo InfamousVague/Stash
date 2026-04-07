@@ -1,9 +1,10 @@
-mod scanner;
-mod env_parser;
-mod profile_manager;
-mod vault;
-mod team;
-mod state;
+pub mod scanner;
+pub mod env_parser;
+pub mod profile_manager;
+pub mod vault;
+pub mod team;
+pub mod session;
+pub mod state;
 mod commands;
 
 use state::AppState;
@@ -49,6 +50,9 @@ pub fn run() {
             commands::team::add_team_member,
             commands::team::remove_team_member,
             commands::team::list_team_members,
+            // CLI commands
+            commands::cli::check_cli_installed,
+            commands::cli::install_cli,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
