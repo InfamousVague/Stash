@@ -5,10 +5,6 @@ function App() {
   return (
     <div className="stash">
       <aside className="stash__sidebar">
-        <div className="stash__logo">
-          <img src={stashIcon} alt="Stash" className="stash__logo-icon" />
-          <span className="stash__logo-text">Stash</span>
-        </div>
         <nav className="stash__nav">
           <button className="stash__nav-item stash__nav-item--active">All Vaults</button>
           <button className="stash__nav-item">API Directory</button>

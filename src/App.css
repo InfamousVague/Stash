@@ -30,28 +30,6 @@ html, body, #root {
   -webkit-app-region: drag;
 }
 
-.stash__logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 20px 20px;
-  border-bottom: 1px solid var(--color-border-default);
-  margin-bottom: 12px;
-}
-
-.stash__logo-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-}
-
-.stash__logo-text {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--color-text-primary);
-}
-
 .stash__nav {
   display: flex;
   flex-direction: column;
@@ -123,9 +101,9 @@ html, body, #root {
 }
 
 .stash__empty-img {
-  width: 64px;
-  height: 64px;
-  opacity: 0.3;
+  width: 96px;
+  height: 96px;
+  opacity: 1;
 }
 
 .stash__empty-text {
