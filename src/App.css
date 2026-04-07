@@ -17,17 +17,21 @@ html, body, #root {
   display: flex;
   height: 100vh;
   overflow: hidden;
+  padding: 0 10px 10px 10px;
+  gap: 10px;
 }
 
 /* Sidebar */
 .stash__sidebar {
   width: 220px;
   background: var(--color-bg-secondary);
-  border-right: 1px solid var(--color-border-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   -webkit-app-region: drag;
+  overflow: hidden;
 }
 
 .stash__sidebar-brand {
@@ -45,22 +49,22 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 8px;
+  padding: 12px 8px 0;
   -webkit-app-region: no-drag;
 }
 
 .stash__nav-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: none;
   border: none;
   color: var(--color-text-secondary);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   text-align: left;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: var(--radius-md, 8px);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -77,6 +81,13 @@ html, body, #root {
   font-weight: 600;
 }
 
+.stash__sidebar-footer {
+  margin-top: auto;
+  padding: 8px;
+  border-top: 1px solid var(--color-border-default);
+  -webkit-app-region: no-drag;
+}
+
 /* Main content */
 .stash__main {
   flex: 1;
@@ -87,7 +98,7 @@ html, body, #root {
 }
 
 .stash__header {
-  padding: 20px 24px 12px;
+  padding: 8px 24px 12px;
   border-bottom: 1px solid var(--color-border-default);
   -webkit-app-region: drag;
   flex-shrink: 0;

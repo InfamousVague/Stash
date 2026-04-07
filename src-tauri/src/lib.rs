@@ -1,6 +1,7 @@
 mod scanner;
 mod env_parser;
 mod profile_manager;
+mod vault;
 mod state;
 mod commands;
 
@@ -31,6 +32,12 @@ pub fn run() {
             commands::profiles::switch_profile,
             commands::profiles::create_profile,
             commands::profiles::delete_profile,
+            // Vault commands
+            commands::vault::check_vault_initialized,
+            commands::vault::check_vault_unlocked,
+            commands::vault::init_vault_cmd,
+            commands::vault::unlock_vault_cmd,
+            commands::vault::lock_vault,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

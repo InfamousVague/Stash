@@ -43,6 +43,7 @@ pub struct AppState {
     pub scan_running: Arc<AtomicBool>,
     pub scan_results: Arc<Mutex<Vec<EnvFileGroup>>>,
     pub projects: Arc<Mutex<Vec<Project>>>,
+    pub vault_key: Arc<Mutex<Option<[u8; 32]>>>,
     pub stash_dir: String,
 }
 
@@ -66,8 +67,13 @@ impl AppState {
             scan_running: Arc::new(AtomicBool::new(false)),
             scan_results: Arc::new(Mutex::new(Vec::new())),
             projects: Arc::new(Mutex::new(projects)),
+            vault_key: Arc::new(Mutex::new(None)),
             stash_dir: stash_dir.to_string_lossy().to_string(),
         }
+    }
+
+    pub fn is_unlocked(&self) -> bool {
+        self.vault_key.lock().unwrap().is_some()
     }
 
     pub fn save_projects(&self) {

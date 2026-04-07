@@ -22,7 +22,7 @@ export function useProjects() {
 
   const importProject = useCallback(async (path: string, name: string) => {
     try {
-      await invoke('import_project', { path, name });
+      await invoke('import_project', { projectPath: path, projectName: name });
       await loadProjects();
     } catch (err) {
       console.error('Failed to import project:', err);

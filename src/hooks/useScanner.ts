@@ -15,8 +15,13 @@ export function useScanner() {
         setProgress(event.payload);
       });
 
-      const unlistenComplete = await listen<EnvFileGroup[]>('scan-complete', (event) => {
-        setResults(event.payload);
+      const unlistenComplete = await listen('scan-complete', async () => {
+        try {
+          const scanResults = await invoke<EnvFileGroup[]>('get_scan_results');
+          setResults(scanResults || []);
+        } catch {
+          setResults([]);
+        }
         setScanning(false);
         setProgress((prev) =>
           prev ? { ...prev, complete: true } : null
@@ -31,6 +36,13 @@ export function useScanner() {
     return () => {
       unlistenRef.current.forEach((fn) => fn());
     };
+  }, []);
+
+  // Load any existing scan results on mount
+  useEffect(() => {
+    invoke<EnvFileGroup[]>('get_scan_results')
+      .then((r) => { if (r && r.length > 0) setResults(r); })
+      .catch(() => {});
   }, []);
 
   const startScan = useCallback(async () => {

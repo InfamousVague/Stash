@@ -1,31 +1,52 @@
 import { useState } from 'react';
 import { Icon } from '@base/primitives/icon';
 import '@base/primitives/icon/icon.css';
+import { Button } from '@base/primitives/button';
+import '@base/primitives/button/button.css';
 import { shieldCheck } from '@base/primitives/icon/icons/shield-check';
+import { radar } from '@base/primitives/icon/icons/radar';
 import { bookOpen } from '@base/primitives/icon/icons/book-open';
 import { settings } from '@base/primitives/icon/icons/settings';
+import { lock } from '@base/primitives/icon/icons/lock';
 import { VaultsPage } from './pages/VaultsPage';
+import { DiscoverPage } from './pages/DiscoverPage';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { UnlockScreen } from './components/UnlockScreen';
+import { useVault } from './hooks/useVault';
 import './App.css';
 
-type Page = 'vaults' | 'directory' | 'settings';
+type Page = 'vaults' | 'discover' | 'directory' | 'settings';
 
 const NAV_ITEMS: { page: Page; label: string; icon: string }[] = [
   { page: 'vaults', label: 'Vaults', icon: shieldCheck },
+  { page: 'discover', label: 'Discover', icon: radar },
   { page: 'directory', label: 'API Directory', icon: bookOpen },
   { page: 'settings', label: 'Settings', icon: settings },
 ];
 
 function App() {
   const [page, setPage] = useState<Page>('vaults');
+  const vault = useVault();
+
+  // Loading state
+  if (vault.initialized === null) return null;
+
+  // Show unlock/init screen
+  if (!vault.initialized || !vault.unlocked) {
+    return (
+      <UnlockScreen
+        initialized={vault.initialized}
+        error={vault.error}
+        onInit={vault.initVault}
+        onUnlock={vault.unlock}
+      />
+    );
+  }
 
   return (
     <div className="stash">
       <aside className="stash__sidebar">
-        <div className="stash__sidebar-brand">
-          <span className="stash__brand-text">Stash</span>
-        </div>
         <nav className="stash__nav">
           {NAV_ITEMS.map((item) => (
             <button
@@ -38,6 +59,11 @@ function App() {
             </button>
           ))}
         </nav>
+        <div className="stash__sidebar-footer">
+          <Button variant="ghost" size="sm" icon={lock} onClick={vault.lock}>
+            Lock
+          </Button>
+        </div>
       </aside>
       <main className="stash__main">
         <header className="stash__header">
@@ -47,6 +73,7 @@ function App() {
         </header>
         <div className="stash__content">
           {page === 'vaults' && <VaultsPage />}
+          {page === 'discover' && <DiscoverPage />}
           {page === 'directory' && <DirectoryPage />}
           {page === 'settings' && <SettingsPage />}
         </div>

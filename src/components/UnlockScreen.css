@@ -1,0 +1,52 @@
+.unlock-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-primary);
+  z-index: 1000;
+}
+
+.unlock-screen__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+  max-width: 340px;
+  width: 100%;
+}
+
+.unlock-screen__icon {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 8px;
+}
+
+.unlock-screen__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
+}
+
+.unlock-screen__desc {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.unlock-screen__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.unlock-screen__error {
+  font-size: 13px;
+  color: var(--color-error, #f87171);
+  text-align: center;
+}

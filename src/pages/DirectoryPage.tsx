@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Input } from '@base/primitives/input';
 import '@base/primitives/input/input.css';
 import { Button } from '@base/primitives/button';
@@ -7,36 +8,53 @@ import { ServiceCard } from '../components/ServiceCard';
 import { useDirectory } from '../hooks/useDirectory';
 import './DirectoryPage.css';
 
+const PAGE_SIZE = 20;
+
 export function DirectoryPage() {
   const { query, category, categories, filtered, searchServices, setCategory } = useDirectory();
+  const [page, setPage] = useState(0);
+
+  // Reset page when filters change
+  const handleSearch = (value: string) => {
+    searchServices(value);
+    setPage(0);
+  };
+
+  const handleCategory = (cat: string | null) => {
+    setCategory(cat);
+    setPage(0);
+  };
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const pageItems = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <div className="directory-page">
       <div className="directory-page__controls">
         <div className="directory-page__search">
           <Input
-            size="sm"
+            size="md"
             variant="outline"
             iconLeft={search}
             placeholder="Search services..."
             value={query}
-            onChange={(e) => searchServices(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
         <div className="directory-page__filters">
           <Button
             variant={category === null ? 'primary' : 'ghost'}
             size="sm"
-            onClick={() => setCategory(null)}
+            onClick={() => handleCategory(null)}
           >
-            All
+            All ({filtered.length})
           </Button>
           {categories.map((cat) => (
             <Button
               key={cat}
               variant={category === cat ? 'primary' : 'ghost'}
               size="sm"
-              onClick={() => setCategory(category === cat ? null : cat)}
+              onClick={() => handleCategory(category === cat ? null : cat)}
             >
               {cat}
             </Button>
@@ -45,14 +63,38 @@ export function DirectoryPage() {
       </div>
 
       <div className="directory-page__grid">
-        {filtered.length === 0 ? (
+        {pageItems.length === 0 ? (
           <div className="directory-page__empty">
             No services match your search.
           </div>
         ) : (
-          filtered.map((svc) => <ServiceCard key={svc.id} service={svc} />)
+          pageItems.map((svc) => <ServiceCard key={svc.id} service={svc} />)
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="directory-page__pagination">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setPage(Math.max(0, page - 1))}
+            disabled={page === 0}
+          >
+            ← Previous
+          </Button>
+          <span className="directory-page__page-info">
+            Page {page + 1} of {totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+            disabled={page >= totalPages - 1}
+          >
+            Next →
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

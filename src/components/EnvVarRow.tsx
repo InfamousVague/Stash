@@ -8,6 +8,7 @@ import '@base/primitives/badge/badge.css';
 import { eye } from '@base/primitives/icon/icons/eye';
 import { eyeOff } from '@base/primitives/icon/icons/eye-off';
 import { trash2 } from '@base/primitives/icon/icons/trash-2';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import type { ApiService } from '../types';
 import './EnvVarRow.css';
 
@@ -88,7 +89,7 @@ export function EnvVarRow({ envKey, value, matchedService, onUpdate, onDelete }:
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => window.open(matchedService.portalUrl, '_blank')}
+            onClick={() => openUrl(matchedService.portalUrl)}
           >
             Get Key
           </Button>
