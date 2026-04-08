@@ -52,7 +52,7 @@ export function DiffView({ projectId, profiles }: DiffViewProps) {
       <div className="diff-view__controls">
         <div className="diff-view__select">
           <label className="diff-view__label">Left</label>
-          <Select size="sm" value={left} onChange={(e) => setLeft(e.target.value)}>
+          <Select size="md" value={left} onChange={(e) => setLeft(e.target.value)}>
             {profiles.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
@@ -61,13 +61,13 @@ export function DiffView({ projectId, profiles }: DiffViewProps) {
         <span className="diff-view__vs">vs</span>
         <div className="diff-view__select">
           <label className="diff-view__label">Right</label>
-          <Select size="sm" value={right} onChange={(e) => setRight(e.target.value)}>
+          <Select size="md" value={right} onChange={(e) => setRight(e.target.value)}>
             {profiles.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
           </Select>
         </div>
-        <Button variant="ghost" size="sm" onClick={runDiff} disabled={loading || left === right}>
+        <Button variant="ghost" size="md" onClick={runDiff} disabled={loading || left === right}>
           Refresh
         </Button>
       </div>

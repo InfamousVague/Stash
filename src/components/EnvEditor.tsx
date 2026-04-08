@@ -47,7 +47,7 @@ export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotati
     <div className="env-editor">
       <div className="env-editor__search">
         <Input
-          size="sm"
+          size="md"
           variant="outline"
           iconLeft={search}
           placeholder="Filter variables..."
@@ -103,7 +103,7 @@ export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotati
 
       <div className="env-editor__add">
         <Input
-          size="sm"
+          size="md"
           variant="outline"
           placeholder="KEY_NAME"
           value={newKey}
@@ -112,7 +112,7 @@ export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotati
           style={{ fontFamily: 'var(--font-mono)', flex: 1 }}
         />
         <Input
-          size="sm"
+          size="md"
           variant="outline"
           placeholder="value"
           value={newValue}
@@ -122,7 +122,7 @@ export function EnvEditor({ vars, onUpdate, onAdd, onDelete, matchEnvKey, rotati
         />
         <Button
           variant="secondary"
-          size="sm"
+          size="md"
           icon={plus}
           onClick={handleAdd}
           disabled={!newKey.trim()}

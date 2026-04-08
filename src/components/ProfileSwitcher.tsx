@@ -38,7 +38,7 @@ export function ProfileSwitcher({ profiles, activeProfile, onSwitch, onCreate }:
       <label className="profile-switcher__label">Profile</label>
       <div className="profile-switcher__controls">
         <Select
-          size="sm"
+          size="md"
           variant="outline"
           value={activeProfile}
           onChange={(e) => onSwitch(e.target.value)}
@@ -51,7 +51,7 @@ export function ProfileSwitcher({ profiles, activeProfile, onSwitch, onCreate }:
         </Select>
         <Button
           variant="ghost"
-          size="sm"
+          size="md"
           iconOnly
           icon={plus}
           onClick={() => setDialogOpen(true)}
@@ -64,7 +64,7 @@ export function ProfileSwitcher({ profiles, activeProfile, onSwitch, onCreate }:
         onClose={() => setDialogOpen(false)}
         title="New Profile"
         description={`Create a new profile based on "${activeProfile}"`}
-        size="sm"
+        size="md"
       >
         <div className="profile-switcher__dialog-body">
           <Input
@@ -77,10 +77,10 @@ export function ProfileSwitcher({ profiles, activeProfile, onSwitch, onCreate }:
             autoFocus
           />
           <div className="profile-switcher__dialog-actions">
-            <Button variant="ghost" size="sm" onClick={() => setDialogOpen(false)}>
+            <Button variant="ghost" size="md" onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="primary" size="sm" onClick={handleCreate} disabled={!newName.trim()}>
+            <Button variant="primary" size="md" onClick={handleCreate} disabled={!newName.trim()}>
               Create
             </Button>
           </div>

@@ -4,6 +4,7 @@ pub mod profile_manager;
 pub mod vault;
 pub mod team;
 pub mod session;
+pub mod config;
 pub mod state;
 mod commands;
 
@@ -53,6 +54,13 @@ pub fn run() {
             // CLI commands
             commands::cli::check_cli_installed,
             commands::cli::install_cli,
+            // Config commands
+            commands::config::get_config,
+            commands::config::save_config_cmd,
+            commands::config::is_setup_complete,
+            commands::config::complete_setup,
+            commands::config::get_suggested_directories,
+            commands::config::get_scan_directories,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

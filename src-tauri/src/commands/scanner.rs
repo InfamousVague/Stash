@@ -11,7 +11,8 @@ pub fn start_scan(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> R
     let running = Arc::clone(&state.scan_running);
     let results = Arc::clone(&state.scan_results);
 
-    crate::scanner::start_scan(app, running, results);
+    let scan_dirs = crate::config::load_config(&state.stash_dir).scan_directories;
+    crate::scanner::start_scan(app, running, results, scan_dirs);
 
     Ok(())
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@base/primitives/icon';
 import '@base/primitives/icon/icon.css';
 import { Button } from '@base/primitives/button';
@@ -13,6 +14,7 @@ import { DiscoverPage } from './pages/DiscoverPage';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { UnlockScreen } from './components/UnlockScreen';
+import { SetupWizard } from './components/SetupWizard';
 import { ToastProvider } from './contexts/ToastContext';
 import { useVault } from './hooks/useVault';
 import './App.css';
@@ -29,11 +31,16 @@ const NAV_ITEMS: { page: Page; label: string; icon: string }[] = [
 function App() {
   const [page, setPage] = useState<Page>('vaults');
   const vault = useVault();
+  const [setupComplete, setSetupComplete] = useState<boolean | null>(null);
 
-  // Loading state
-  if (vault.initialized === null) return null;
+  useEffect(() => {
+    invoke<boolean>('is_setup_complete').then(setSetupComplete).catch(() => setSetupComplete(false));
+  }, []);
 
-  // Show unlock/init screen
+  // Loading
+  if (vault.initialized === null || setupComplete === null) return null;
+
+  // Show unlock/init screen first
   if (!vault.initialized || !vault.unlocked) {
     return (
       <UnlockScreen
@@ -43,6 +50,11 @@ function App() {
         onUnlock={vault.unlock}
       />
     );
+  }
+
+  // Show setup wizard after unlock, before main app
+  if (!setupComplete) {
+    return <SetupWizard onComplete={() => setSetupComplete(true)} />;
   }
 
   return (
@@ -75,7 +87,7 @@ function App() {
         </header>
         <div className="stash__content">
           {page === 'vaults' && <VaultsPage />}
-          {page === 'discover' && <DiscoverPage />}
+          {page === 'discover' && <DiscoverPage onNavigateToVaults={() => setPage('vaults')} />}
           {page === 'directory' && <DirectoryPage />}
           {page === 'settings' && <SettingsPage />}
         </div>

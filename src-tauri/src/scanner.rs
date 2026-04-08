@@ -75,6 +75,7 @@ pub fn start_scan(
     app_handle: tauri::AppHandle,
     running: Arc<AtomicBool>,
     results: Arc<Mutex<Vec<EnvFileGroup>>>,
+    custom_dirs: Vec<String>,
 ) {
     running.store(true, Ordering::SeqCst);
 
@@ -88,18 +89,18 @@ pub fn start_scan(
     std::thread::spawn(move || {
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
         let home = dirs::home_dir().unwrap_or_default();
-        let scan_dirs = [
-            "Development", "Projects", "code",
-            "repos", "work", "src",
-        ];
+
+        // Use custom dirs if provided, otherwise fall back to defaults
+        let default_dirs: Vec<String> = ["Development", "Projects", "code", "repos", "work", "src"]
+            .iter().map(|d| home.join(d).to_string_lossy().to_string()).collect();
+        let scan_paths = if custom_dirs.is_empty() { default_dirs } else { custom_dirs };
 
         let mut dirs_scanned: u32 = 0;
         let mut files_found: u32 = 0;
-        // Map from parent directory -> list of env files found
         let mut grouped: HashMap<String, Vec<EnvFile>> = HashMap::new();
 
-        for scan_dir in &scan_dirs {
-            let root = home.join(scan_dir);
+        for scan_path in &scan_paths {
+            let root = std::path::Path::new(scan_path);
             if !root.exists() {
                 continue;
             }

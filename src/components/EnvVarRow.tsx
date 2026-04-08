@@ -78,7 +78,7 @@ export function EnvVarRow({ envKey, value, matchedService, lastChanged, onUpdate
       </div>
       <div className="env-var-row__value">
         <Input
-          size="sm"
+          size="md"
           variant="ghost"
           type={visible ? 'text' : 'password'}
           value={localValue}
@@ -88,7 +88,7 @@ export function EnvVarRow({ envKey, value, matchedService, lastChanged, onUpdate
         />
         <Button
           variant="ghost"
-          size="sm"
+          size="md"
           iconOnly
           icon={visible ? eyeOff : eye}
           onClick={() => setVisible(!visible)}
@@ -96,7 +96,7 @@ export function EnvVarRow({ envKey, value, matchedService, lastChanged, onUpdate
         />
         <Button
           variant="ghost"
-          size="sm"
+          size="md"
           iconOnly
           icon={trash2}
           onClick={() => onDelete(envKey)}
@@ -105,7 +105,7 @@ export function EnvVarRow({ envKey, value, matchedService, lastChanged, onUpdate
         {showGetKey && (
           <Button
             variant="secondary"
-            size="sm"
+            size="md"
             onClick={() => openUrl(matchedService.portalUrl)}
           >
             Get Key

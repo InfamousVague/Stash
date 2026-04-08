@@ -67,7 +67,7 @@ export function SettingsPage() {
               </span>
             </div>
             {vault.unlocked && (
-              <Button variant="secondary" size="sm" icon={lock} onClick={vault.lock}>
+              <Button variant="secondary" size="md" icon={lock} onClick={vault.lock}>
                 Lock Now
               </Button>
             )}
@@ -86,7 +86,7 @@ export function SettingsPage() {
               <code key={dir} className="settings-page__scan-dir">{dir}</code>
             ))}
           </div>
-          <Button variant="secondary" size="sm" icon={scan} onClick={startScan} disabled={scanning}>
+          <Button variant="secondary" size="md" icon={scan} onClick={startScan} disabled={scanning}>
             {scanning ? 'Scanning...' : 'Re-scan Directories'}
           </Button>
         </section>
@@ -110,7 +110,7 @@ export function SettingsPage() {
             </div>
             <Button
               variant="secondary"
-              size="sm"
+              size="md"
               icon={terminal}
               onClick={async () => {
                 try {

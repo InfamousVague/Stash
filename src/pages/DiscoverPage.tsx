@@ -7,24 +7,37 @@ import '@base/primitives/icon/icon.css';
 import { folderOpen } from '@base/primitives/icon/icons/folder-open';
 import { scan } from '@base/primitives/icon/icons/scan';
 import { plus } from '@base/primitives/icon/icons/plus';
+import { externalLink } from '@base/primitives/icon/icons/external-link';
+import { check } from '@base/primitives/icon/icons/check';
 import { ScanBanner } from '../components/ScanBanner';
 import { useScanner } from '../hooks/useScanner';
 import { useProjects } from '../hooks/useProjects';
 import stashIcon from '../assets/stash-icon.png';
 import './DiscoverPage.css';
 
-export function DiscoverPage() {
-  const { scanning, progress, results, startScan, dismiss } = useScanner();
-  const { projects, importProject, loadProjects } = useProjects();
+interface DiscoverPageProps {
+  onNavigateToVaults?: (projectId: string) => void;
+}
 
-  const unimported = results.filter(
-    (r) => !projects.some((p) => p.path === r.project_path)
-  );
+export function DiscoverPage({ onNavigateToVaults }: DiscoverPageProps) {
+  const { scanning, progress, results, startScan, dismiss } = useScanner();
+  const { projects, importProject, loadProjects, selectProject } = useProjects();
 
   const handleImport = async (path: string, name: string) => {
     await importProject(path, name);
     await loadProjects();
   };
+
+  const handleOpen = (projectPath: string) => {
+    const project = projects.find((p) => p.path === projectPath);
+    if (project && onNavigateToVaults) {
+      selectProject(project.id);
+      onNavigateToVaults(project.id);
+    }
+  };
+
+  const isImported = (path: string) => projects.some((p) => p.path === path);
+  const unimportedCount = results.filter((r) => !isImported(r.project_path)).length;
 
   return (
     <div className="discover-page">
@@ -38,7 +51,7 @@ export function DiscoverPage() {
         </Button>
         {results.length > 0 && (
           <span className="discover-page__stats">
-            {results.length} found · {unimported.length} available to import
+            {results.length} found · {unimportedCount} available to import · {results.length - unimportedCount} imported
           </span>
         )}
       </div>
@@ -53,37 +66,42 @@ export function DiscoverPage() {
         </div>
       )}
 
-      {unimported.length > 0 && (
+      {results.length > 0 && (
         <div className="discover-page__grid">
-          {unimported.map((group) => (
-            <div key={group.project_path} className="discover-page__card">
-              <div className="discover-page__card-header">
-                <Icon icon={folderOpen} size="base" color="secondary" />
-                <span className="discover-page__card-name">{group.project_name}</span>
-                {group.framework && (
-                  <Badge variant="subtle" size="sm" color="accent">{group.framework}</Badge>
-                )}
+          {results.map((group) => {
+            const imported = isImported(group.project_path);
+            return (
+              <div key={group.project_path} className={`discover-page__card ${imported ? 'discover-page__card--imported' : ''}`}>
+                <div className="discover-page__card-header">
+                  <Icon icon={folderOpen} size="base" color="secondary" />
+                  <span className="discover-page__card-name">{group.project_name}</span>
+                  {group.framework && (
+                    <Badge variant="subtle" size="sm" color="accent">{group.framework}</Badge>
+                  )}
+                  {imported && (
+                    <Badge variant="subtle" size="sm" color="success">Imported</Badge>
+                  )}
+                </div>
+                <p className="discover-page__card-path">{group.project_path}</p>
+                <div className="discover-page__card-files">
+                  {group.env_files.map((f) => (
+                    <code key={f.path} className="discover-page__card-file">{f.filename}</code>
+                  ))}
+                </div>
+                <div className="discover-page__card-footer">
+                  {imported ? (
+                    <Button variant="secondary" size="md" icon={externalLink} onClick={() => handleOpen(group.project_path)}>
+                      Open in Vaults
+                    </Button>
+                  ) : (
+                    <Button variant="primary" size="md" icon={plus} onClick={() => handleImport(group.project_path, group.project_name)}>
+                      Import
+                    </Button>
+                  )}
+                </div>
               </div>
-              <p className="discover-page__card-path">{group.project_path}</p>
-              <div className="discover-page__card-files">
-                {group.env_files.map((f) => (
-                  <code key={f.path} className="discover-page__card-file">{f.filename}</code>
-                ))}
-              </div>
-              <div className="discover-page__card-footer">
-                <Button variant="primary" size="md" icon={plus} onClick={() => handleImport(group.project_path, group.project_name)}>
-                  Import
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {results.length > 0 && unimported.length === 0 && !scanning && (
-        <div className="discover-page__empty">
-          <p className="discover-page__empty-text">All discovered environments have been imported!</p>
-          <p className="discover-page__empty-hint">Hit scan again to check for new .env files.</p>
+            );
+          })}
         </div>
       )}
     </div>

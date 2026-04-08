@@ -81,7 +81,7 @@ export function TeamPanel({ projectId }: TeamPanelProps) {
         ) : (
           <div>
             <p className="team-panel__hint">Generate a keypair to enable team sharing.</p>
-            <Button variant="primary" size="sm" onClick={handleGenerateKey}>Generate Keypair</Button>
+            <Button variant="primary" size="md" onClick={handleGenerateKey}>Generate Keypair</Button>
           </div>
         )}
       </section>
@@ -92,10 +92,10 @@ export function TeamPanel({ projectId }: TeamPanelProps) {
       <section className="team-panel__section">
         <h3 className="team-panel__section-title">Sync</h3>
         <div className="team-panel__actions">
-          <Button variant="secondary" size="sm" onClick={handlePush}>
+          <Button variant="secondary" size="md" onClick={handlePush}>
             Push to .stash.lock
           </Button>
-          <Button variant="secondary" size="sm" onClick={handlePull}>
+          <Button variant="secondary" size="md" onClick={handlePull}>
             Pull from .stash.lock
           </Button>
         </div>
@@ -121,18 +121,18 @@ export function TeamPanel({ projectId }: TeamPanelProps) {
         {showAdd && (
           <div className="team-panel__add-form">
             <Input
-              size="sm" variant="outline"
+              size="md" variant="outline"
               placeholder="Name"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
             />
             <Input
-              size="sm" variant="outline"
+              size="md" variant="outline"
               placeholder="Paste their public key"
               value={newKey}
               onChange={(e) => setNewKey(e.target.value)}
             />
-            <Button variant="primary" size="sm" onClick={handleAddMember} disabled={!newName.trim() || !newKey.trim()}>
+            <Button variant="primary" size="md" onClick={handleAddMember} disabled={!newName.trim() || !newKey.trim()}>
               Add Member
             </Button>
           </div>

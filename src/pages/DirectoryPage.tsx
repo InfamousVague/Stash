@@ -44,7 +44,7 @@ export function DirectoryPage() {
         <div className="directory-page__filters">
           <Button
             variant={category === null ? 'primary' : 'ghost'}
-            size="sm"
+            size="md"
             onClick={() => handleCategory(null)}
           >
             All ({filtered.length})
@@ -53,7 +53,7 @@ export function DirectoryPage() {
             <Button
               key={cat}
               variant={category === cat ? 'primary' : 'ghost'}
-              size="sm"
+              size="md"
               onClick={() => handleCategory(category === cat ? null : cat)}
             >
               {cat}
@@ -76,7 +76,7 @@ export function DirectoryPage() {
         <div className="directory-page__pagination">
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={() => setPage(Math.max(0, page - 1))}
             disabled={page === 0}
           >
@@ -87,7 +87,7 @@ export function DirectoryPage() {
           </span>
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
             disabled={page >= totalPages - 1}
           >

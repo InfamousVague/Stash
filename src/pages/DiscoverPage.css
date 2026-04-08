@@ -66,6 +66,10 @@
   background: var(--color-bg-elevated);
 }
 
+.discover-page__card--imported {
+  opacity: 0.7;
+}
+
 .discover-page__card-header {
   display: flex;
   align-items: center;

@@ -88,6 +88,11 @@ html, body, #root {
   -webkit-app-region: no-drag;
 }
 
+.stash__sidebar-footer button {
+  width: 100%;
+  justify-content: center;
+}
+
 /* Main content */
 .stash__main {
   flex: 1;
