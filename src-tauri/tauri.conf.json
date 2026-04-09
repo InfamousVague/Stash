@@ -38,7 +38,9 @@
     ],
     "macOS": {
       "frameworks": [],
-      "exceptionDomain": null
+      "exceptionDomain": null,
+      "entitlements": "Entitlements.plist",
+      "signingIdentity": "0948896DC970503ADEF5B5070E0BB3E9D9047757"
     }
   },
   "plugins": {
