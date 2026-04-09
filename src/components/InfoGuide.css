@@ -1,0 +1,36 @@
+.info-guide {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.info-guide__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-guide__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.info-guide__steps {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.info-guide__steps code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--color-bg-inset, var(--color-bg-secondary));
+  padding: 1px 4px;
+  border-radius: 3px;
+}

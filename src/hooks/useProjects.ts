@@ -7,6 +7,7 @@ export function useProjects() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [vars, setVars] = useState<EnvVar[]>([]);
   const [rotation, setRotation] = useState<Record<string, number>>({});
+  const [expiry, setExpiry] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const loadProjects = useCallback(async () => {
@@ -39,10 +40,13 @@ export function useProjects() {
         setVars(result);
         const rot = await invoke<Record<string, number>>('get_rotation_info', { projectId: id });
         setRotation(rot);
+        const exp = await invoke<Record<string, number>>('get_key_expiry', { projectId: id });
+        setExpiry(exp);
       } catch (err) {
         console.error('Failed to load project vars:', err);
         setVars([]);
         setRotation({});
+        setExpiry({});
       }
     } else {
       setVars([]);
@@ -78,6 +82,28 @@ export function useProjects() {
     }
   }, [activeProject]);
 
+  const setKeyExpiry = useCallback(async (key: string, timestamp: number | null) => {
+    if (!activeProject) return;
+    try {
+      await invoke('set_key_expiry', {
+        projectId: activeProject.id,
+        key,
+        expiryTimestamp: timestamp ?? 0,
+      });
+      setExpiry((prev) => {
+        const next = { ...prev };
+        if (timestamp) {
+          next[key] = timestamp;
+        } else {
+          delete next[key];
+        }
+        return next;
+      });
+    } catch (err) {
+      console.error('Failed to set expiry:', err);
+    }
+  }, [activeProject]);
+
   const deleteProject = useCallback(async (id: string) => {
     try {
       await invoke('delete_project', { projectId: id });
@@ -96,6 +122,7 @@ export function useProjects() {
     activeProject,
     vars,
     rotation,
+    expiry,
     loading,
     loadProjects,
     importProject,
@@ -103,6 +130,7 @@ export function useProjects() {
     updateVar,
     addVar,
     deleteVar,
+    setKeyExpiry,
     deleteProject,
   };
 }

@@ -5,7 +5,12 @@
   border: 1px solid var(--color-border-default);
   border-radius: 10px;
   background: var(--color-bg-elevated);
-  height: 220px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .service-card__header {
@@ -39,10 +44,6 @@
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 10px;
-  flex: 1;
-  min-height: 0;
-  max-height: 52px;
-  overflow-y: auto;
   align-content: flex-start;
 }
 

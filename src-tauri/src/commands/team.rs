@@ -198,3 +198,47 @@ pub fn list_team_members(
 }
 
 use base64;
+
+#[derive(serde::Serialize, Clone, Debug)]
+pub struct ProjectRef {
+    pub id: String,
+    pub name: String,
+}
+
+#[derive(serde::Serialize, Clone, Debug)]
+pub struct DeveloperInfo {
+    pub name: String,
+    pub public_key: String,
+    pub projects: Vec<ProjectRef>,
+}
+
+#[tauri::command]
+pub fn list_all_team_members(state: tauri::State<'_, AppState>) -> Vec<DeveloperInfo> {
+    let projects = state.projects.lock().map(|p| p.clone()).unwrap_or_default();
+
+    // Aggregate members by public key across all projects
+    let mut dev_map: HashMap<String, DeveloperInfo> = HashMap::new();
+
+    for project in &projects {
+        let lock = match team::read_lock_file(&project.path) {
+            Ok(l) => l,
+            Err(_) => continue,
+        };
+
+        for member in &lock.members {
+            let entry = dev_map.entry(member.public_key.clone()).or_insert_with(|| DeveloperInfo {
+                name: member.name.clone(),
+                public_key: member.public_key.clone(),
+                projects: Vec::new(),
+            });
+            entry.projects.push(ProjectRef {
+                id: project.id.clone(),
+                name: project.name.clone(),
+            });
+        }
+    }
+
+    let mut developers: Vec<DeveloperInfo> = dev_map.into_values().collect();
+    developers.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+    developers
+}

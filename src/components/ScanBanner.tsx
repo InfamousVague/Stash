@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '@base/primitives/button';
 import '@base/primitives/button/button.css';
 import { Progress } from '@base/primitives/progress';
@@ -20,6 +21,7 @@ function truncatePath(path: string, maxLen = 50): string {
 }
 
 export function ScanBanner({ scanning, progress, results, onDismiss }: ScanBannerProps) {
+  const { t } = useTranslation();
   if (!progress) return null;
 
   const isComplete = progress.complete || !scanning;
@@ -30,14 +32,12 @@ export function ScanBanner({ scanning, progress, results, onDismiss }: ScanBanne
       <div className="scan-banner__content">
         {isComplete ? (
           <p className="scan-banner__text">
-            Found <strong>{progress.files_found}</strong> environment files across{' '}
-            <strong>{projectCount}</strong> projects
+            {t('scanBanner.found', { files: progress.files_found, projects: projectCount })}
           </p>
         ) : (
           <>
             <p className="scan-banner__text">
-              Scanning... <strong>{progress.files_found}</strong> files found in{' '}
-              <strong>{progress.directories_scanned}</strong> directories
+              {t('scanBanner.scanning', { files: progress.files_found, dirs: progress.directories_scanned })}
             </p>
             {progress.current_dir && (
               <p className="scan-banner__path">{truncatePath(progress.current_dir)}</p>
@@ -48,11 +48,11 @@ export function ScanBanner({ scanning, progress, results, onDismiss }: ScanBanne
       <div className="scan-banner__actions">
         {isComplete ? (
           <Button variant="ghost" size="sm" onClick={onDismiss}>
-            Dismiss
+            {t('scanBanner.dismiss')}
           </Button>
         ) : (
           <Button variant="ghost" size="sm" onClick={onDismiss}>
-            Cancel
+            {t('scanBanner.cancel')}
           </Button>
         )}
       </div>

@@ -1,0 +1,15 @@
+.project-icon {
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.project-icon--img {
+  object-fit: cover;
+}
+
+.project-icon--letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}

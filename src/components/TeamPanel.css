@@ -34,6 +34,85 @@
   line-height: 1.5;
 }
 
+.team-panel__hint code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--color-bg-inset, var(--color-bg-secondary));
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* Guide */
+.team-panel__guide {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.team-panel__guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.team-panel__guide-steps {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.team-panel__guide-steps code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--color-bg-inset, var(--color-bg-secondary));
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* Identity */
+.team-panel__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-panel__identity-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.team-panel__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+}
+
+.team-panel__status-dot--active {
+  background: #22c55e;
+}
+
+.team-panel__identity-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.team-panel__identity-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  text-align: center;
+  color: var(--color-text-tertiary);
+}
+
 .team-panel__key-row {
   display: flex;
   align-items: center;
@@ -50,11 +129,49 @@
   flex: 1;
 }
 
-.team-panel__actions {
-  display: flex;
+/* Sync cards */
+.team-panel__sync-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
+.team-panel__sync-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--color-text-primary);
+}
+
+.team-panel__sync-card:hover:not(:disabled) {
+  background: var(--color-accent-subtle);
+  border-color: var(--color-accent);
+}
+
+.team-panel__sync-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.team-panel__sync-card-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.team-panel__sync-card-desc {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
+/* Add form */
 .team-panel__add-form {
   display: flex;
   flex-direction: column;
@@ -65,6 +182,7 @@
   border: 1px solid var(--color-border-default);
 }
 
+/* Members */
 .team-panel__members {
   display: flex;
   flex-direction: column;
@@ -75,15 +193,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
   border: 1px solid var(--color-border-default);
 }
 
 .team-panel__member-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
+}
+
+.team-panel__member-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .team-panel__member-name {

@@ -7,6 +7,13 @@
   background: var(--color-bg-secondary);
 }
 
+.profile-switcher__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .profile-switcher__label {
   font-size: 12px;
   font-weight: 600;

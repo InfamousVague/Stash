@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { Button } from '@base/primitives/button';
 import '@base/primitives/button/button.css';
@@ -6,21 +7,47 @@ import { Separator } from '@base/primitives/separator';
 import '@base/primitives/separator/separator.css';
 import { Toggle } from '@base/primitives/toggle';
 import '@base/primitives/toggle/toggle.css';
+import { Select } from '@base/primitives/select';
+import '@base/primitives/select/select.css';
 import { Badge } from '@base/primitives/badge';
 import '@base/primitives/badge/badge.css';
+import { Progress } from '@base/primitives/progress';
+import '@base/primitives/progress/progress.css';
 import { scan } from '@base/primitives/icon/icons/scan';
 import { lock } from '@base/primitives/icon/icons/lock';
 import { terminal } from '@base/primitives/icon/icons/terminal';
+import { download } from '@base/primitives/icon/icons/download';
 import { useScanner } from '../hooks/useScanner';
 import { useVault } from '../hooks/useVault';
+import { useUpdater } from '../hooks/useUpdater';
 import { useToastContext } from '../contexts/ToastContext';
 import { ScanBanner } from '../components/ScanBanner';
 import stashIcon from '../assets/stash-icon.png';
 import './SettingsPage.css';
 
+const LANGUAGES = [
+  { code: 'en', name: 'English' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'bn', name: 'বাংলা' },
+  { code: 'ta', name: 'தமிழ்' },
+  { code: 'te', name: 'తెలుగు' },
+  { code: 'mr', name: 'मराठी' },
+  { code: 'gu', name: 'ગુજરાતી' },
+  { code: 'kn', name: 'ಕನ್ನಡ' },
+  { code: 'ml', name: 'മലയാളം' },
+  { code: 'pa', name: 'ਪੰਜਾਬੀ' },
+  { code: 'uk', name: 'Українська' },
+  { code: 'pl', name: 'Polski' },
+  { code: 'ko', name: '한국어' },
+  { code: 'ja', name: '日本語' },
+  { code: 'zh', name: '简体中文' },
+];
+
 export function SettingsPage() {
+  const { t, i18n } = useTranslation();
   const { scanning, progress, results, startScan, dismiss } = useScanner();
   const vault = useVault();
+  const updater = useUpdater();
   const toast = useToastContext();
   const [cliInstalled, setCliInstalled] = useState(false);
 
@@ -45,41 +72,82 @@ export function SettingsPage() {
 
       <div className="settings-page__content">
         <section className="settings-page__section">
-          <h3 className="settings-page__section-title">Appearance</h3>
+          <h3 className="settings-page__section-title">{t('settings.appearance')}</h3>
           <div className="settings-page__row">
             <div>
-              <span className="settings-page__row-label">Dark Mode</span>
-              <span className="settings-page__row-desc">Toggle between light and dark theme</span>
+              <span className="settings-page__row-label">{t('settings.darkMode')}</span>
+              <span className="settings-page__row-desc">{t('settings.darkModeDesc')}</span>
             </div>
-            <Toggle checked={isDark} onChange={toggleTheme} />
+            <Toggle size="lg" checked={isDark} onChange={toggleTheme} />
+          </div>
+          <div className="settings-page__row">
+            <div>
+              <span className="settings-page__row-label">{t('settings.language')}</span>
+              <span className="settings-page__row-desc">{t('settings.languageDesc')}</span>
+            </div>
+            <Select
+              size="md"
+              variant="outline"
+              value={i18n.language?.split('-')[0] || 'en'}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code}>{lang.name}</option>
+              ))}
+            </Select>
           </div>
         </section>
 
         <Separator />
 
         <section className="settings-page__section">
-          <h3 className="settings-page__section-title">Security</h3>
+          <h3 className="settings-page__section-title">{t('settings.security')}</h3>
           <div className="settings-page__row">
             <div>
-              <span className="settings-page__row-label">Vault Status</span>
+              <span className="settings-page__row-label">{t('settings.vaultStatus')}</span>
               <span className="settings-page__row-desc">
-                {vault.unlocked ? 'Unlocked — your vault is accessible' : 'Locked'}
+                {vault.unlocked ? t('settings.vaultUnlocked') : t('settings.vaultLocked')}
               </span>
             </div>
             {vault.unlocked && (
               <Button variant="secondary" size="md" icon={lock} onClick={vault.lock}>
-                Lock Now
+                {t('settings.lockNow')}
               </Button>
             )}
+          </div>
+          <div className="settings-page__row">
+            <div>
+              <span className="settings-page__row-label">{t('settings.touchId')}</span>
+              <span className="settings-page__row-desc">
+                {vault.hasKeychain ? t('settings.touchIdEnabled') : t('settings.touchIdDisabled')}
+              </span>
+            </div>
+            <Toggle
+              size="lg"
+              checked={vault.hasKeychain}
+              onChange={async () => {
+                try {
+                  if (vault.hasKeychain) {
+                    await vault.clearKeychain();
+                    toast.info(t('settings.keychainDisabled'));
+                  } else {
+                    await vault.storeInKeychain();
+                    toast.success(t('settings.keychainEnabled'));
+                  }
+                } catch (e) {
+                  toast.error(`Failed: ${e}`);
+                }
+              }}
+            />
           </div>
         </section>
 
         <Separator />
 
         <section className="settings-page__section">
-          <h3 className="settings-page__section-title">Scanning</h3>
+          <h3 className="settings-page__section-title">{t('settings.scanning')}</h3>
           <p className="settings-page__section-desc">
-            Stash scans ~/Development, ~/Projects, ~/code, ~/repos, ~/work, and ~/src for .env files.
+            {t('settings.scanDesc')}
           </p>
           <div className="settings-page__scan-dirs">
             {['~/Development', '~/Projects', '~/code', '~/repos', '~/work', '~/src'].map((dir) => (
@@ -87,25 +155,25 @@ export function SettingsPage() {
             ))}
           </div>
           <Button variant="secondary" size="md" icon={scan} onClick={startScan} disabled={scanning}>
-            {scanning ? 'Scanning...' : 'Re-scan Directories'}
+            {scanning ? t('settings.scanningInProgress') : t('settings.rescan')}
           </Button>
         </section>
 
         <Separator />
 
         <section className="settings-page__section">
-          <h3 className="settings-page__section-title">CLI</h3>
+          <h3 className="settings-page__section-title">{t('settings.cli')}</h3>
           <p className="settings-page__section-desc">
-            Use Stash from the terminal with commands like <code>stash pull</code>, <code>stash push</code>, and <code>stash switch</code>.
+            {t('settings.cliDesc')}
           </p>
           <div className="settings-page__row">
             <div>
               <span className="settings-page__row-label">
-                Install CLI
-                {cliInstalled && <Badge variant="subtle" size="sm" color="success" style={{ marginLeft: 8 }}>Installed</Badge>}
+                {t('settings.installCli')}
+                {cliInstalled && <Badge variant="subtle" size="sm" color="success" style={{ marginLeft: 8 }}>{t('settings.installed')}</Badge>}
               </span>
               <span className="settings-page__row-desc">
-                {cliInstalled ? 'stash is available in your terminal' : 'Installs to /usr/local/bin/stash'}
+                {cliInstalled ? t('settings.cliAvailable') : t('settings.cliInstallPath')}
               </span>
             </div>
             <Button
@@ -116,22 +184,56 @@ export function SettingsPage() {
                 try {
                   await invoke('install_cli');
                   setCliInstalled(true);
-                  toast.success('CLI installed to /usr/local/bin/stash');
+                  toast.success(t('settings.cliInstalledToast'));
                 } catch (e) {
-                  toast.error(`Install failed: ${e}`);
+                  toast.error(t('settings.installFailed', { error: String(e) }));
                 }
               }}
               disabled={cliInstalled}
             >
-              {cliInstalled ? 'Installed' : 'Install'}
+              {cliInstalled ? t('settings.installed') : t('settings.install')}
             </Button>
           </div>
+          <pre className="settings-page__cli-preview">
+{`$ stash pull          # decrypt .stash.lock → .env
+$ stash push          # encrypt .env → .stash.lock
+$ stash switch staging
+$ stash run -- npm start`}
+          </pre>
         </section>
 
         <Separator />
 
         <section className="settings-page__section">
-          <h3 className="settings-page__section-title">About</h3>
+          <h3 className="settings-page__section-title">{t('settings.updates')}</h3>
+          <div className="settings-page__row">
+            <div>
+              <span className="settings-page__row-label">{t('settings.currentVersion')}</span>
+              <span className="settings-page__row-desc">
+                {updater.updateAvailable
+                  ? t('settings.updateAvailable', { version: updater.updateAvailable.version })
+                  : t('settings.upToDate')}
+              </span>
+            </div>
+            <Button
+              variant="secondary"
+              size="md"
+              icon={download}
+              onClick={updater.updateAvailable ? updater.downloadAndInstall : updater.checkForUpdate}
+              disabled={updater.checking || updater.downloading}
+            >
+              {updater.checking ? t('settings.checking') : updater.updateAvailable ? t('settings.updateNow') : t('settings.checkForUpdates')}
+            </Button>
+          </div>
+          {updater.downloading && (
+            <Progress value={updater.progress} size="md" />
+          )}
+        </section>
+
+        <Separator />
+
+        <section className="settings-page__section">
+          <h3 className="settings-page__section-title">{t('settings.about')}</h3>
           <div className="settings-page__about">
             <img src={stashIcon} alt="Stash" className="settings-page__about-icon" />
             <div>
@@ -140,11 +242,11 @@ export function SettingsPage() {
                 <span className="settings-page__about-value">v0.2.0</span>
               </div>
               <div className="settings-page__about-row">
-                <span className="settings-page__about-label">Runtime</span>
+                <span className="settings-page__about-label">{t('settings.runtime')}</span>
                 <span className="settings-page__about-value">Tauri v2</span>
               </div>
               <div className="settings-page__about-row">
-                <span className="settings-page__about-label">Encryption</span>
+                <span className="settings-page__about-label">{t('settings.encryption')}</span>
                 <span className="settings-page__about-value">AES-256-GCM + Argon2id</span>
               </div>
             </div>

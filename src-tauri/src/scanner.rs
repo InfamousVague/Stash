@@ -11,10 +11,20 @@ const SKIP_DIRS: &[&str] = &[
     ".venv", "vendor", "Pods", ".next", ".nuxt", ".cache", "coverage", ".cargo",
 ];
 
-const ENV_FILENAMES: &[&str] = &[
-    ".env", ".env.local", ".env.development", ".env.staging", ".env.production",
-    ".env.example", ".env.sample", ".env.test", ".env.dev", ".env.prod",
-];
+/// File extensions/names to exclude even though they start with ".env"
+const ENV_EXCLUDE: &[&str] = &[".envrc", ".env-cmdrc"];
+
+/// Check if a filename is an env file: starts with ".env" and isn't excluded
+fn is_env_file(filename: &str) -> bool {
+    if !filename.starts_with(".env") {
+        return false;
+    }
+    // Must be ".env" exactly or ".env.something" (not ".environment" etc.)
+    if filename.len() > 4 && !filename[4..].starts_with('.') {
+        return false;
+    }
+    !ENV_EXCLUDE.contains(&filename)
+}
 
 fn classify_env_file(filename: &str) -> String {
     match filename {
@@ -23,9 +33,17 @@ fn classify_env_file(filename: &str) -> String {
         ".env.development" | ".env.dev" => "development".to_string(),
         ".env.staging" => "staging".to_string(),
         ".env.production" | ".env.prod" => "production".to_string(),
-        ".env.example" | ".env.sample" => "example".to_string(),
+        ".env.example" | ".env.sample" | ".env.template" => "example".to_string(),
         ".env.test" => "test".to_string(),
-        _ => "root".to_string(),
+        _ => {
+            // For custom env files like .env.apple, .env.custom, etc.
+            // Extract the suffix after ".env." as the type
+            if let Some(suffix) = filename.strip_prefix(".env.") {
+                suffix.to_string()
+            } else {
+                "root".to_string()
+            }
+        }
     }
 }
 
@@ -145,7 +163,7 @@ pub fn start_scan(
                 }
 
                 let filename = entry.file_name().to_string_lossy().to_string();
-                if !ENV_FILENAMES.contains(&filename.as_str()) {
+                if !is_env_file(&filename) {
                     continue;
                 }
 
@@ -255,8 +273,9 @@ mod tests {
     }
 
     #[test]
-    fn test_classify_env_file_unknown_falls_to_root() {
-        assert_eq!(classify_env_file(".env.custom"), "root");
+    fn test_classify_env_file_custom_uses_suffix() {
+        assert_eq!(classify_env_file(".env.custom"), "custom");
+        assert_eq!(classify_env_file(".env.apple"), "apple");
     }
 
     // ── detect_framework ──────────────────────────────────────

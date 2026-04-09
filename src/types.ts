@@ -40,3 +40,54 @@ export interface ApiService {
   envKeys: string[];
   portalUrl: string;
 }
+
+// ── Health types ──────────────────────────────────────────
+
+export interface HealthIssue {
+  key: string;
+  project_id: string;
+  project_name: string;
+  issue_type: 'stale' | 'duplicate' | 'format' | 'git_exposed' | 'expiring';
+  severity: 'critical' | 'warning' | 'info';
+  details: string;
+}
+
+export interface HealthSummary {
+  total: number;
+  critical: number;
+  warning: number;
+  info: number;
+}
+
+export interface HealthReport {
+  issues: HealthIssue[];
+  summary: HealthSummary;
+}
+
+export interface HistoryEntry {
+  timestamp: number;
+  action: 'created' | 'updated' | 'deleted';
+  old_value: string | null;
+  new_value: string | null;
+}
+
+export interface DeveloperInfo {
+  name: string;
+  public_key: string;
+  projects: { id: string; name: string }[];
+}
+
+export interface GitExposure {
+  key: string;
+  commit_hash: string;
+  commit_date: string;
+  author: string;
+  project_id: string;
+  project_name: string;
+}
+
+export interface Contact {
+  name: string;
+  public_key: string;
+  added_at: number;
+}

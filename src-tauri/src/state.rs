@@ -39,6 +39,58 @@ pub struct EnvVar {
     pub value: String,
 }
 
+// ── Health types ──────────────────────────────────────────
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct HealthIssue {
+    pub key: String,
+    pub project_id: String,
+    pub project_name: String,
+    pub issue_type: String,
+    pub severity: String,
+    pub details: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct HealthSummary {
+    pub total: u32,
+    pub critical: u32,
+    pub warning: u32,
+    pub info: u32,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct HealthReport {
+    pub issues: Vec<HealthIssue>,
+    pub summary: HealthSummary,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct GitExposure {
+    pub key: String,
+    pub commit_hash: String,
+    pub commit_date: String,
+    pub author: String,
+    pub project_id: String,
+    pub project_name: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct GitScanCache {
+    pub exposures: Vec<GitExposure>,
+    pub scanned_at: u64,
+}
+
+// ── History types ─────────────────────────────────────────
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct HistoryEntry {
+    pub timestamp: u64,
+    pub action: String,
+    pub old_value: Option<String>,
+    pub new_value: Option<String>,
+}
+
 pub struct AppState {
     pub scan_running: Arc<AtomicBool>,
     pub scan_results: Arc<Mutex<Vec<EnvFileGroup>>>,
@@ -46,6 +98,10 @@ pub struct AppState {
     pub vault_key: Arc<Mutex<Option<[u8; 32]>>>,
     /// Tracks when each key was last modified: "{project_id}:{key}" -> unix timestamp
     pub rotation: Arc<Mutex<std::collections::HashMap<String, u64>>>,
+    /// Tracks manual expiry dates: "{project_id}:{key}" -> unix timestamp
+    pub expiry: Arc<Mutex<std::collections::HashMap<String, u64>>>,
+    /// Full change history: "{project_id}:{key}" -> Vec<HistoryEntry>
+    pub history: Arc<Mutex<std::collections::HashMap<String, Vec<HistoryEntry>>>>,
     pub stash_dir: String,
 }
 
@@ -76,12 +132,36 @@ impl AppState {
             std::collections::HashMap::new()
         };
 
+        // Load expiry data
+        let expiry_path = stash_dir.join("expiry.json");
+        let expiry: std::collections::HashMap<String, u64> = if expiry_path.exists() {
+            std::fs::read_to_string(&expiry_path)
+                .ok()
+                .and_then(|s| serde_json::from_str(&s).ok())
+                .unwrap_or_default()
+        } else {
+            std::collections::HashMap::new()
+        };
+
+        // Load history data
+        let history_path = stash_dir.join("history.json");
+        let history: std::collections::HashMap<String, Vec<HistoryEntry>> = if history_path.exists() {
+            std::fs::read_to_string(&history_path)
+                .ok()
+                .and_then(|s| serde_json::from_str(&s).ok())
+                .unwrap_or_default()
+        } else {
+            std::collections::HashMap::new()
+        };
+
         Self {
             scan_running: Arc::new(AtomicBool::new(false)),
             scan_results: Arc::new(Mutex::new(Vec::new())),
             projects: Arc::new(Mutex::new(projects)),
             vault_key: Arc::new(Mutex::new(None)),
             rotation: Arc::new(Mutex::new(rotation)),
+            expiry: Arc::new(Mutex::new(expiry)),
+            history: Arc::new(Mutex::new(history)),
             stash_dir: stash_dir.to_string_lossy().to_string(),
         }
     }
@@ -109,6 +189,77 @@ impl AppState {
     pub fn get_rotation(&self, project_id: &str, key: &str) -> Option<u64> {
         let composite = format!("{}:{}", project_id, key);
         self.rotation.lock().ok()?.get(&composite).copied()
+    }
+
+    pub fn set_expiry(&self, project_id: &str, key: &str, timestamp: u64) {
+        let composite = format!("{}:{}", project_id, key);
+        if let Ok(mut expiry) = self.expiry.lock() {
+            expiry.insert(composite, timestamp);
+            let path = format!("{}/expiry.json", self.stash_dir);
+            if let Ok(json) = serde_json::to_string(&*expiry) {
+                std::fs::write(path, json).ok();
+            }
+        }
+    }
+
+    pub fn remove_expiry(&self, project_id: &str, key: &str) {
+        let composite = format!("{}:{}", project_id, key);
+        if let Ok(mut expiry) = self.expiry.lock() {
+            expiry.remove(&composite);
+            let path = format!("{}/expiry.json", self.stash_dir);
+            if let Ok(json) = serde_json::to_string(&*expiry) {
+                std::fs::write(path, json).ok();
+            }
+        }
+    }
+
+    pub fn get_expiry(&self, project_id: &str, key: &str) -> Option<u64> {
+        let composite = format!("{}:{}", project_id, key);
+        self.expiry.lock().ok()?.get(&composite).copied()
+    }
+
+    pub fn record_history(
+        &self,
+        project_id: &str,
+        key: &str,
+        action: &str,
+        old_value: Option<&str>,
+        new_value: Option<&str>,
+    ) {
+        let composite = format!("{}:{}", project_id, key);
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        let entry = HistoryEntry {
+            timestamp: now,
+            action: action.to_string(),
+            old_value: old_value.map(|s| s.to_string()),
+            new_value: new_value.map(|s| s.to_string()),
+        };
+        if let Ok(mut history) = self.history.lock() {
+            let entries = history.entry(composite).or_default();
+            entries.push(entry);
+            // Cap at 50 entries per key
+            if entries.len() > 50 {
+                let start = entries.len() - 50;
+                *entries = entries[start..].to_vec();
+            }
+            // Save to disk
+            let path = format!("{}/history.json", self.stash_dir);
+            if let Ok(json) = serde_json::to_string(&*history) {
+                std::fs::write(path, json).ok();
+            }
+        }
+    }
+
+    pub fn get_history(&self, project_id: &str, key: &str) -> Vec<HistoryEntry> {
+        let composite = format!("{}:{}", project_id, key);
+        self.history
+            .lock()
+            .ok()
+            .and_then(|h| h.get(&composite).cloned())
+            .unwrap_or_default()
     }
 
     pub fn get_project_path(&self, project_id: &str) -> Result<String, String> {
@@ -155,12 +306,36 @@ impl AppState {
                 std::collections::HashMap::new()
             };
 
+        let expiry_path = format!("{}/expiry.json", stash_dir);
+        let expiry: std::collections::HashMap<String, u64> =
+            if std::path::Path::new(&expiry_path).exists() {
+                std::fs::read_to_string(&expiry_path)
+                    .ok()
+                    .and_then(|s| serde_json::from_str(&s).ok())
+                    .unwrap_or_default()
+            } else {
+                std::collections::HashMap::new()
+            };
+
+        let history_path = format!("{}/history.json", stash_dir);
+        let history: std::collections::HashMap<String, Vec<HistoryEntry>> =
+            if std::path::Path::new(&history_path).exists() {
+                std::fs::read_to_string(&history_path)
+                    .ok()
+                    .and_then(|s| serde_json::from_str(&s).ok())
+                    .unwrap_or_default()
+            } else {
+                std::collections::HashMap::new()
+            };
+
         Self {
             scan_running: Arc::new(AtomicBool::new(false)),
             scan_results: Arc::new(Mutex::new(Vec::new())),
             projects: Arc::new(Mutex::new(projects)),
             vault_key: Arc::new(Mutex::new(None)),
             rotation: Arc::new(Mutex::new(rotation)),
+            expiry: Arc::new(Mutex::new(expiry)),
+            history: Arc::new(Mutex::new(history)),
             stash_dir: stash_dir.to_string(),
         }
     }

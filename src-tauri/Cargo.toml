@@ -21,6 +21,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
+tauri-plugin-deep-link = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 walkdir = "2"
@@ -28,6 +29,7 @@ uuid = { version = "1", features = ["v4"] }
 dirs = "5"
 log = "0.4"
 tauri-plugin-log = "2"
+tauri-plugin-updater = "2"
 aes-gcm = "0.10"
 argon2 = "0.5"
 rand = "0.8"
@@ -36,6 +38,7 @@ ed25519-dalek = { version = "2", features = ["rand_core"] }
 base64 = "0.22"
 sha2 = "0.10"
 clap = { version = "4", features = ["derive"] }
+# keyring removed — Touch ID key stored in local file, protected by biometric prompt
 
 [dev-dependencies]
 tempfile = "3"

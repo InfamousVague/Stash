@@ -6,9 +6,11 @@
   justify-content: center;
   background: var(--color-bg-primary);
   z-index: 1000;
+  -webkit-app-region: drag;
 }
 
 .unlock-screen__card {
+  -webkit-app-region: no-drag;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,4 +51,67 @@
   font-size: 13px;
   color: var(--color-error, #f87171);
   text-align: center;
+}
+
+.unlock-screen__biometric {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.unlock-screen__biometric-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 32px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.unlock-screen__biometric-btn:hover {
+  background: var(--color-accent-subtle);
+  border-color: var(--color-accent);
+}
+
+.unlock-screen__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.unlock-screen__divider hr {
+  flex: 1;
+  border: none;
+  border-top: 1px solid var(--color-border-default);
+}
+
+.unlock-screen__actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.unlock-screen__actions button {
+  flex: 1;
+}
+
+.unlock-screen__setup-hint {
+  font-size: 12px;
+  color: var(--color-accent);
+  text-align: center;
+  font-weight: 500;
+}
+
+.unlock-screen__divider span {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
 }

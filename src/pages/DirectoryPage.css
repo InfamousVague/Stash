@@ -24,6 +24,25 @@
   gap: 4px;
 }
 
+.directory-page__filters--collapsed {
+  max-height: 56px;
+  overflow: hidden;
+}
+
+.directory-page__show-all {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0 0;
+  font-weight: 500;
+}
+
+.directory-page__show-all:hover {
+  color: var(--color-text-primary);
+}
+
 .directory-page__grid {
   flex: 1;
   overflow-y: auto;

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@base/primitives/input';
 import '@base/primitives/input/input.css';
 import { Button } from '@base/primitives/button';
@@ -11,8 +12,16 @@ import './DirectoryPage.css';
 const PAGE_SIZE = 20;
 
 export function DirectoryPage() {
+  const { t } = useTranslation();
   const { query, category, categories, filtered, searchServices, setCategory } = useDirectory();
   const [page, setPage] = useState(0);
+  const [showAllFilters, setShowAllFilters] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  const goToPage = (p: number) => {
+    setPage(p);
+    gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   // Reset page when filters change
   const handleSearch = (value: string) => {
@@ -36,39 +45,47 @@ export function DirectoryPage() {
             size="md"
             variant="outline"
             iconLeft={search}
-            placeholder="Search services..."
+            placeholder={t('directory.searchServices')}
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <div className="directory-page__filters">
+        <div className={`directory-page__filters ${showAllFilters ? '' : 'directory-page__filters--collapsed'}`}>
           <Button
             variant={category === null ? 'primary' : 'ghost'}
-            size="md"
+            size="sm"
             onClick={() => handleCategory(null)}
           >
-            All ({filtered.length})
+            {t('directory.all', { count: filtered.length })}
           </Button>
           {categories.map((cat) => (
             <Button
               key={cat}
               variant={category === cat ? 'primary' : 'ghost'}
-              size="md"
+              size="sm"
               onClick={() => handleCategory(category === cat ? null : cat)}
             >
               {cat}
             </Button>
           ))}
         </div>
+        {categories.length > 10 && (
+          <button
+            className="directory-page__show-all"
+            onClick={() => setShowAllFilters(!showAllFilters)}
+          >
+            {showAllFilters ? t('directory.showLess') : t('directory.showAll', { count: categories.length })}
+          </button>
+        )}
       </div>
 
-      <div className="directory-page__grid">
+      <div className="directory-page__grid" ref={gridRef}>
         {pageItems.length === 0 ? (
           <div className="directory-page__empty">
-            No services match your search.
+            {t('directory.noMatch')}
           </div>
         ) : (
-          pageItems.map((svc) => <ServiceCard key={svc.id} service={svc} />)
+          pageItems.map((svc, i) => <ServiceCard key={svc.id} service={svc} style={{ animationDelay: `${i * 40}ms` }} />)
         )}
       </div>
 
@@ -77,21 +94,21 @@ export function DirectoryPage() {
           <Button
             variant="ghost"
             size="md"
-            onClick={() => setPage(Math.max(0, page - 1))}
+            onClick={() => goToPage(Math.max(0, page - 1))}
             disabled={page === 0}
           >
-            ← Previous
+            {t('directory.previous')}
           </Button>
           <span className="directory-page__page-info">
-            Page {page + 1} of {totalPages}
+            {t('directory.pageOf', { page: page + 1, total: totalPages })}
           </span>
           <Button
             variant="ghost"
             size="md"
-            onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+            onClick={() => goToPage(Math.min(totalPages - 1, page + 1))}
             disabled={page >= totalPages - 1}
           >
-            Next →
+            {t('directory.next')}
           </Button>
         </div>
       )}

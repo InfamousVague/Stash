@@ -6,19 +6,20 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npx vite build",
     "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
         "title": "Stash",
-        "width": 920,
-        "height": 620,
+        "width": 1196,
+        "height": 806,
         "resizable": true,
         "center": true,
-        "minWidth": 700,
-        "minHeight": 480
+        "minWidth": 910,
+        "minHeight": 624,
+        "decorations": true
       }
     ],
     "security": {
@@ -34,6 +35,23 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "macOS": {
+      "frameworks": [],
+      "exceptionDomain": null
+    }
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["stash"]
+      }
+    },
+    "updater": {
+      "endpoints": [
+        "https://github.com/InfamousVague/Stash/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDYxNjhCQTI5MEZDQjI0NEEKUldSS0pNc1BLYnBvWWN1dTlLKzVWVko2QVhaU1ppaXhlbEErTFJtQjdxdnFlaERGaUhLdlp3Q2YK"
+    }
   }
 }

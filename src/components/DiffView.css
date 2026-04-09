@@ -5,6 +5,13 @@
   gap: 12px;
 }
 
+.diff-view__hint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .diff-view__controls {
   display: flex;
   align-items: flex-end;

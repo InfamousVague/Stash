@@ -64,6 +64,16 @@ pub fn init_vault(password: &str, stash_dir: &str) -> Result<[u8; KEY_LEN], Stri
     Ok(key)
 }
 
+/// Encrypt data with a known key. Used by saved_keys and other modules that need direct encryption.
+pub fn encrypt_with_key(data: &[u8], key: &[u8; KEY_LEN]) -> Result<Vec<u8>, String> {
+    encrypt(data, key)
+}
+
+/// Decrypt data with a known key. Used by keychain unlock to verify the key is still valid.
+pub fn decrypt_with_key(data: &[u8], key: &[u8; KEY_LEN]) -> Result<Vec<u8>, String> {
+    decrypt(data, key)
+}
+
 pub fn unlock_vault(password: &str, stash_dir: &str) -> Result<[u8; KEY_LEN], String> {
     let salt = std::fs::read(Path::new(stash_dir).join("salt"))
         .map_err(|e| format!("Failed to read salt: {}", e))?;

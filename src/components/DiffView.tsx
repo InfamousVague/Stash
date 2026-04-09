@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { Button } from '@base/primitives/button';
 import '@base/primitives/button/button.css';
 import { Select } from '@base/primitives/select';
 import '@base/primitives/select/select.css';
+import { InfoGuide } from './InfoGuide';
 import './DiffView.css';
 
 interface DiffEntry {
@@ -19,6 +21,7 @@ interface DiffViewProps {
 }
 
 export function DiffView({ projectId, profiles }: DiffViewProps) {
+  const { t } = useTranslation();
   const [left, setLeft] = useState(profiles[0] || '');
   const [right, setRight] = useState(profiles[1] || profiles[0] || '');
   const [entries, setEntries] = useState<DiffEntry[]>([]);
@@ -49,18 +52,25 @@ export function DiffView({ projectId, profiles }: DiffViewProps) {
 
   return (
     <div className="diff-view">
+      <div style={{ padding: '0 0 8px' }}>
+        <InfoGuide
+          storageKey="stash-guide-diff-dismissed"
+          titleKey="guide.diff.title"
+          stepKeys={['guide.diff.step1', 'guide.diff.step2', 'guide.diff.step3']}
+        />
+      </div>
       <div className="diff-view__controls">
         <div className="diff-view__select">
-          <label className="diff-view__label">Left</label>
+          <label className="diff-view__label">{t('diffView.left')}</label>
           <Select size="md" value={left} onChange={(e) => setLeft(e.target.value)}>
             {profiles.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
           </Select>
         </div>
-        <span className="diff-view__vs">vs</span>
+        <span className="diff-view__vs">{t('diffView.vs')}</span>
         <div className="diff-view__select">
-          <label className="diff-view__label">Right</label>
+          <label className="diff-view__label">{t('diffView.right')}</label>
           <Select size="md" value={right} onChange={(e) => setRight(e.target.value)}>
             {profiles.map((p) => (
               <option key={p} value={p}>{p}</option>
@@ -68,24 +78,24 @@ export function DiffView({ projectId, profiles }: DiffViewProps) {
           </Select>
         </div>
         <Button variant="ghost" size="md" onClick={runDiff} disabled={loading || left === right}>
-          Refresh
+          {t('diffView.refresh')}
         </Button>
       </div>
 
       {left === right && (
-        <p className="diff-view__hint">Select two different profiles to compare.</p>
+        <p className="diff-view__hint">{t('diffView.selectDifferent')}</p>
       )}
 
       {entries.length > 0 && (
         <>
           <p className="diff-view__summary">
             {changedCount === 0
-              ? 'Profiles are identical.'
-              : `${changedCount} difference${changedCount !== 1 ? 's' : ''} found.`}
+              ? t('diffView.identical')
+              : t('diffView.differences', { count: changedCount })}
           </p>
           <div className="diff-view__table">
             <div className="diff-view__row diff-view__row--header">
-              <span className="diff-view__cell diff-view__cell--key">Variable</span>
+              <span className="diff-view__cell diff-view__cell--key">{t('diffView.variable')}</span>
               <span className="diff-view__cell">{left}</span>
               <span className="diff-view__cell">{right}</span>
             </div>
@@ -104,7 +114,7 @@ export function DiffView({ projectId, profiles }: DiffViewProps) {
             ))}
             {entries.filter((e) => e.status === 'same').length > 0 && (
               <details className="diff-view__unchanged">
-                <summary>{entries.filter((e) => e.status === 'same').length} unchanged variables</summary>
+                <summary>{t('diffView.unchangedVars', { count: entries.filter((e) => e.status === 'same').length })}</summary>
                 {entries.filter((e) => e.status === 'same').map((entry) => (
                   <div key={entry.key} className="diff-view__row diff-view__row--same">
                     <span className="diff-view__cell diff-view__cell--key">

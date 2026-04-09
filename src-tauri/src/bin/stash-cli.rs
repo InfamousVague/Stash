@@ -50,6 +50,27 @@ enum Commands {
     Remove {
         key: String,
     },
+    /// Run a command with env vars injected
+    Run {
+        /// Profile to use (defaults to active)
+        #[arg(long)]
+        profile: Option<String>,
+        /// Command and arguments (after --)
+        #[arg(trailing_var_arg = true, required = true)]
+        command: Vec<String>,
+    },
+    /// Export env vars in different formats
+    Export {
+        /// Output format: env (default), json, yaml, docker, github
+        #[arg(long, short, default_value = "env")]
+        format: String,
+        /// Profile to use (defaults to active)
+        #[arg(long)]
+        profile: Option<String>,
+        /// Output file (defaults to stdout)
+        #[arg(long, short)]
+        output: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -111,6 +132,8 @@ fn main() {
         Commands::Keys { action } => cmd_keys(action),
         Commands::Add { key, value } => cmd_add(&key, value.as_deref()),
         Commands::Remove { key } => cmd_remove(&key),
+        Commands::Run { profile, command } => cmd_run(profile.as_deref(), &command),
+        Commands::Export { format, profile, output } => cmd_export(&format, profile.as_deref(), output.as_deref()),
     };
 
     if let Err(e) = result {
@@ -386,6 +409,112 @@ fn cmd_remove(key: &str) -> Result<(), String> {
     let env_path = Path::new(&dir).join(".env");
     env_parser::remove_var_from_file(&env_path.to_string_lossy(), key)?;
     println!("Removed {}", key);
+    Ok(())
+}
+
+fn cmd_run(profile: Option<&str>, command: &[String]) -> Result<(), String> {
+    if command.is_empty() {
+        return Err("No command specified. Usage: stash run -- <command>".to_string());
+    }
+
+    let dir = current_dir();
+
+    // Determine which .env file to read
+    let env_path = if let Some(prof) = profile {
+        Path::new(&dir).join(format!(".env.{}", prof))
+    } else {
+        Path::new(&dir).join(".env")
+    };
+
+    let vars = if env_path.exists() {
+        env_parser::read_env_file(&env_path.to_string_lossy())?
+    } else {
+        Vec::new()
+    };
+
+    let mut child = std::process::Command::new(&command[0]);
+    if command.len() > 1 {
+        child.args(&command[1..]);
+    }
+
+    // Inject env vars
+    for var in &vars {
+        child.env(&var.key, &var.value);
+    }
+
+    let status = child
+        .status()
+        .map_err(|e| format!("Failed to run '{}': {}", command[0], e))?;
+
+    std::process::exit(status.code().unwrap_or(1));
+}
+
+fn cmd_export(format: &str, profile: Option<&str>, output: Option<&str>) -> Result<(), String> {
+    let dir = current_dir();
+
+    let env_path = if let Some(prof) = profile {
+        Path::new(&dir).join(format!(".env.{}", prof))
+    } else {
+        Path::new(&dir).join(".env")
+    };
+
+    if !env_path.exists() {
+        return Err(format!("{} not found", env_path.display()));
+    }
+
+    let vars = env_parser::read_env_file(&env_path.to_string_lossy())?;
+
+    let content = match format {
+        "json" => {
+            let map: serde_json::Map<String, serde_json::Value> = vars
+                .iter()
+                .map(|v| (v.key.clone(), serde_json::Value::String(v.value.clone())))
+                .collect();
+            serde_json::to_string_pretty(&map).map_err(|e| e.to_string())?
+        }
+        "yaml" => {
+            vars.iter()
+                .map(|v| format!("{}: \"{}\"", v.key, v.value.replace('"', "\\\"")))
+                .collect::<Vec<_>>()
+                .join("\n")
+        }
+        "docker" => {
+            // Docker --env-file format: KEY=VALUE (no quotes)
+            vars.iter()
+                .map(|v| format!("{}={}", v.key, v.value))
+                .collect::<Vec<_>>()
+                .join("\n")
+        }
+        "github" => {
+            // GitHub Actions: gh secret set commands
+            vars.iter()
+                .map(|v| format!("gh secret set {} --body \"{}\"", v.key, v.value.replace('"', "\\\"")))
+                .collect::<Vec<_>>()
+                .join("\n")
+        }
+        "env" | _ => {
+            // Standard .env format
+            vars.iter()
+                .map(|v| {
+                    if v.value.contains(' ') || v.value.contains('#') {
+                        format!("{}=\"{}\"", v.key, v.value.replace('"', "\\\""))
+                    } else {
+                        format!("{}={}", v.key, v.value)
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join("\n")
+        }
+    };
+
+    if let Some(out_path) = output {
+        std::fs::write(out_path, &content)
+            .map_err(|e| format!("Failed to write {}: {}", out_path, e))?;
+        println!("Exported {} variables to {}", vars.len(), out_path);
+    } else {
+        println!("{}", content);
+    }
+
     Ok(())
 }
 
