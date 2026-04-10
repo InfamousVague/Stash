@@ -2,7 +2,6 @@
   border: 1px solid var(--color-border-default);
   border-radius: 8px;
   margin: 12px 16px 0;
-  overflow: hidden;
   background: var(--color-bg-elevated);
 }
 
@@ -22,6 +21,7 @@
   align-items: center;
   gap: 8px;
   padding: 0 4px 0 0;
+  border-radius: 7px 7px 0 0;
 }
 
 .lock-panel__header-left {
@@ -51,6 +51,10 @@
   text-align: left;
 }
 
+.lock-panel__toggle {
+  border-radius: 7px 0 0 0;
+}
+
 .lock-panel__toggle:hover {
   background: var(--color-bg-secondary);
 }
@@ -75,15 +79,20 @@
   line-height: 1.5;
   padding: 0 12px 10px;
   margin: 0;
+  border-radius: 0 0 7px 7px;
 }
 
-/* Stats row */
+/* Stats row — last visible child when collapsed */
 .lock-panel__stats {
   display: flex;
   align-items: center;
   gap: 0;
   padding: 6px 12px 8px;
   border-top: 1px solid var(--color-border-subtle, var(--color-border-default));
+}
+
+.lock-panel__stats:last-child {
+  border-radius: 0 0 7px 7px;
 }
 
 .lock-panel__stat {
@@ -125,6 +134,7 @@
   border-top: 1px solid var(--color-border-default);
   display: flex;
   flex-direction: column;
+  border-radius: 0 0 7px 7px;
 }
 
 .lock-panel__detail-heading {
@@ -143,6 +153,7 @@
 
 .lock-panel__profile:last-child {
   border-bottom: none;
+  border-radius: 0 0 7px 7px;
 }
 
 .lock-panel__profile--changed,
