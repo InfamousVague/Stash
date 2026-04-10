@@ -13,10 +13,13 @@ import { Badge } from '@base/primitives/badge';
 import '@base/primitives/badge/badge.css';
 import { Progress } from '@base/primitives/progress';
 import '@base/primitives/progress/progress.css';
+import { Icon } from '@base/primitives/icon';
+import '@base/primitives/icon/icon.css';
 import { scan } from '@base/primitives/icon/icons/scan';
 import { lock } from '@base/primitives/icon/icons/lock';
 import { terminal } from '@base/primitives/icon/icons/terminal';
 import { download } from '@base/primitives/icon/icons/download';
+import { copy } from '@base/primitives/icon/icons/copy';
 import { useScanner } from '../hooks/useScanner';
 import { useVault } from '../hooks/useVault';
 import { useUpdater } from '../hooks/useUpdater';
@@ -50,10 +53,43 @@ export function SettingsPage() {
   const updater = useUpdater();
   const toast = useToastContext();
   const [cliInstalled, setCliInstalled] = useState(false);
+  const [identityName, setIdentityName] = useState('');
+  const [identitySource, setIdentitySource] = useState<'git' | 'env' | 'fallback'>('fallback');
+  const [publicKey, setPublicKey] = useState('');
+  const [hasKeypair, setHasKeypair] = useState(false);
 
   useEffect(() => {
     // Check if CLI is installed
     invoke<boolean>('check_cli_installed').then(setCliInstalled).catch(() => {});
+
+    // Load identity info
+    invoke<string>('get_git_username').then((name) => {
+      if (name) {
+        setIdentityName(name);
+        setIdentitySource('git');
+      } else {
+        // Fall back to $USER
+        const envUser = import.meta.env.VITE_USER || '';
+        if (envUser) {
+          setIdentityName(envUser);
+          setIdentitySource('env');
+        } else {
+          setIdentityName('Me');
+          setIdentitySource('fallback');
+        }
+      }
+    }).catch(() => {
+      setIdentityName('Me');
+      setIdentitySource('fallback');
+    });
+
+    // Load public key
+    invoke<string>('get_public_key').then((key) => {
+      setPublicKey(key);
+      setHasKeypair(true);
+    }).catch(() => {
+      setHasKeypair(false);
+    });
   }, []);
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -140,6 +176,59 @@ export function SettingsPage() {
               }}
             />
           </div>
+        </section>
+
+        <Separator />
+
+        <section className="settings-page__section">
+          <h3 className="settings-page__section-title">{t('settings.identity')}</h3>
+          <p className="settings-page__section-desc">{t('settings.identityDesc')}</p>
+
+          <div className="settings-page__row">
+            <div>
+              <span className="settings-page__row-label">{t('settings.displayName')}</span>
+              <span className="settings-page__row-desc">
+                {identitySource === 'git'
+                  ? t('settings.nameSourceGit')
+                  : identitySource === 'env'
+                  ? t('settings.nameSourceEnv')
+                  : t('settings.nameSourceFallback')}
+              </span>
+            </div>
+            <span className="settings-page__identity-name">{identityName}</span>
+          </div>
+
+          {hasKeypair && (
+            <div className="settings-page__identity-key">
+              <div className="settings-page__identity-key-header">
+                <span className="settings-page__row-label">{t('settings.publicKey')}</span>
+                <Badge variant="subtle" size="sm" color="success">{t('settings.x25519')}</Badge>
+                <button
+                  className="settings-page__copy-btn"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(publicKey);
+                    toast.success(t('settings.keyCopied'));
+                  }}
+                  title={t('common.copy')}
+                >
+                  <Icon icon={copy} size="xs" color="currentColor" />
+                  {t('common.copy')}
+                </button>
+              </div>
+              <code className="settings-page__key-value">{publicKey}</code>
+              <span className="settings-page__row-desc">{t('settings.publicKeyHint')}</span>
+            </div>
+          )}
+
+          {!hasKeypair && (
+            <div className="settings-page__row">
+              <div>
+                <span className="settings-page__row-label">{t('settings.publicKey')}</span>
+                <span className="settings-page__row-desc">{t('settings.noKeypairHint')}</span>
+              </div>
+              <Badge variant="subtle" size="sm" color="neutral">{t('settings.noKeypair')}</Badge>
+            </div>
+          )}
         </section>
 
         <Separator />
