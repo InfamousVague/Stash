@@ -10,12 +10,10 @@ import { folderOpen } from '@base/primitives/icon/icons/folder-open';
 import { scan } from '@base/primitives/icon/icons/scan';
 import { plus } from '@base/primitives/icon/icons/plus';
 import { externalLink } from '@base/primitives/icon/icons/external-link';
-import { check } from '@base/primitives/icon/icons/check';
 import { ScanBanner } from '../components/ScanBanner';
 import { useScanner } from '../hooks/useScanner';
 import { useProjects } from '../hooks/useProjects';
 import { FrameworkChip } from '../components/FrameworkChip';
-import { InfoGuide } from '../components/InfoGuide';
 import stashIcon from '../assets/stash-icon.png';
 import './DiscoverPage.css';
 
@@ -26,7 +24,7 @@ interface DiscoverPageProps {
 export function DiscoverPage({ onNavigateToVaults }: DiscoverPageProps) {
   const { t } = useTranslation();
   const { scanning, progress, results, startScan, dismiss } = useScanner();
-  const { projects, importProject, loadProjects, selectProject } = useProjects();
+  const { projects, importProject, loadProjects } = useProjects();
 
   useEffect(() => { loadProjects(); }, [loadProjects]);
   // Auto-scan on first mount if no results yet
@@ -55,13 +53,6 @@ export function DiscoverPage({ onNavigateToVaults }: DiscoverPageProps) {
 
   return (
     <div className="discover-page">
-      <div style={{ padding: '16px 24px 0' }}>
-        <InfoGuide
-          storageKey="stash-guide-discover-dismissed"
-          titleKey="guide.discover.title"
-          stepKeys={['guide.discover.step1', 'guide.discover.step2', 'guide.discover.step3', 'guide.discover.step4']}
-        />
-      </div>
       <div className="discover-page__toolbar">
         <Button variant="primary" icon={scan} onClick={startScan} disabled={scanning}>
           {scanning ? t('discover.scanning') : t('discover.scanForEnvs')}

@@ -18,6 +18,9 @@ import { ProfileSwitcher } from '../components/ProfileSwitcher';
 import { EnvEditor } from '../components/EnvEditor';
 import { EnvWizard } from '../components/EnvWizard';
 import { GitBanner } from '../components/GitBanner';
+import { StashSetupBanner } from '../components/StashSetupBanner';
+import { StashLockPanel } from '../components/StashLockPanel';
+import { ProjectSettings } from '../components/ProjectSettings';
 import { DiffView } from '../components/DiffView';
 import { TeamPanel } from '../components/TeamPanel';
 import { useScanner } from '../hooks/useScanner';
@@ -26,36 +29,41 @@ import { useProfiles } from '../hooks/useProfiles';
 import { useDirectory } from '../hooks/useDirectory';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useToastContext } from '../contexts/ToastContext';
+import { useSavedKeys } from '../hooks/useSavedKeys';
+import { useLockMetadata } from '../hooks/useLockMetadata';
 import { invoke } from '@tauri-apps/api/core';
-import type { EnvFileGroup, EnvVar } from '../types';
+import type { EnvFileGroup, EnvVar, ApiService } from '../types';
 import { FrameworkChip } from '../components/FrameworkChip';
 import { ProjectIcon } from '../components/ProjectIcon';
-import { InfoGuide } from '../components/InfoGuide';
+import { Tip } from '../components/Tip';
 import stashIcon from '../assets/stash-icon.png';
 import './VaultsPage.css';
 
 interface VaultsPageProps {
   tourShowDemo?: boolean;
+  onNavigateToDiscover?: () => void;
 }
 
-export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
+export function VaultsPage({ tourShowDemo, onNavigateToDiscover }: VaultsPageProps) {
   const { t } = useTranslation();
   const { scanning, progress, results, startScan, dismiss } = useScanner();
   const {
-    projects, activeProject, vars, rotation, expiry,
+    projects, activeProject, vars, rotation,
     loadProjects, importProject, selectProject,
-    updateVar, addVar, deleteVar, setKeyExpiry, deleteProject,
+    updateVar, addVar, deleteVar, deleteProject,
   } = useProjects();
-  const { profiles, activeProfile, loadProfiles, switchProfile, createProfile } = useProfiles();
+  const { profiles, activeProfile, loadProfiles, switchProfile, createProfile, deleteProfile } = useProfiles();
   const { matchEnvKey } = useDirectory();
+  const { keys: savedKeys, refresh: refreshSavedKeys, addKey: addSavedKey } = useSavedKeys();
+  const lockMeta = useLockMetadata(activeProject?.id);
   const toast = useToastContext();
-  const [detailTab, setDetailTab] = useState<'editor' | 'diff' | 'team'>('editor');
+  const [detailTab, setDetailTab] = useState<'editor' | 'diff' | 'sharing' | 'settings'>('editor');
   const [wizardMode, setWizardMode] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [cliInstalled, setCliInstalled] = useState<boolean | null>(null);
   const [cliBannerDismissed, setCliBannerDismissed] = useState(() => localStorage.getItem('stash-cli-banner-dismissed') === 'true');
 
-  useEffect(() => { loadProjects(); }, [loadProjects]);
+  useEffect(() => { loadProjects(); refreshSavedKeys(); }, [loadProjects, refreshSavedKeys]);
 
   useEffect(() => {
     invoke<boolean>('check_cli_installed').then(setCliInstalled).catch(() => setCliInstalled(false));
@@ -71,8 +79,11 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
   }, [projects, selectProject]);
 
   useEffect(() => {
-    if (activeProject) loadProfiles(activeProject.id);
-  }, [activeProject, loadProfiles]);
+    if (activeProject) {
+      loadProfiles(activeProject.id);
+      lockMeta.load();
+    }
+  }, [activeProject, loadProfiles, lockMeta.load]);
 
   const handleImport = async (group: EnvFileGroup) => {
     await importProject(group.project_path, group.project_name);
@@ -120,7 +131,7 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
           <img src={stashIcon} alt="" className="vaults-page__empty-img" />
           <p className="vaults-page__empty-text">{t('vaults.emptyTitle')}</p>
           <p className="vaults-page__empty-hint">{t('vaults.emptyHint')}</p>
-          <Button variant="primary" icon={scan} onClick={startScan}>
+          <Button variant="primary" icon={scan} onClick={onNavigateToDiscover || startScan}>
             {t('vaults.scanForEnvs')}
           </Button>
         </div>
@@ -153,17 +164,19 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
             >
               {t('cli.bannerInstall')}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={x}
-              iconOnly
-              onClick={() => {
-                localStorage.setItem('stash-cli-banner-dismissed', 'true');
-                setCliBannerDismissed(true);
-              }}
-              aria-label={t('cli.bannerDismiss')}
-            />
+            <Tip content={t('cli.bannerDismiss')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={x}
+                iconOnly
+                onClick={() => {
+                  localStorage.setItem('stash-cli-banner-dismissed', 'true');
+                  setCliBannerDismissed(true);
+                }}
+                aria-label={t('cli.bannerDismiss')}
+              />
+            </Tip>
           </div>
         </div>
       )}
@@ -180,15 +193,20 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
                   <span className="vaults-page__list-title">{t('vaults.discovered')}</span>
                   <Badge variant="subtle" size="sm" color="accent">{unimportedResults.length}</Badge>
                 </div>
-                {unimportedResults.map((group) => (
+                {unimportedResults.slice(0, 3).map((group) => (
                   <div key={group.project_path} className="vaults-page__discover-item">
                     <div className="vaults-page__discover-info">
                       <Icon icon={folderOpen} size="xs" color="tertiary" />
                       <span className="vaults-page__discover-name">{group.project_name}</span>
                     </div>
-                    <Button variant="ghost" size="sm" icon={plus} iconOnly onClick={() => handleImport(group)} aria-label="Import" />
+                    <Tip content={t('vaults.import')}><Button variant="ghost" size="sm" icon={plus} iconOnly onClick={() => handleImport(group)} aria-label={t('vaults.import')} /></Tip>
                   </div>
                 ))}
+                {unimportedResults.length > 3 && onNavigateToDiscover && (
+                  <button className="vaults-page__discover-more" onClick={onNavigateToDiscover}>
+                    {t('vaults.andMore', { count: unimportedResults.length - 3 })}
+                  </button>
+                )}
               </div>
             )}
 
@@ -234,6 +252,10 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
               />
             ) : activeProject ? (
               <>
+                <StashSetupBanner
+                  projectId={activeProject.id}
+                  projectName={activeProject.name}
+                />
                 <div className="vaults-page__detail-header">
                   <h2 className="vaults-page__detail-title">{activeProject.name}</h2>
                   <div className="vaults-page__detail-tabs">
@@ -248,31 +270,52 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
                       >{t('vaults.diff')}</button>
                     )}
                     <button
-                      className={`vaults-page__tab ${detailTab === 'team' ? 'vaults-page__tab--active' : ''}`}
-                      onClick={() => setDetailTab('team')}
-                    >{t('vaults.team')}</button>
+                      className={`vaults-page__tab ${detailTab === 'sharing' ? 'vaults-page__tab--active' : ''}`}
+                      onClick={() => setDetailTab('sharing')}
+                    >{t('vaults.sharing')}</button>
+                    <button
+                      className={`vaults-page__tab ${detailTab === 'settings' ? 'vaults-page__tab--active' : ''}`}
+                      onClick={() => setDetailTab('settings')}
+                    >{t('vaults.settings')}</button>
                   </div>
-                  <Button
-                    variant="ghost" size="sm" iconOnly icon={trash2}
-                    onClick={() => setConfirmDelete(activeProject.id)}
-                    aria-label="Delete project"
-                  />
+                  <Tip content={t('vaults.deleteProject')}>
+                    <Button
+                      variant="ghost" size="sm" iconOnly icon={trash2}
+                      onClick={() => setConfirmDelete(activeProject.id)}
+                      aria-label={t('vaults.deleteProject')}
+                    />
+                  </Tip>
                 </div>
                 {detailTab === 'editor' && (
                   <>
-                    <div style={{ padding: '12px 16px 0' }}>
-                      <InfoGuide
-                        storageKey="stash-guide-editor-dismissed"
-                        titleKey="guide.editor.title"
-                        stepKeys={['guide.editor.step1', 'guide.editor.step2', 'guide.editor.step3', 'guide.editor.step4']}
-                      />
-                    </div>
                     <GitBanner projectPath={activeProject.path} />
                     <ProfileSwitcher
                       profiles={profiles}
                       activeProfile={activeProfile}
-                      onSwitch={(name) => activeProject && switchProfile(activeProject.id, name)}
-                      onCreate={(name, copyFrom) => activeProject && createProfile(activeProject.id, name, copyFrom)}
+                      customColors={lockMeta.get<Record<string, string>>('profile_colors')}
+                      onColorChange={async (profileName, color) => {
+                        const colors = lockMeta.get<Record<string, string>>('profile_colors', {});
+                        await lockMeta.set('profile_colors', { ...colors, [profileName]: color });
+                      }}
+                      onSwitch={async (name) => {
+                        if (!activeProject) return;
+                        await switchProfile(activeProject.id, name);
+                        selectProject(activeProject.id);
+                      }}
+                      onCreate={async (name, copyValues, copyFrom) => {
+                        if (!activeProject) return;
+                        await createProfile(activeProject.id, name, copyValues, copyFrom);
+                        selectProject(activeProject.id);
+                      }}
+                      onDelete={async (name) => {
+                        if (!activeProject) return;
+                        await deleteProfile(activeProject.id, name);
+                        selectProject(activeProject.id);
+                      }}
+                    />
+                    <StashLockPanel
+                      projectId={activeProject.id}
+                      onSynced={() => selectProject(activeProject.id)}
                     />
                     <EnvEditor
                       vars={vars}
@@ -282,17 +325,31 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
                       onDelete={deleteVar}
                       matchEnvKey={matchEnvKey}
                       rotation={rotation}
-                      expiry={expiry}
-                      onSetExpiry={setKeyExpiry}
                       framework={activeProject.framework}
+                      savedKeys={savedKeys}
+                      onSaveKey={async (envKey, value, service) => {
+                        const svc = service as ApiService | null | undefined;
+                        const serviceId = svc?.id || envKey.toLowerCase().replace(/_/g, '-');
+                        const serviceName = svc?.name || envKey;
+                        try {
+                          await addSavedKey(serviceId, serviceName, envKey, value, '');
+                          toast.success(t('envVarRow.keySaved', { key: envKey }));
+                          refreshSavedKeys();
+                        } catch (e) {
+                          toast.error(String(e));
+                        }
+                      }}
                     />
                   </>
                 )}
                 {detailTab === 'diff' && (
                   <DiffView projectId={activeProject.id} profiles={profiles} />
                 )}
-                {detailTab === 'team' && (
+                {detailTab === 'sharing' && (
                   <TeamPanel projectId={activeProject.id} />
+                )}
+                {detailTab === 'settings' && (
+                  <ProjectSettings projectId={activeProject.id} projectPath={activeProject.path} />
                 )}
               </>
             ) : tourShowDemo ? (
@@ -302,7 +359,8 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
                   <div className="vaults-page__detail-tabs">
                     <button className="vaults-page__tab vaults-page__tab--active">{t('vaults.editor')}</button>
                     <button className="vaults-page__tab">{t('vaults.diff')}</button>
-                    <button className="vaults-page__tab">{t('vaults.team')}</button>
+                    <button className="vaults-page__tab">{t('vaults.sharing')}</button>
+                    <button className="vaults-page__tab">{t('vaults.settings')}</button>
                   </div>
                 </div>
                 <div className="vaults-page__tour-demo">
@@ -322,13 +380,6 @@ export function VaultsPage({ tourShowDemo }: VaultsPageProps) {
               </>
             ) : (
               <div className="vaults-page__detail-empty">
-                <div style={{ width: '100%', maxWidth: 400 }}>
-                  <InfoGuide
-                    storageKey="stash-guide-vaults-dismissed"
-                    titleKey="guide.vaults.title"
-                    stepKeys={['guide.vaults.step1', 'guide.vaults.step2', 'guide.vaults.step3', 'guide.vaults.step4']}
-                  />
-                </div>
                 <img src={stashIcon} alt="" className="vaults-page__empty-img" />
                 <p className="vaults-page__empty-text">{t('vaults.selectProject')}</p>
                 <p className="vaults-page__empty-hint">{t('vaults.selectProjectHint')}</p>

@@ -44,13 +44,14 @@ describe('useProfiles', () => {
     const { result } = renderHook(() => useProfiles());
 
     await act(async () => {
-      await result.current.createProfile('proj-1', 'new-profile', 'default');
+      await result.current.createProfile('proj-1', 'new-profile', false, 'default');
     });
 
     expect(invoke).toHaveBeenCalledWith('create_profile', {
       projectId: 'proj-1',
       name: 'new-profile',
       copyFrom: 'default',
+      copyValues: false,
     });
   });
 });

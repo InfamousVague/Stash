@@ -28,8 +28,10 @@ export default defineConfig(async () => ({
       ? { protocol: "ws", host, port: 1421 }
       : undefined,
     watch: {
-      ignored: ["**/src-tauri/**"],
+      ignored: ["**/src-tauri/**", "**/.env", "**/.env.*", "**/.env*"],
     },
+    // Prevent Vite from watching/reloading on .env file changes (profile switching writes to .env)
+    envDir: resolve(__dirname, 'src-tauri'),
   },
   test: {
     globals: true,

@@ -9,6 +9,24 @@ import { lockOpen } from '@base/primitives/icon/icons/lock-open';
 import stashIcon from '../assets/stash-icon.png';
 import './UnlockScreen.css';
 
+function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
+  if (!pw) return { score: 0, label: '', color: 'transparent' };
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (pw.length >= 14) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+  // Penalize repeated chars
+  if (/(.)\1{2,}/.test(pw)) score = Math.max(score - 1, 0);
+
+  if (score <= 1) return { score: 1, label: 'Weak', color: 'var(--color-error, #ef4444)' };
+  if (score <= 2) return { score: 2, label: 'Fair', color: 'var(--color-warning, #f59e0b)' };
+  if (score <= 4) return { score: 3, label: 'Good', color: 'var(--color-info, #3b82f6)' };
+  return { score: 4, label: 'Strong', color: 'var(--color-success, #22c55e)' };
+}
+
 interface UnlockScreenProps {
   initialized: boolean;
   error: string;
@@ -73,6 +91,27 @@ export function UnlockScreen({ initialized, error, hasKeychain, onInit, onUnlock
             onChange={(e) => setPassword(e.target.value)}
             autoFocus={!hasKeychain}
           />
+          {!initialized && password && (() => {
+            const strength = getPasswordStrength(password);
+            return (
+              <div className="unlock-screen__strength">
+                <div className="unlock-screen__strength-track">
+                  {[1, 2, 3, 4].map((level) => (
+                    <div
+                      key={level}
+                      className="unlock-screen__strength-segment"
+                      style={{
+                        background: level <= strength.score ? strength.color : 'var(--color-border-default)',
+                      }}
+                    />
+                  ))}
+                </div>
+                <span className="unlock-screen__strength-label" style={{ color: strength.color }}>
+                  {strength.label}
+                </span>
+              </div>
+            );
+          })()}
           {!initialized && (
             <Input
               size="md"

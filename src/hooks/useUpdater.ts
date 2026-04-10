@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { check } from '@tauri-apps/plugin-updater';
+import { relaunch } from '@tauri-apps/plugin-process';
 
 interface UpdateInfo {
   version: string;
@@ -12,6 +13,7 @@ export function useUpdater() {
   const [updateAvailable, setUpdateAvailable] = useState<UpdateInfo | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [readyToRelaunch, setReadyToRelaunch] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
@@ -48,6 +50,7 @@ export function useUpdater() {
     if (!update) return;
     setDownloading(true);
     setProgress(0);
+    setReadyToRelaunch(false);
     try {
       let downloaded = 0;
       let contentLength = 0;
@@ -67,10 +70,20 @@ export function useUpdater() {
             break;
         }
       });
-      // After install, the app will restart automatically
+      // Download + install complete — ready to relaunch
+      setDownloading(false);
+      setReadyToRelaunch(true);
     } catch (e) {
       setError(String(e));
       setDownloading(false);
+    }
+  }, []);
+
+  const doRelaunch = useCallback(async () => {
+    try {
+      await relaunch();
+    } catch (e) {
+      setError(`Relaunch failed: ${e}`);
     }
   }, []);
 
@@ -78,8 +91,7 @@ export function useUpdater() {
     setDismissed(true);
   }, []);
 
-  // Check on mount, but silently (don't show errors)
-  // Skip the auto-check if we're outside Tauri (e.g. browser/E2E)
+  // Check on mount silently
   useEffect(() => {
     if (!(window as any).__TAURI_INTERNALS__) return;
     check().then((update) => {
@@ -101,10 +113,12 @@ export function useUpdater() {
     updateAvailable,
     downloading,
     progress,
+    readyToRelaunch,
     error,
     dismissed,
     checkForUpdate,
     downloadAndInstall,
+    doRelaunch,
     dismiss,
   };
 }

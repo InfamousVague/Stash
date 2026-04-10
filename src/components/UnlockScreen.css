@@ -47,6 +47,35 @@
   width: 100%;
 }
 
+/* Password strength meter */
+.unlock-screen__strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.unlock-screen__strength-track {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.unlock-screen__strength-segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.unlock-screen__strength-label {
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 42px;
+  text-align: right;
+}
+
 .unlock-screen__error {
   font-size: 13px;
   color: var(--color-error, #f87171);

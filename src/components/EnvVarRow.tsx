@@ -10,13 +10,17 @@ import { invoke } from '@tauri-apps/api/core';
 import { eye } from '@base/primitives/icon/icons/eye';
 import { eyeOff } from '@base/primitives/icon/icons/eye-off';
 import { trash2 } from '@base/primitives/icon/icons/trash-2';
-import { calendar } from '@base/primitives/icon/icons/calendar';
-import { clock } from '@base/primitives/icon/icons/clock';
+import { clipboardCopy } from '@base/primitives/icon/icons/clipboard-copy';
+import { clipboardPaste } from '@base/primitives/icon/icons/clipboard-paste';
+import { history as historyIcon } from '@base/primitives/icon/icons/history';
 import { alertTriangle } from '@base/primitives/icon/icons/alert-triangle';
+import { save } from '@base/primitives/icon/icons/save';
 import { Icon } from '@base/primitives/icon';
 import '@base/primitives/icon/icon.css';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import type { ApiService, HistoryEntry } from '../types';
+import type { SavedKey } from '../hooks/useSavedKeys';
+import { Tip } from './Tip';
 import './EnvVarRow.css';
 
 interface EnvVarRowProps {
@@ -25,10 +29,10 @@ interface EnvVarRowProps {
   projectId?: string;
   matchedService?: ApiService | null;
   lastChanged?: number; // unix timestamp
-  expiryDate?: number; // unix timestamp
   onUpdate: (key: string, value: string) => void;
   onDelete: (key: string) => void;
-  onSetExpiry?: (key: string, timestamp: number | null) => void;
+  savedKeys?: SavedKey[];
+  onSaveKey?: (envKey: string, value: string, service?: ApiService | null) => void;
 }
 
 function formatRelativeTime(timestamp: number): string {
@@ -48,17 +52,6 @@ function getStaleStatus(lastChanged?: number): 'fresh' | 'aging' | 'stale' | 'un
   if (days > 90) return 'stale';
   if (days > 30) return 'aging';
   return 'fresh';
-}
-
-function getExpiryLabel(expiryDate?: number): { label: string; color: 'error' | 'warning' | 'neutral' } | null {
-  if (!expiryDate) return null;
-  const now = Date.now() / 1000;
-  const daysUntil = Math.ceil((expiryDate - now) / 86400);
-  const date = new Date(expiryDate * 1000);
-  const formatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  if (daysUntil <= 0) return { label: `Expired ${formatted}`, color: 'error' };
-  if (daysUntil <= 7) return { label: `Expires ${formatted}`, color: 'warning' };
-  return { label: `Expires ${formatted}`, color: 'neutral' };
 }
 
 function validateEnvVar(key: string, value: string): string | null {
@@ -93,32 +86,37 @@ function validateEnvVar(key: string, value: string): string | null {
   return null;
 }
 
-function timestampToDateInput(ts: number): string {
-  const d = new Date(ts * 1000);
-  return d.toISOString().split('T')[0];
-}
-
-export function EnvVarRow({ envKey, value, projectId, matchedService, lastChanged, expiryDate, onUpdate, onDelete, onSetExpiry }: EnvVarRowProps) {
+export function EnvVarRow({ envKey, value, projectId, matchedService, lastChanged, onUpdate, onDelete, savedKeys, onSaveKey }: EnvVarRowProps) {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const [editing, setEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
-  const [showExpiryPicker, setShowExpiryPicker] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
+  const [showSavedKeyPicker, setShowSavedKeyPicker] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [historyVisible, setHistoryVisible] = useState(false);
   const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
-  const [dotKey, setDotKey] = useState(0); // for re-triggering dot animation
+  const [dotKey, setDotKey] = useState(0);
+  const [copied, setCopied] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const historyRef = useRef<HTMLDivElement>(null);
-  const expiryRef = useRef<HTMLDivElement>(null);
   const validationRef = useRef<HTMLSpanElement>(null);
+  const savedKeyPickerRef = useRef<HTMLDivElement>(null);
 
   const openPopoverAt = (el: HTMLElement) => {
     const rect = el.getBoundingClientRect();
     setPopoverPos({ top: rect.bottom + 4, left: rect.left });
   };
+
+  // Matching saved keys for this env key
+  const matchingSavedKeys = (savedKeys || []).filter((sk) => {
+    // Match by exact env_key name
+    if (sk.env_key.toUpperCase() === envKey.toUpperCase()) return true;
+    // Match by service if we have a matched service
+    if (matchedService && sk.service_id === matchedService.id) return true;
+    return false;
+  });
 
   // Close popovers on outside click
   useEffect(() => {
@@ -126,22 +124,22 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
       if (showHistory && historyRef.current && !historyRef.current.contains(e.target as Node)) {
         setShowHistory(false);
       }
-      if (showExpiryPicker && expiryRef.current && !expiryRef.current.contains(e.target as Node)) {
-        setShowExpiryPicker(false);
-      }
       if (showValidation && validationRef.current && !validationRef.current.contains(e.target as Node)) {
         setShowValidation(false);
+      }
+      if (showSavedKeyPicker && savedKeyPickerRef.current && !savedKeyPickerRef.current.contains(e.target as Node)) {
+        setShowSavedKeyPicker(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showHistory, showExpiryPicker, showValidation]);
+  }, [showHistory, showValidation, showSavedKeyPicker]);
 
   const loadHistory = useCallback(async () => {
     if (!projectId) return;
     try {
       const entries = await invoke<HistoryEntry[]>('get_var_history', { projectId, key: envKey });
-      setHistory(entries.reverse()); // newest first
+      setHistory(entries.reverse());
       setShowHistory(true);
     } catch {
       setHistory([]);
@@ -171,10 +169,25 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
     };
   }, []);
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(localValue);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* ignore */ }
+  };
+
+  const handleUseSavedKey = (sk: SavedKey) => {
+    setLocalValue(sk.value);
+    onUpdate(envKey, sk.value);
+    setShowSavedKeyPicker(false);
+  };
+
   const showGetKey = matchedService && !value.trim();
   const stale = getStaleStatus(lastChanged);
-  const expiryLabel = getExpiryLabel(expiryDate);
   const validationWarning = validateEnvVar(envKey, localValue);
+  const hasSavedValue = matchingSavedKeys.length > 0;
+  const isAlreadySaved = matchingSavedKeys.some((sk) => sk.value === localValue && localValue !== '');
 
   return (
     <div className="env-var-row">
@@ -191,26 +204,23 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
         {stale === 'aging' && (
           <Badge variant="subtle" size="sm" color="warning">{t('envVarRow.aging30d')}</Badge>
         )}
-        {expiryLabel && (
-          <Badge variant="subtle" size="sm" color={expiryLabel.color}>
-            {expiryLabel.label}
-          </Badge>
-        )}
         {projectId && (
           <div className="env-var-row__history-wrapper" ref={historyRef}>
-            <Button
-              variant="ghost"
-              size="sm"
-              iconOnly
-              icon={clock}
-              onClick={(e) => {
-                if (showHistory) { setShowHistory(false); } else {
-                  openPopoverAt(e.currentTarget as HTMLElement);
-                  loadHistory();
-                }
-              }}
-              aria-label="View history"
-            />
+            <Tip content={t('envVarRow.history')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                iconOnly
+                icon={historyIcon}
+                onClick={(e) => {
+                  if (showHistory) { setShowHistory(false); } else {
+                    openPopoverAt(e.currentTarget as HTMLElement);
+                    loadHistory();
+                  }
+                }}
+                aria-label={t('envVarRow.history')}
+              />
+            </Tip>
             {showHistory && popoverPos && (
               <div className="env-var-row__history-popover" style={{ top: popoverPos.top, left: popoverPos.left }}>
                 <div className="env-var-row__history-header">
@@ -323,69 +333,90 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
             )}
           </span>
         )}
-        <Button
-          variant="ghost"
-          size="md"
-          iconOnly
-          icon={visible ? eyeOff : eye}
-          onClick={() => setVisible(!visible)}
-          aria-label={visible ? 'Hide value' : 'Show value'}
-        />
-        <Button
-          variant="ghost"
-          size="md"
-          iconOnly
-          icon={trash2}
-          onClick={() => onDelete(envKey)}
-          aria-label="Delete variable"
-        />
-        {onSetExpiry && (
-          <div className="env-var-row__expiry-wrapper" ref={expiryRef}>
+
+        {/* Saved key picker — show when value is empty and there are matching saved keys */}
+        {hasSavedValue && !localValue && (
+          <div className="env-var-row__saved-wrapper" ref={savedKeyPickerRef}>
             <Button
-              variant="ghost"
+              variant="secondary"
               size="md"
-              iconOnly
-              icon={calendar}
+              icon={clipboardPaste}
               onClick={(e) => {
-                if (showExpiryPicker) { setShowExpiryPicker(false); } else {
+                if (matchingSavedKeys.length === 1) {
+                  handleUseSavedKey(matchingSavedKeys[0]);
+                } else {
                   openPopoverAt(e.currentTarget as HTMLElement);
-                  setShowExpiryPicker(true);
+                  setShowSavedKeyPicker(!showSavedKeyPicker);
                 }
               }}
-              aria-label="Set expiry date"
-            />
-            {showExpiryPicker && popoverPos && (
-              <div className="env-var-row__expiry-popover" style={{ top: popoverPos.top, left: popoverPos.left }}>
-                <input
-                  type="date"
-                  className="env-var-row__expiry-input"
-                  value={expiryDate ? timestampToDateInput(expiryDate) : ''}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val) {
-                      const ts = Math.floor(new Date(val + 'T00:00:00').getTime() / 1000);
-                      onSetExpiry(envKey, ts);
-                    }
-                    setShowExpiryPicker(false);
-                  }}
-                />
-                {expiryDate && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      onSetExpiry(envKey, null);
-                      setShowExpiryPicker(false);
-                    }}
+            >
+              {t('envVarRow.useSaved')}
+            </Button>
+            {showSavedKeyPicker && popoverPos && matchingSavedKeys.length > 1 && (
+              <div className="env-var-row__saved-popover" style={{ top: popoverPos.top, left: popoverPos.left }}>
+                <div className="env-var-row__saved-popover-header">{t('envVarRow.selectSavedKey')}</div>
+                {matchingSavedKeys.map((sk) => (
+                  <button
+                    key={sk.id}
+                    className="env-var-row__saved-option"
+                    onClick={() => handleUseSavedKey(sk)}
                   >
-                    {t('envVarRow.clear')}
-                  </Button>
-                )}
+                    <span className="env-var-row__saved-option-service">{sk.service_name}</span>
+                    <code className="env-var-row__saved-option-key">{sk.env_key}</code>
+                    {sk.notes && <span className="env-var-row__saved-option-notes">{sk.notes}</span>}
+                  </button>
+                ))}
               </div>
             )}
           </div>
         )}
-        {showGetKey && (
+
+        <Tip content={copied ? t('envVarRow.copied') : t('envVarRow.copy')}>
+          <Button
+            variant="ghost"
+            size="md"
+            iconOnly
+            icon={clipboardCopy}
+            onClick={handleCopy}
+            aria-label={copied ? t('envVarRow.copied') : t('envVarRow.copy')}
+            disabled={!localValue}
+            className={copied ? 'env-var-row__copied' : ''}
+          />
+        </Tip>
+        <Tip content={visible ? t('envVarRow.hide') : t('envVarRow.reveal')}>
+          <Button
+            variant="ghost"
+            size="md"
+            iconOnly
+            icon={visible ? eyeOff : eye}
+            onClick={() => setVisible(!visible)}
+            aria-label={visible ? t('envVarRow.hide') : t('envVarRow.reveal')}
+          />
+        </Tip>
+        {/* Save to saved keys */}
+        {onSaveKey && localValue && !isAlreadySaved && (
+          <Tip content={t('envVarRow.saveKey')}>
+            <Button
+              variant="ghost"
+              size="md"
+              iconOnly
+              icon={save}
+              onClick={() => onSaveKey(envKey, localValue, matchedService)}
+              aria-label={t('envVarRow.saveKey')}
+            />
+          </Tip>
+        )}
+        <Tip content={t('envVarRow.delete')}>
+          <Button
+            variant="ghost"
+            size="md"
+            iconOnly
+            icon={trash2}
+            onClick={() => onDelete(envKey)}
+            aria-label={t('envVarRow.delete')}
+          />
+        </Tip>
+        {showGetKey && !hasSavedValue && (
           <Button
             variant="secondary"
             size="md"

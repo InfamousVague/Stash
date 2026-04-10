@@ -71,13 +71,15 @@ pub fn write_env_file(path: &str, vars: &[EnvVar]) -> Result<(), String> {
     }
 
     let dest = Path::new(path);
-    let parent = dest.parent().ok_or("Invalid file path")?;
+    // Resolve symlinks so we write to the actual target file, not replace the symlink
+    let resolved = std::fs::canonicalize(dest).unwrap_or_else(|_| dest.to_path_buf());
+    let parent = resolved.parent().ok_or("Invalid file path")?;
     let temp_path = parent.join(format!(".env.tmp.{}", uuid::Uuid::new_v4()));
 
     std::fs::write(&temp_path, &content)
         .map_err(|e| format!("Failed to write temp file: {}", e))?;
 
-    std::fs::rename(&temp_path, dest)
+    std::fs::rename(&temp_path, &resolved)
         .map_err(|e| {
             // Clean up temp file on rename failure
             let _ = std::fs::remove_file(&temp_path);

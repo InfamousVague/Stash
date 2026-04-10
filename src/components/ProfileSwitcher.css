@@ -1,21 +1,14 @@
 .profile-switcher {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--color-border-default);
   background: var(--color-bg-secondary);
 }
 
-.profile-switcher__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
 .profile-switcher__label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--color-text-tertiary);
   text-transform: uppercase;
@@ -23,18 +16,135 @@
   flex-shrink: 0;
 }
 
-.profile-switcher__controls {
+.profile-switcher__list {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex: 1;
+  flex-wrap: wrap;
 }
 
+/* Individual profile chip */
+.profile-switcher__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-primary);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.profile-switcher__item:hover {
+  border-color: var(--color-border-strong, var(--color-text-tertiary));
+}
+
+.profile-switcher__item--active {
+  font-weight: 600;
+}
+
+.profile-switcher__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.profile-switcher__dot-btn {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profile-switcher__item--active .profile-switcher__dot-btn {
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+}
+
+.profile-switcher__item--active .profile-switcher__dot-btn:hover {
+  transform: scale(1.4);
+  box-shadow: 0 0 0 2px var(--color-bg-primary), 0 0 0 3px currentColor;
+}
+
+/* Color picker popover */
+.profile-switcher__item {
+  position: relative;
+}
+
+.profile-switcher__color-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 100;
+  padding: 8px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  animation: profile-color-popover-in 0.15s ease;
+}
+
+@keyframes profile-color-popover-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-switcher__item-name {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: inherit;
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.profile-switcher__item--active .profile-switcher__item-name {
+  cursor: default;
+}
+
+.profile-switcher__item-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-full, 999px);
+  transition: color 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+  margin-left: -2px;
+}
+
+.profile-switcher__item-delete:hover {
+  color: var(--color-error, #ef4444);
+  background: var(--color-error-subtle, rgba(239, 68, 68, 0.1));
+}
+
+/* Dialog styles */
 .profile-switcher__dialog-body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-top: 8px;
+  padding: 16px;
+}
+
+.profile-switcher__dialog-hint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
 }
 
 .profile-switcher__dialog-actions {

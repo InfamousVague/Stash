@@ -210,23 +210,34 @@ $ stash run -- npm start`}
             <div>
               <span className="settings-page__row-label">{t('settings.currentVersion')}</span>
               <span className="settings-page__row-desc">
-                {updater.updateAvailable
+                {updater.readyToRelaunch
+                  ? t('settings.readyToRelaunch', { version: updater.updateAvailable?.version })
+                  : updater.updateAvailable
                   ? t('settings.updateAvailable', { version: updater.updateAvailable.version })
                   : t('settings.upToDate')}
               </span>
             </div>
-            <Button
-              variant="secondary"
-              size="md"
-              icon={download}
-              onClick={updater.updateAvailable ? updater.downloadAndInstall : updater.checkForUpdate}
-              disabled={updater.checking || updater.downloading}
-            >
-              {updater.checking ? t('settings.checking') : updater.updateAvailable ? t('settings.updateNow') : t('settings.checkForUpdates')}
-            </Button>
+            {updater.readyToRelaunch ? (
+              <Button variant="primary" size="md" onClick={updater.doRelaunch}>
+                {t('settings.relaunch')}
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                size="md"
+                icon={download}
+                onClick={updater.updateAvailable ? updater.downloadAndInstall : updater.checkForUpdate}
+                disabled={updater.checking || updater.downloading}
+              >
+                {updater.checking ? t('settings.checking') : updater.downloading ? t('settings.downloading') : updater.updateAvailable ? t('settings.updateNow') : t('settings.checkForUpdates')}
+              </Button>
+            )}
           </div>
           {updater.downloading && (
-            <Progress value={updater.progress} size="md" />
+            <div className="settings-page__progress-row">
+              <Progress value={updater.progress} size="md" />
+              <span className="settings-page__progress-text">{updater.progress}%</span>
+            </div>
           )}
         </section>
 

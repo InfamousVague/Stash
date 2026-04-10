@@ -111,3 +111,18 @@
   overflow-x: auto;
   white-space: pre;
 }
+
+.settings-page__progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-page__progress-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
+}

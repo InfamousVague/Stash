@@ -18,7 +18,16 @@ pub struct TeamMember {
 pub struct LockFile {
     pub version: u32,
     pub members: Vec<TeamMember>,
-    pub variables: HashMap<String, HashMap<String, String>>, // key -> { member_name -> encrypted_base64 }
+    /// Per-profile encrypted variables: profile_name -> { key -> { member_name -> encrypted_base64 } }
+    pub profiles: HashMap<String, HashMap<String, HashMap<String, String>>>,
+    /// Shared metadata: preferences, profile colors, notes, etc.
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    pub metadata: HashMap<String, serde_json::Value>,
+    /// Legacy flat variables (for backward compat reading v1 files)
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    pub variables: HashMap<String, HashMap<String, String>>,
+    /// Legacy single profile field (for backward compat)
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub profile: String,
 }
 
@@ -231,24 +240,33 @@ mod tests {
         inner.insert("alice".to_string(), "encrypted_val".to_string());
         variables.insert("API_KEY".to_string(), inner);
 
+        let mut profiles = HashMap::new();
+        let mut profile_vars = HashMap::new();
+        let mut inner = HashMap::new();
+        inner.insert("alice".to_string(), "encrypted_val".to_string());
+        profile_vars.insert("API_KEY".to_string(), inner);
+        profiles.insert("production".to_string(), profile_vars);
+
         let lock = LockFile {
-            version: 1,
+            version: 2,
             members: vec![TeamMember {
                 name: "alice".to_string(),
                 public_key: "AAAA".to_string(),
             }],
-            variables,
-            profile: "production".to_string(),
+            profiles,
+            metadata: HashMap::new(),
+            variables: HashMap::new(),
+            profile: String::new(),
         };
 
         write_lock_file(p, &lock).unwrap();
         let read_back = read_lock_file(p).unwrap();
 
-        assert_eq!(read_back.version, 1);
-        assert_eq!(read_back.profile, "production");
+        assert_eq!(read_back.version, 2);
         assert_eq!(read_back.members.len(), 1);
         assert_eq!(read_back.members[0].name, "alice");
-        assert!(read_back.variables.contains_key("API_KEY"));
+        assert!(read_back.profiles.contains_key("production"));
+        assert!(read_back.profiles["production"].contains_key("API_KEY"));
     }
 
     #[test]
@@ -260,15 +278,19 @@ mod tests {
 
     #[test]
     fn test_lock_file_serialization_contains_expected_fields() {
+        let mut profiles = HashMap::new();
+        profiles.insert("dev".to_string(), HashMap::new());
         let lock = LockFile {
             version: 2,
             members: vec![],
+            profiles,
+            metadata: HashMap::new(),
             variables: HashMap::new(),
-            profile: "dev".to_string(),
+            profile: String::new(),
         };
         let json = serde_json::to_string(&lock).unwrap();
         assert!(json.contains("\"version\":2"));
-        assert!(json.contains("\"profile\":\"dev\""));
         assert!(json.contains("\"members\":[]"));
+        assert!(json.contains("\"dev\""));
     }
 }

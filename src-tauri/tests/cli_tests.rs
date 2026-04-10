@@ -205,7 +205,7 @@ fn profile_create_from_scratch() {
     let dir = TempDir::new().unwrap();
     let p = dir.path();
 
-    profile_manager::create_profile(p.to_str().unwrap(), "test", None).unwrap();
+    profile_manager::create_profile(p.to_str().unwrap(), "test", None, false).unwrap();
 
     let created = p.join(".env.test");
     assert!(created.exists());
@@ -219,7 +219,7 @@ fn profile_create_cloned_from_existing() {
     let p = dir.path();
     std::fs::write(p.join(".env.source"), "API_KEY=abc\nDEBUG=true\n").unwrap();
 
-    profile_manager::create_profile(p.to_str().unwrap(), "clone", Some("source")).unwrap();
+    profile_manager::create_profile(p.to_str().unwrap(), "clone", Some("source"), true).unwrap();
 
     let content = std::fs::read_to_string(p.join(".env.clone")).unwrap();
     assert!(content.contains("API_KEY=abc"));
@@ -296,6 +296,8 @@ fn team_write_and_read_lock_file_roundtrip() {
                 public_key: "bob_pub_key".to_string(),
             },
         ],
+        profiles: HashMap::new(),
+        metadata: HashMap::new(),
         variables,
         profile: "production".to_string(),
     };
@@ -349,6 +351,8 @@ fn team_lock_file_with_multiple_members_and_variables() {
     let lock = team::LockFile {
         version: 1,
         members: members.clone(),
+        profiles: HashMap::new(),
+        metadata: HashMap::new(),
         variables,
         profile: "production".to_string(),
     };
@@ -575,8 +579,8 @@ fn workflow_create_profile_add_vars_switch_and_verify() {
     let dir_str = p.to_str().unwrap();
 
     // Create two profiles
-    profile_manager::create_profile(dir_str, "development", None).unwrap();
-    profile_manager::create_profile(dir_str, "staging", None).unwrap();
+    profile_manager::create_profile(dir_str, "development", None, false).unwrap();
+    profile_manager::create_profile(dir_str, "staging", None, false).unwrap();
 
     // Add variables to the development profile
     let dev_path = p.join(".env.development").to_string_lossy().to_string();
@@ -640,6 +644,8 @@ fn workflow_encrypt_vars_write_lock_decrypt_for_each_member() {
     let lock = team::LockFile {
         version: 1,
         members,
+        profiles: HashMap::new(),
+        metadata: HashMap::new(),
         variables,
         profile: "default".to_string(),
     };

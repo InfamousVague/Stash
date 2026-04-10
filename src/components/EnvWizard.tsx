@@ -24,6 +24,7 @@ import { FRAMEWORK_SUGGESTIONS } from '../data/framework-suggestions';
 import { getFrameworkColor } from '../data/framework-colors';
 import { useDirectory } from '../hooks/useDirectory';
 import type { Project, EnvVar } from '../types';
+import { Tip } from './Tip';
 import './EnvWizard.css';
 
 type WizardTab = 'templates' | 'services' | 'clone';
@@ -116,7 +117,7 @@ export function EnvWizard({ projects, onGenerate, onCancel }: EnvWizardProps) {
   return (
     <div className="env-wizard">
       <div className="env-wizard__header">
-        <Button variant="ghost" size="sm" iconOnly icon={arrowLeft} onClick={onCancel} aria-label="Back" />
+        <Tip content={t('common.back')}><Button variant="ghost" size="sm" iconOnly icon={arrowLeft} onClick={onCancel} aria-label={t('common.back')} /></Tip>
         <h2>{t('envWizard.newEnvironment')}</h2>
       </div>
 
@@ -348,6 +349,7 @@ function VarList({ title, vars, onUpdateValue, onRemoveVar }: {
   onUpdateValue: (key: string, value: string) => void;
   onRemoveVar: (key: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="env-wizard__var-section">
       <span className="env-wizard__section-title">{title}</span>
@@ -360,7 +362,7 @@ function VarList({ title, vars, onUpdateValue, onRemoveVar }: {
                 onChange={(e) => onUpdateValue(v.key, e.target.value)}
                 style={{ fontFamily: 'var(--font-mono)', width: '100%' }} />
             </div>
-            <Button variant="ghost" size="sm" iconOnly icon={trash2} onClick={() => onRemoveVar(v.key)} aria-label="Remove" />
+            <Tip content={t('common.remove')}><Button variant="ghost" size="sm" iconOnly icon={trash2} onClick={() => onRemoveVar(v.key)} aria-label={t('common.remove')} /></Tip>
           </div>
         ))}
       </div>

@@ -14,10 +14,10 @@ vi.mock('@base/primitives/input', () => ({
     return <input {...rest} />;
   },
 }));
-vi.mock('@base/primitives/select', () => ({
-  Select: ({ children, ...props }: Record<string, unknown>) => {
-    const { variant: _v, size: _s, ...rest } = props;
-    return <select {...rest}>{children as React.ReactNode}</select>;
+vi.mock('@base/primitives/checkbox', () => ({
+  Checkbox: (props: Record<string, unknown>) => {
+    const { label, ...rest } = props;
+    return <label><input type="checkbox" {...rest} />{label as string}</label>;
   },
 }));
 vi.mock('@base/primitives/dialog', () => ({
@@ -27,6 +27,9 @@ vi.mock('@base/primitives/dialog', () => ({
   },
 }));
 vi.mock('@base/primitives/icon/icons/plus', () => ({ plus: 'plus-svg' }));
+vi.mock('@base/primitives/icon/icons/x', () => ({ x: 'x-svg' }));
+vi.mock('@base/primitives/icon/icons/check', () => ({ check: 'check-svg' }));
+vi.mock('@base/primitives/icon/icons/trash-2', () => ({ trash2: 'trash-svg' }));
 
 describe('ProfileSwitcher', () => {
   const defaultProps = {
@@ -34,29 +37,26 @@ describe('ProfileSwitcher', () => {
     activeProfile: 'default',
     onSwitch: vi.fn(),
     onCreate: vi.fn(),
+    onDelete: vi.fn(),
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders profiles in select dropdown', () => {
+  it('renders all profiles as items', () => {
     render(<ProfileSwitcher {...defaultProps} />);
-    const options = screen.getAllByRole('option');
-    expect(options).toHaveLength(3);
-    expect(options[0]).toHaveTextContent('default');
-    expect(options[1]).toHaveTextContent('staging');
-    expect(options[2]).toHaveTextContent('production');
+    expect(screen.getByText('default')).toBeInTheDocument();
+    expect(screen.getByText('staging')).toBeInTheDocument();
+    expect(screen.getByText('production')).toBeInTheDocument();
   });
 
-  it('calls onSwitch when profile selected', async () => {
+  it('calls onSwitch when non-active profile clicked', async () => {
     const user = userEvent.setup();
     const onSwitch = vi.fn();
     render(<ProfileSwitcher {...defaultProps} onSwitch={onSwitch} />);
 
-    const select = screen.getByRole('combobox');
-    await user.selectOptions(select, 'staging');
-
+    await user.click(screen.getByText('staging'));
     expect(onSwitch).toHaveBeenCalledWith('staging');
   });
 

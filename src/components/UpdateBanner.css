@@ -10,9 +10,22 @@
   flex-shrink: 0;
 }
 
+.update-banner--downloading {
+  border-color: var(--color-accent, #8b5cf6);
+}
+
+.update-banner--ready {
+  background: color-mix(in srgb, var(--color-success, #22c55e) 8%, transparent);
+  border-color: var(--color-success, #22c55e);
+}
+
 .update-banner__icon {
   color: var(--color-accent, #8b5cf6);
   flex-shrink: 0;
+}
+
+.update-banner--ready .update-banner__icon {
+  color: var(--color-success, #22c55e);
 }
 
 .update-banner__text {
@@ -57,4 +70,6 @@
   font-weight: 600;
   color: var(--color-accent);
   font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
 }

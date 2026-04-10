@@ -37,6 +37,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import { useVault } from './hooks/useVault';
 import { useUpdater } from './hooks/useUpdater';
 import { UpdateBanner } from './components/UpdateBanner';
+import { IdentityPrompt } from './components/IdentityPrompt';
 import './App.css';
 
 type Page = 'vaults' | 'discover' | 'directory' | 'savedkeys' | 'health' | 'developers' | 'contacts' | 'settings';
@@ -236,17 +237,19 @@ function App() {
         </div>
       </aside>
       <main className="stash__main">
-        {updater.updateAvailable && !updater.dismissed && (
+        {updater.updateAvailable && (!updater.dismissed || updater.readyToRelaunch) && (
           <UpdateBanner
             version={updater.updateAvailable.version}
             downloading={updater.downloading}
             progress={updater.progress}
+            readyToRelaunch={updater.readyToRelaunch}
             onUpdate={updater.downloadAndInstall}
+            onRelaunch={updater.doRelaunch}
             onDismiss={updater.dismiss}
           />
         )}
         <div className="stash__content" key={page}>
-          {page === 'vaults' && <VaultsPage tourShowDemo={tourActive && tourStep === 2} />}
+          {page === 'vaults' && <VaultsPage tourShowDemo={tourActive && (tourStep === 1 || tourStep === 2)} onNavigateToDiscover={() => setPage('discover')} />}
           {page === 'discover' && <DiscoverPage onNavigateToVaults={() => setPage('vaults')} />}
           {page === 'directory' && <DirectoryPage />}
           {page === 'savedkeys' && (
@@ -267,6 +270,7 @@ function App() {
         </div>
       </main>
     </div>
+    <IdentityPrompt />
     <Tour
       steps={appTour}
       active={tourActive}

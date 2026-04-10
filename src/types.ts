@@ -86,6 +86,35 @@ export interface GitExposure {
   project_name: string;
 }
 
+export interface LockProfileInfo {
+  name: string;
+  key_count: number;
+  keys: string[];
+}
+
+export interface LockFileInfo {
+  version: number;
+  member_count: number;
+  profiles: LockProfileInfo[];
+}
+
+export interface ProfileSyncDetail {
+  name: string;
+  status: 'synced' | 'changed' | 'new' | 'lock_only';
+  env_key_count: number;
+  lock_key_count: number;
+  added_keys: string[];
+  removed_keys: string[];
+}
+
+export interface LockSyncStatus {
+  in_sync: boolean;
+  has_lock: boolean;
+  member_count: number;
+  version: number;
+  profiles: ProfileSyncDetail[];
+}
+
 export interface Contact {
   name: string;
   public_key: string;

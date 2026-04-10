@@ -19,6 +19,7 @@ import { scan } from '@base/primitives/icon/icons/scan';
 import { useHealth, type IssueFilter } from '../hooks/useHealth';
 import { InfoGuide } from '../components/InfoGuide';
 import type { HealthIssue } from '../types';
+import { Tip } from '../components/Tip';
 import './HealthPage.css';
 
 const SEVERITY_COLOR: Record<string, 'error' | 'warning' | 'neutral'> = {
@@ -158,15 +159,17 @@ export function HealthPage() {
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-          <Button
-            variant="ghost"
-            size="md"
-            iconOnly
-            icon={refreshCw}
-            onClick={loadReport}
-            disabled={loading}
-            aria-label="Refresh"
-          />
+          <Tip content={t('common.refresh')}>
+            <Button
+              variant="ghost"
+              size="md"
+              iconOnly
+              icon={refreshCw}
+              onClick={loadReport}
+              disabled={loading}
+              aria-label={t('common.refresh')}
+            />
+          </Tip>
           <Button
             variant="ghost"
             size="sm"

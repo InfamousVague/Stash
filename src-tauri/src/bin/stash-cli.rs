@@ -160,6 +160,37 @@ fn cmd_pull() -> Result<(), String> {
         .map(|m| m.name.clone())
         .ok_or("You are not a member of this .stash.lock")?;
 
+    // Handle v2 (per-profile) format
+    if !lock.profiles.is_empty() {
+        let mut total = 0usize;
+        for (profile_name, profile_vars) in &lock.profiles {
+            let mut vars = Vec::new();
+            for (key, encrypted_map) in profile_vars {
+                if let Some(encrypted) = encrypted_map.get(&my_name) {
+                    match team::decrypt_with_private_key(encrypted, private_key) {
+                        Ok(value) => vars.push((key.clone(), value)),
+                        Err(e) => eprintln!("  Warning: failed to decrypt {} in {}: {}", key, profile_name, e),
+                    }
+                }
+            }
+            let profile_path = if profile_name == "default" {
+                Path::new(&dir).join(".env")
+            } else {
+                Path::new(&dir).join(format!(".env.{}", profile_name))
+            };
+            let content = vars.iter()
+                .map(|(k, v)| format!("{}={}", k, v))
+                .collect::<Vec<_>>()
+                .join("\n");
+            std::fs::write(&profile_path, &content)
+                .map_err(|e| format!("Failed to write {}: {}", profile_path.display(), e))?;
+            total += vars.len();
+        }
+        println!("Pulled {} profiles, {} total variables from .stash.lock", lock.profiles.len(), total);
+        return Ok(());
+    }
+
+    // Legacy v1 format
     let mut vars = Vec::new();
     for (key, encrypted_map) in &lock.variables {
         if let Some(encrypted) = encrypted_map.get(&my_name) {
@@ -192,10 +223,12 @@ fn cmd_push() -> Result<(), String> {
 
     let vars = env_parser::read_env_file(&env_path.to_string_lossy())?;
     let mut lock = team::read_lock_file(&dir).unwrap_or(team::LockFile {
-        version: 1,
+        version: 2,
         members: Vec::new(),
+        profiles: HashMap::new(),
+        metadata: HashMap::new(),
         variables: HashMap::new(),
-        profile: "default".to_string(),
+        profile: String::new(),
     });
 
     let stash = stash_dir();
@@ -212,18 +245,53 @@ fn cmd_push() -> Result<(), String> {
         });
     }
 
+    // Upgrade to v2 — encrypt all profiles
+    lock.version = 2;
+    lock.profiles.clear();
     lock.variables.clear();
-    for var in &vars {
-        let mut encrypted_map = HashMap::new();
-        for member in &lock.members {
-            let encrypted = team::encrypt_for_recipient(&var.value, &member.public_key)?;
-            encrypted_map.insert(member.name.clone(), encrypted);
+    lock.profile = String::new();
+
+    let profile_names = profile_manager::list_profiles(&dir);
+    for profile_name in &profile_names {
+        let profile_path = Path::new(&dir).join(format!(".env.{}", profile_name));
+        let actual_path = if !profile_path.exists() && profile_name == "default" {
+            Path::new(&dir).join(".env")
+        } else {
+            profile_path
+        };
+
+        if actual_path.exists() {
+            let profile_vars = env_parser::read_env_file(&actual_path.to_string_lossy())?;
+            let mut encrypted_profile: HashMap<String, HashMap<String, String>> = HashMap::new();
+            for var in &profile_vars {
+                let mut encrypted_map = HashMap::new();
+                for member in &lock.members {
+                    let encrypted = team::encrypt_for_recipient(&var.value, &member.public_key)?;
+                    encrypted_map.insert(member.name.clone(), encrypted);
+                }
+                encrypted_profile.insert(var.key.clone(), encrypted_map);
+            }
+            lock.profiles.insert(profile_name.clone(), encrypted_profile);
         }
-        lock.variables.insert(var.key.clone(), encrypted_map);
+    }
+
+    // Fallback: if no profiles found, push current .env as "default"
+    if lock.profiles.is_empty() {
+        let mut encrypted_profile: HashMap<String, HashMap<String, String>> = HashMap::new();
+        for var in &vars {
+            let mut encrypted_map = HashMap::new();
+            for member in &lock.members {
+                let encrypted = team::encrypt_for_recipient(&var.value, &member.public_key)?;
+                encrypted_map.insert(member.name.clone(), encrypted);
+            }
+            encrypted_profile.insert(var.key.clone(), encrypted_map);
+        }
+        lock.profiles.insert("default".to_string(), encrypted_profile);
     }
 
     team::write_lock_file(&dir, &lock)?;
-    println!("Pushed {} variables for {} members", vars.len(), lock.members.len());
+    let total_vars: usize = lock.profiles.values().map(|p| p.len()).sum();
+    println!("Pushed {} profiles, {} vars for {} members", lock.profiles.len(), total_vars, lock.members.len());
     Ok(())
 }
 
@@ -275,13 +343,15 @@ fn cmd_init() -> Result<(), String> {
     let public_key = keypair["public"].as_str().ok_or("Invalid keypair")?;
 
     let lock = team::LockFile {
-        version: 1,
+        version: 2,
         members: vec![team::TeamMember {
             name: whoami().unwrap_or_else(|| "Me".to_string()),
             public_key: public_key.to_string(),
         }],
+        profiles: HashMap::new(),
+        metadata: HashMap::new(),
         variables: HashMap::new(),
-        profile: "default".to_string(),
+        profile: String::new(),
     };
 
     team::write_lock_file(&dir, &lock)?;
@@ -527,5 +597,17 @@ fn truncate(s: &str, max: usize) -> String {
 }
 
 fn whoami() -> Option<String> {
+    // Try git config user.name first
+    if let Ok(output) = std::process::Command::new("git")
+        .args(["config", "user.name"])
+        .output()
+    {
+        if output.status.success() {
+            let name = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            if !name.is_empty() {
+                return Some(name);
+            }
+        }
+    }
     std::env::var("USER").ok()
 }

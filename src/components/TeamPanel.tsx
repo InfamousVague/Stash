@@ -10,7 +10,7 @@ import { Separator } from '@base/primitives/separator';
 import '@base/primitives/separator/separator.css';
 import { Icon } from '@base/primitives/icon';
 import '@base/primitives/icon/icon.css';
-import { key } from '@base/primitives/icon/icons/key';
+import { keyRound } from '@base/primitives/icon/icons/key-round';
 import { useTeam } from '../hooks/useTeam';
 import { useToastContext } from '../contexts/ToastContext';
 import { InfoGuide } from './InfoGuide';
@@ -56,24 +56,6 @@ export function TeamPanel({ projectId }: TeamPanelProps) {
     }
   };
 
-  const handlePush = async () => {
-    try {
-      await team.pushLock(projectId);
-      toast.success(t('teamPanel.pushSuccess'));
-    } catch (e) {
-      toast.error(t('teamPanel.pushFailed', { error: String(e) }));
-    }
-  };
-
-  const handlePull = async () => {
-    try {
-      await team.pullLock(projectId);
-      toast.success(t('teamPanel.pullSuccess'));
-    } catch (e) {
-      toast.error(t('teamPanel.pullFailed', { error: String(e) }));
-    }
-  };
-
   return (
     <div className="team-panel">
       <InfoGuide
@@ -99,33 +81,13 @@ export function TeamPanel({ projectId }: TeamPanelProps) {
           </div>
         ) : (
           <div className="team-panel__identity-empty">
-            <Icon icon={key} size="lg" color="currentColor" />
+            <Icon icon={keyRound} size="lg" color="currentColor" />
             <p className="team-panel__hint">
               {t('teamPanel.generateKeypairHint')}
             </p>
             <Button variant="primary" size="md" onClick={handleGenerateKey}>{t('teamPanel.generateKeypair')}</Button>
           </div>
         )}
-      </section>
-
-      <Separator />
-
-      {/* Sync */}
-      <section className="team-panel__section">
-        <h3 className="team-panel__section-title">{t('teamPanel.sync')}</h3>
-        <div className="team-panel__sync-cards">
-          <button className="team-panel__sync-card" onClick={handlePush} disabled={!team.publicKey}>
-            <span className="team-panel__sync-card-title">{t('teamPanel.push')}</span>
-            <span className="team-panel__sync-card-desc">{t('teamPanel.pushDesc')}</span>
-          </button>
-          <button className="team-panel__sync-card" onClick={handlePull} disabled={!team.publicKey}>
-            <span className="team-panel__sync-card-title">{t('teamPanel.pull')}</span>
-            <span className="team-panel__sync-card-desc">{t('teamPanel.pullDesc')}</span>
-          </button>
-        </div>
-        <p className="team-panel__hint">
-          {t('teamPanel.syncHint')}
-        </p>
       </section>
 
       <Separator />

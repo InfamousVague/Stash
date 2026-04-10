@@ -13,11 +13,12 @@ pub fn install_cli() -> Result<(), String> {
     // Find the CLI binary — in dev it's in target/debug, in release it's alongside the main binary
     let cli_src = find_cli_binary()?;
 
-    // Use osascript to create dir + copy with admin privileges
+    // Use osascript to create dir + copy + chmod in a single admin prompt
     let script = format!(
-        "do shell script \"mkdir -p '{}' && cp '{}' '{}'\" with administrator privileges",
+        "do shell script \"mkdir -p '{}' && cp '{}' '{}' && chmod +x '{}'\" with administrator privileges",
         Path::new(CLI_INSTALL_PATH).parent().unwrap().display(),
         cli_src,
+        CLI_INSTALL_PATH,
         CLI_INSTALL_PATH
     );
 
@@ -31,17 +32,6 @@ pub fn install_cli() -> Result<(), String> {
         let stderr = String::from_utf8_lossy(&output.stderr);
         return Err(format!("Install failed: {}", stderr.trim()));
     }
-
-    // Make executable
-    let chmod_script = format!(
-        "do shell script \"chmod +x '{}'\" with administrator privileges",
-        CLI_INSTALL_PATH
-    );
-    Command::new("osascript")
-        .arg("-e")
-        .arg(&chmod_script)
-        .output()
-        .ok();
 
     log::info!("CLI installed to {}", CLI_INSTALL_PATH);
     Ok(())

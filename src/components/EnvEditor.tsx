@@ -11,6 +11,7 @@ import '@base/primitives/badge/badge.css';
 import { EnvVarRow } from './EnvVarRow';
 import { getSuggestions } from '../data/framework-suggestions';
 import type { EnvVar, ApiService } from '../types';
+import type { SavedKey } from '../hooks/useSavedKeys';
 import './EnvEditor.css';
 
 interface EnvEditorProps {
@@ -21,12 +22,12 @@ interface EnvEditorProps {
   onDelete: (key: string) => void;
   matchEnvKey: (key: string) => ApiService | null;
   rotation?: Record<string, number>;
-  expiry?: Record<string, number>;
-  onSetExpiry?: (key: string, timestamp: number | null) => void;
   framework?: string | null;
+  savedKeys?: SavedKey[];
+  onSaveKey?: (envKey: string, value: string, service?: ApiService | null) => void;
 }
 
-export function EnvEditor({ vars, projectId, onUpdate, onAdd, onDelete, matchEnvKey, rotation, expiry, onSetExpiry, framework }: EnvEditorProps) {
+export function EnvEditor({ vars, projectId, onUpdate, onAdd, onDelete, matchEnvKey, rotation, framework, savedKeys, onSaveKey }: EnvEditorProps) {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('');
   const [newKey, setNewKey] = useState('');
@@ -76,10 +77,10 @@ export function EnvEditor({ vars, projectId, onUpdate, onAdd, onDelete, matchEnv
               projectId={projectId}
               matchedService={matchEnvKey(v.key)}
               lastChanged={rotation?.[v.key]}
-              expiryDate={expiry?.[v.key]}
               onUpdate={onUpdate}
               onDelete={onDelete}
-              onSetExpiry={onSetExpiry}
+              savedKeys={savedKeys}
+              onSaveKey={onSaveKey}
             />
           ))
         )}

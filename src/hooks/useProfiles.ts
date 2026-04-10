@@ -25,14 +25,31 @@ export function useProfiles() {
     }
   }, []);
 
-  const createProfile = useCallback(async (projectId: string, name: string, copyFrom?: string) => {
+  const createProfile = useCallback(async (projectId: string, name: string, copyValues: boolean, copyFrom?: string) => {
     try {
-      await invoke('create_profile', { projectId, name, copyFrom });
+      await invoke('create_profile', { projectId, name, copyFrom, copyValues });
+      await invoke('switch_profile', { projectId, profileName: name });
+      setActiveProfile(name);
       await loadProfiles(projectId);
     } catch (err) {
       console.error('Failed to create profile:', err);
     }
   }, [loadProfiles]);
 
-  return { profiles, activeProfile, loadProfiles, switchProfile, createProfile };
+  const deleteProfile = useCallback(async (projectId: string, name: string) => {
+    try {
+      // Must switch away from active profile before deleting it
+      if (name === activeProfile) {
+        const fallback = profiles.find((p) => p !== name) || 'default';
+        await invoke('switch_profile', { projectId, profileName: fallback });
+        setActiveProfile(fallback);
+      }
+      await invoke('delete_profile', { projectId, name });
+      await loadProfiles(projectId);
+    } catch (err) {
+      console.error('Failed to delete profile:', err);
+    }
+  }, [loadProfiles, activeProfile, profiles]);
+
+  return { profiles, activeProfile, loadProfiles, switchProfile, createProfile, deleteProfile };
 }

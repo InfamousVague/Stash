@@ -1,0 +1,38 @@
+.stash-setup-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: color-mix(in srgb, var(--color-warning, #f59e0b) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-warning, #f59e0b) 25%, transparent);
+}
+
+.stash-setup-banner__icon {
+  color: var(--color-warning, #f59e0b);
+  flex-shrink: 0;
+  display: flex;
+}
+
+.stash-setup-banner__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.stash-setup-banner__title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.stash-setup-banner__desc {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 1px;
+}
+
+.stash-setup-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}

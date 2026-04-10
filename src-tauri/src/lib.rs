@@ -17,6 +17,7 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(AppState::new())
         .invoke_handler(tauri::generate_handler![
             // Scanner commands
@@ -55,14 +56,23 @@ pub fn run() {
             commands::vault::is_biometric_available,
             commands::vault::clear_keychain_key,
             // Team commands
+            commands::team::check_lock_initialized,
+            commands::team::init_lock,
             commands::team::generate_team_key,
             commands::team::get_public_key,
+            commands::team::get_lock_info,
             commands::team::push_lock,
             commands::team::pull_lock,
             commands::team::add_team_member,
             commands::team::remove_team_member,
             commands::team::list_team_members,
             commands::team::list_all_team_members,
+            commands::team::check_lock_sync,
+            commands::team::get_lock_metadata,
+            commands::team::set_lock_metadata,
+            commands::team::get_git_username,
+            commands::team::set_git_username,
+            commands::team::rename_lock_member,
             // CLI commands
             commands::cli::check_cli_installed,
             commands::cli::install_cli,

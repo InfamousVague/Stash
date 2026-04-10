@@ -38,9 +38,10 @@ pub fn create_profile(
     project_id: String,
     name: String,
     copy_from: Option<String>,
+    copy_values: Option<bool>,
 ) -> Result<(), String> {
     let project_path = state.get_project_path(&project_id)?;
-    profile_manager::create_profile(&project_path, &name, copy_from.as_deref())
+    profile_manager::create_profile(&project_path, &name, copy_from.as_deref(), copy_values.unwrap_or(false))
 }
 
 #[tauri::command]

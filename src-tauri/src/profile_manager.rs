@@ -6,6 +6,17 @@ pub fn list_profiles(project_path: &str) -> Vec<String> {
     let dir = Path::new(project_path);
     let mut profiles = Vec::new();
 
+    // Include "default" only when .env is a real file (not a symlink to another profile)
+    let env_path = dir.join(".env");
+    if env_path.exists() {
+        let is_symlink = std::fs::symlink_metadata(&env_path)
+            .map(|m| m.file_type().is_symlink())
+            .unwrap_or(false);
+        if !is_symlink {
+            profiles.push("default".to_string());
+        }
+    }
+
     let entries = match std::fs::read_dir(dir) {
         Ok(e) => e,
         Err(_) => return profiles,
@@ -17,7 +28,9 @@ pub fn list_profiles(project_path: &str) -> Vec<String> {
             let profile_name = name.strip_prefix(".env.").unwrap().to_string();
             // Skip common non-profile suffixes
             if !["example", "sample", "template", "bak", "backup"].contains(&profile_name.as_str()) {
-                profiles.push(profile_name);
+                if profile_name != "default" || !profiles.contains(&"default".to_string()) {
+                    profiles.push(profile_name);
+                }
             }
         }
     }
@@ -98,7 +111,8 @@ pub fn switch_profile(project_path: &str, to_profile: &str) -> Result<(), String
 }
 
 /// Create a new profile, optionally copying from an existing one.
-pub fn create_profile(project_path: &str, name: &str, copy_from: Option<&str>) -> Result<(), String> {
+/// Keys are always copied. When `copy_values` is false, values are replaced with empty strings.
+pub fn create_profile(project_path: &str, name: &str, copy_from: Option<&str>, copy_values: bool) -> Result<(), String> {
     let dir = Path::new(project_path);
     let new_path = dir.join(format!(".env.{}", name));
 
@@ -109,14 +123,42 @@ pub fn create_profile(project_path: &str, name: &str, copy_from: Option<&str>) -
     match copy_from {
         Some(source_profile) => {
             let source_path = dir.join(format!(".env.{}", source_profile));
-            if !source_path.exists() {
-                return Err(format!("Source profile '{}' does not exist", source_profile));
+            // For "default", fall back to .env if .env.default doesn't exist
+            let source_path = if !source_path.exists() && source_profile == "default" {
+                dir.join(".env")
+            } else {
+                source_path
+            };
+            if source_path.exists() {
+                if copy_values {
+                    // Copy the entire file (keys + values)
+                    std::fs::copy(&source_path, &new_path)
+                        .map_err(|e| format!("Failed to copy profile: {}", e))?;
+                } else {
+                    // Copy keys only with empty values
+                    let content = std::fs::read_to_string(&source_path)
+                        .map_err(|e| format!("Failed to read source profile: {}", e))?;
+                    let keys_only: String = content.lines().map(|line| {
+                        let trimmed = line.trim();
+                        // Preserve comments and blank lines
+                        if trimmed.is_empty() || trimmed.starts_with('#') {
+                            line.to_string()
+                        } else if let Some(eq_pos) = line.find('=') {
+                            format!("{}=", &line[..eq_pos])
+                        } else {
+                            line.to_string()
+                        }
+                    }).collect::<Vec<_>>().join("\n");
+                    std::fs::write(&new_path, keys_only)
+                        .map_err(|e| format!("Failed to create profile: {}", e))?;
+                }
+            } else {
+                // Source doesn't exist — create empty profile
+                std::fs::write(&new_path, "")
+                    .map_err(|e| format!("Failed to create profile: {}", e))?;
             }
-            std::fs::copy(&source_path, &new_path)
-                .map_err(|e| format!("Failed to copy profile: {}", e))?;
         }
         None => {
-            // Create an empty .env file for the new profile
             std::fs::write(&new_path, "")
                 .map_err(|e| format!("Failed to create profile: {}", e))?;
         }
@@ -255,37 +297,52 @@ mod tests {
     #[test]
     fn test_create_profile_empty() {
         let dir = TempDir::new().unwrap();
-        create_profile(dir.path().to_str().unwrap(), "test", None).unwrap();
+        create_profile(dir.path().to_str().unwrap(), "test", None, false).unwrap();
         assert!(dir.path().join(".env.test").exists());
         let content = std::fs::read_to_string(dir.path().join(".env.test")).unwrap();
         assert!(content.is_empty());
     }
 
     #[test]
-    fn test_create_profile_copy_from() {
+    fn test_create_profile_copy_values() {
         let dir = TempDir::new().unwrap();
         std::fs::write(dir.path().join(".env.source"), "A=1\nB=2").unwrap();
-        create_profile(dir.path().to_str().unwrap(), "dest", Some("source")).unwrap();
+        create_profile(dir.path().to_str().unwrap(), "dest", Some("source"), true).unwrap();
         let content = std::fs::read_to_string(dir.path().join(".env.dest")).unwrap();
         assert!(content.contains("A=1"));
         assert!(content.contains("B=2"));
     }
 
     #[test]
+    fn test_create_profile_copy_keys_only() {
+        let dir = TempDir::new().unwrap();
+        std::fs::write(dir.path().join(".env.source"), "A=secret1\nB=secret2\n# comment").unwrap();
+        create_profile(dir.path().to_str().unwrap(), "dest", Some("source"), false).unwrap();
+        let content = std::fs::read_to_string(dir.path().join(".env.dest")).unwrap();
+        assert!(content.contains("A="));
+        assert!(content.contains("B="));
+        assert!(!content.contains("secret1"));
+        assert!(!content.contains("secret2"));
+        assert!(content.contains("# comment"));
+    }
+
+    #[test]
     fn test_create_profile_already_exists() {
         let dir = TempDir::new().unwrap();
         std::fs::write(dir.path().join(".env.existing"), "").unwrap();
-        let result = create_profile(dir.path().to_str().unwrap(), "existing", None);
+        let result = create_profile(dir.path().to_str().unwrap(), "existing", None, false);
         assert!(result.is_err());
         assert!(result.unwrap_err().contains("already exists"));
     }
 
     #[test]
-    fn test_create_profile_copy_from_nonexistent() {
+    fn test_create_profile_copy_from_nonexistent_creates_empty() {
         let dir = TempDir::new().unwrap();
-        let result = create_profile(dir.path().to_str().unwrap(), "new", Some("ghost"));
-        assert!(result.is_err());
-        assert!(result.unwrap_err().contains("does not exist"));
+        // When source doesn't exist, an empty profile is created gracefully
+        create_profile(dir.path().to_str().unwrap(), "new", Some("ghost"), false).unwrap();
+        assert!(dir.path().join(".env.new").exists());
+        let content = std::fs::read_to_string(dir.path().join(".env.new")).unwrap();
+        assert!(content.is_empty());
     }
 
     // ── delete_profile ────────────────────────────────────────

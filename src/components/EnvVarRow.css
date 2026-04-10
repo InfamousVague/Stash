@@ -11,8 +11,11 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  padding: 0 12px;
-  height: 36px;
+  /* Match Input md ghost exactly: same padding, border, font-size, line-height */
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid transparent;
+  font-size: var(--text-base-size);
+  line-height: var(--text-base-line-height);
   flex: 1;
   min-width: 0;
   cursor: text;
@@ -228,4 +231,74 @@
 
 .env-var-row__history-toggle-vis:hover {
   color: var(--color-text-primary);
+}
+
+/* Copy button feedback */
+.env-var-row__copied {
+  color: var(--color-success, #22c55e) !important;
+}
+
+/* Saved key picker */
+.env-var-row__saved-wrapper {
+  position: relative;
+}
+
+.env-var-row__saved-popover {
+  position: fixed;
+  z-index: 9999;
+  min-width: 260px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.env-var-row__saved-popover-header {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border-subtle, var(--color-border-default));
+}
+
+.env-var-row__saved-option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border-subtle, var(--color-border-default));
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.env-var-row__saved-option:last-child {
+  border-bottom: none;
+}
+
+.env-var-row__saved-option:hover {
+  background: var(--color-accent-subtle, var(--color-bg-secondary));
+}
+
+.env-var-row__saved-option-service {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.env-var-row__saved-option-key {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.env-var-row__saved-option-notes {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
 }
