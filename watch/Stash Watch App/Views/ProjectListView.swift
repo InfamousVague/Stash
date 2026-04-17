@@ -25,38 +25,64 @@ struct ProjectListContent: View {
                 EmptyProjectsView()
             } else {
                 List {
-                    // Workspace picker chip — only show if multiple workspaces
-                    if appState.workspaces.count > 1 {
-                        WorkspaceChip()
-                            .listRowBackground(Color.clear)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    }
-                    ForEach(appState.filteredProjects) { project in
-                        NavigationLink(destination: ProjectDetailView(project: project)) {
-                            ProjectCard(project: project)
+                    // If viewing all workspaces and there are multiple, group by workspace
+                    if appState.selectedWorkspaceId == nil && appState.workspaces.count > 1 {
+                        ForEach(appState.workspaces) { workspace in
+                            let wsProjects = appState.projects.filter { $0.sourceDeviceId == workspace.id }
+                            if !wsProjects.isEmpty {
+                                Section {
+                                    ForEach(wsProjects) { project in
+                                        NavigationLink(destination: ProjectDetailView(project: project)) {
+                                            ProjectCard(project: project)
+                                        }
+                                    }
+                                } header: {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "laptopcomputer")
+                                            .font(.system(size: 10))
+                                        Text(workspace.displayName)
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .lineLimit(1)
+                                            .truncationMode(.tail)
+                                        if appState.lanReachable[workspace.id] == true {
+                                            Image(systemName: "wifi")
+                                                .font(.system(size: 8))
+                                                .foregroundStyle(.stashGreen)
+                                        }
+                                    }
+                                    .foregroundStyle(.stashGreen)
+                                }
+                            }
+                        }
+                    } else {
+                        // Single workspace or filtered view — flat list
+                        ForEach(appState.filteredProjects) { project in
+                            NavigationLink(destination: ProjectDetailView(project: project)) {
+                                ProjectCard(project: project)
+                            }
                         }
                     }
-                }
-                .listStyle(.carousel)
 
-                if let lastSync = appState.lastSyncTime {
-                    HStack(spacing: 4) {
-                        Spacer()
-                        if !appState.lastSyncPath.isEmpty {
-                            Image(systemName: appState.lastSyncPath == "lan" ? "wifi" : "globe")
-                                .font(.system(size: 8))
+                    // Sync info footer
+                    if let lastSync = appState.lastSyncTime {
+                        HStack(spacing: 4) {
+                            Spacer()
+                            if !appState.lastSyncPath.isEmpty {
+                                Image(systemName: appState.lastSyncPath == "lan" ? "wifi" : "globe")
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                            }
+                            Text("Synced \(lastSync, formatter: relativeDateFormatter)")
+                                .font(.system(size: 9))
                                 .foregroundStyle(.secondary)
+                            Spacer()
                         }
-                        Text("Synced \(lastSync, formatter: relativeDateFormatter)")
-                            .font(.system(size: 9))
-                            .foregroundStyle(.secondary)
-                        Spacer()
+                        .listRowBackground(Color.clear)
                     }
-                    .padding(.top, 4)
                 }
             }
         }
-        .navigationTitle("Projects")
+        .navigationTitle(appState.selectedWorkspaceId != nil ? appState.selectedWorkspaceLabel : "Projects")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -427,17 +453,17 @@ struct ProjectCard: View {
                     .foregroundStyle(.secondary)
             }
 
-            // Workspace name (only when multiple workspaces)
-            if appState.workspaces.count > 1 {
-                if let workspace = appState.workspaces.first(where: { $0.id == project.sourceDeviceId }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "laptopcomputer")
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
-                        Text(workspace.displayName)
-                            .font(.system(size: 9))
-                            .foregroundStyle(.secondary)
-                    }
+            // Workspace label
+            if let workspace = appState.workspaces.first(where: { $0.id == project.sourceDeviceId }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "laptopcomputer")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.secondary)
+                    Text(workspace.displayName)
+                        .font(.system(size: 9))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
             }
         }

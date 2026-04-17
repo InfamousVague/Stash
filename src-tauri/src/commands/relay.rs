@@ -1,5 +1,80 @@
 const RELAY_URL: &str = "https://stash.mattssoftware.com";
 
+const LAUNCH_AGENT_LABEL: &str = "com.mattssoftware.stash-daemon";
+const LAUNCH_AGENT_PLIST: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.mattssoftware.stash-daemon</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/Stash.app/Contents/MacOS/stash-daemon</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/stash-daemon.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/stash-daemon.err</string>
+</dict>
+</plist>"#;
+
+/// Check if the daemon is running and if the LaunchAgent is installed.
+#[tauri::command]
+pub fn relay_daemon_status() -> Result<serde_json::Value, String> {
+    // Check if daemon process is running
+    let running = std::process::Command::new("pgrep")
+        .args(["-x", "stash-daemon"])
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false);
+
+    // Check if LaunchAgent plist exists
+    let plist_path = dirs::home_dir()
+        .unwrap_or_default()
+        .join("Library/LaunchAgents/com.mattssoftware.stash-daemon.plist");
+    let installed = plist_path.exists();
+
+    Ok(serde_json::json!({
+        "running": running,
+        "launchAgentInstalled": installed,
+    }))
+}
+
+/// Install the LaunchAgent and start the daemon.
+#[tauri::command]
+pub fn relay_install_daemon() -> Result<(), String> {
+    let plist_path = dirs::home_dir()
+        .ok_or("Cannot determine home directory")?
+        .join("Library/LaunchAgents/com.mattssoftware.stash-daemon.plist");
+
+    // Create LaunchAgents dir if needed
+    if let Some(parent) = plist_path.parent() {
+        std::fs::create_dir_all(parent)
+            .map_err(|e| format!("Failed to create LaunchAgents dir: {}", e))?;
+    }
+
+    // Write plist
+    std::fs::write(&plist_path, LAUNCH_AGENT_PLIST)
+        .map_err(|e| format!("Failed to write plist: {}", e))?;
+
+    // Unload first (ignore errors — may not be loaded)
+    let _ = std::process::Command::new("launchctl")
+        .args(["unload", &plist_path.to_string_lossy()])
+        .output();
+
+    // Load
+    std::process::Command::new("launchctl")
+        .args(["load", &plist_path.to_string_lossy()])
+        .output()
+        .map_err(|e| format!("Failed to load LaunchAgent: {}", e))?;
+
+    Ok(())
+}
+
 #[tauri::command]
 pub async fn relay_sign_in_with_apple(
     identity_token: String,

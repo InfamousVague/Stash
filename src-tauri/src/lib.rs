@@ -128,6 +128,8 @@ pub fn run() {
             commands::relay::relay_set_workspace_label,
             commands::relay::relay_get_linked_devices,
             commands::relay::relay_unlink_device,
+            commands::relay::relay_daemon_status,
+            commands::relay::relay_install_daemon,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -62,6 +62,9 @@ export function SettingsPage() {
   const [workspaceLabel, setWorkspaceLabel] = useState('');
   const [workspaceLabelDraft, setWorkspaceLabelDraft] = useState('');
   const [linkedDevices, setLinkedDevices] = useState<{ device_id: string; public_key: string; device_type: string; label?: string; lan_ip?: string }[]>([]);
+  const [daemonRunning, setDaemonRunning] = useState(true);
+  const [daemonInstalled, setDaemonInstalled] = useState(true);
+  const [installingDaemon, setInstallingDaemon] = useState(false);
 
   const refreshRelayStatus = async () => {
     try {
@@ -102,10 +105,21 @@ export function SettingsPage() {
     refreshWorkspaceLabel();
     refreshLinkedDevices();
 
-    // Poll relay status + devices every 5 seconds
+    // Check daemon status
+    const checkDaemon = async () => {
+      try {
+        const status = await invoke<{ running: boolean; launchAgentInstalled: boolean }>('relay_daemon_status');
+        setDaemonRunning(status.running);
+        setDaemonInstalled(status.launchAgentInstalled);
+      } catch { /* ignore */ }
+    };
+    checkDaemon();
+
+    // Poll relay status + devices + daemon every 5 seconds
     const interval = setInterval(() => {
       refreshRelayStatus();
       refreshLinkedDevices();
+      checkDaemon();
     }, 5000);
 
     // Listen for auth-complete deep link event
@@ -251,6 +265,55 @@ export function SettingsPage() {
           <p className="settings-page__section-desc">
             Connect to the Stash relay to sync secrets with your Apple Watch and other devices.
           </p>
+
+          {/* Daemon status banner */}
+          {(!daemonRunning || !daemonInstalled) && relayConnected && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '10px 14px',
+              borderRadius: 10,
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              marginBottom: 12,
+            }}>
+              <span style={{ fontSize: 20 }}>⚠️</span>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontWeight: 600, fontSize: 13 }}>
+                  {!daemonInstalled ? 'Sync daemon not set up' : 'Sync daemon not running'}
+                </span>
+                <span style={{ display: 'block', fontSize: 11, opacity: 0.6, marginTop: 2 }}>
+                  {!daemonInstalled
+                    ? 'Install the background daemon so your projects sync automatically to your watch.'
+                    : 'The daemon stopped. Click to restart it.'}
+                </span>
+              </div>
+              <button
+                disabled={installingDaemon}
+                onClick={async () => {
+                  setInstallingDaemon(true);
+                  try {
+                    await invoke('relay_install_daemon');
+                    toast.success('Daemon installed and started');
+                    setDaemonRunning(true);
+                    setDaemonInstalled(true);
+                  } catch (e: any) {
+                    toast.error(`Failed: ${e}`);
+                  } finally {
+                    setInstallingDaemon(false);
+                  }
+                }}
+                style={{
+                  background: 'rgba(52, 211, 153, 0.15)', border: '1px solid rgba(52, 211, 153, 0.2)',
+                  borderRadius: 6, cursor: 'pointer', padding: '6px 12px',
+                  fontSize: 12, fontWeight: 600, color: '#34d399',
+                }}
+              >
+                {installingDaemon ? 'Setting up...' : !daemonInstalled ? 'Set Up' : 'Restart'}
+              </button>
+            </div>
+          )}
 
           {/* Watch detection banner */}
           {linkedWatches.length > 0 && (
