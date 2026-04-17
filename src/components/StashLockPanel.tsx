@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { Button } from '@base/primitives/button';
@@ -18,9 +18,11 @@ import { circleAlert } from '@base/primitives/icon/icons/circle-alert';
 import { circlePlus } from '@base/primitives/icon/icons/circle-plus';
 import { circleX } from '@base/primitives/icon/icons/circle-x';
 import { refreshCw } from '@base/primitives/icon/icons/refresh-cw';
+import { clock } from '@base/primitives/icon/icons/clock';
 import { useToastContext } from '../contexts/ToastContext';
 import { Tip } from './Tip';
-import type { LockSyncStatus, ProfileSyncDetail } from '../types';
+import { PullPreviewDialog } from './PullPreviewDialog';
+import type { LockSyncStatus, ProfileSyncDetail, ChangelogEntry } from '../types';
 import './StashLockPanel.css';
 
 interface StashLockPanelProps {
@@ -35,20 +37,47 @@ export function StashLockPanel({ projectId, onSynced }: StashLockPanelProps) {
   const [syncing, setSyncing] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [initialExpandDone, setInitialExpandDone] = useState(false);
+  const [pullPreviewOpen, setPullPreviewOpen] = useState(false);
+  const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
+  const [changelogOpen, setChangelogOpen] = useState(false);
+  const [changelogLoaded, setChangelogLoaded] = useState(false);
+
+  const syncVersionRef = useRef(0);
 
   const checkSync = useCallback(async () => {
+    const version = ++syncVersionRef.current;
     try {
       const result = await invoke<LockSyncStatus>('check_lock_sync', { projectId });
-      setStatus(result);
+      if (version === syncVersionRef.current) setStatus(result);
       return result;
     } catch {
-      setStatus(null);
+      if (version === syncVersionRef.current) setStatus(null);
       return null;
     }
   }, [projectId]);
 
+  const loadChangelog = useCallback(async () => {
+    try {
+      const entries = await invoke<ChangelogEntry[]>('get_lock_changelog', { projectId });
+      setChangelog(entries);
+      setChangelogLoaded(true);
+    } catch {
+      setChangelog([]);
+      setChangelogLoaded(true);
+    }
+  }, [projectId]);
+
+  const toggleChangelog = () => {
+    if (!changelogOpen && !changelogLoaded) {
+      loadChangelog();
+    }
+    setChangelogOpen(!changelogOpen);
+  };
+
   useEffect(() => {
     setInitialExpandDone(false);
+    setChangelogLoaded(false);
+    setChangelogOpen(false);
     checkSync();
   }, [checkSync]);
 
@@ -76,18 +105,14 @@ export function StashLockPanel({ projectId, onSynced }: StashLockPanelProps) {
     }
   };
 
-  const handlePull = async () => {
-    setSyncing(true);
-    try {
-      await invoke('pull_lock', { projectId });
-      toast.success(t('lockPanel.pullSuccess'));
-      await checkSync();
-      onSynced?.();
-    } catch (e) {
-      toast.error(String(e));
-    } finally {
-      setSyncing(false);
-    }
+  const handlePull = () => {
+    setPullPreviewOpen(true);
+  };
+
+  const handlePullApplied = async () => {
+    toast.success(t('lockPanel.pullSuccess'));
+    await checkSync();
+    onSynced?.();
   };
 
   if (!status) return null;
@@ -132,45 +157,20 @@ export function StashLockPanel({ projectId, onSynced }: StashLockPanelProps) {
   const needsPush = !status.in_sync && hasLocalChanges;
   const needsPull = !status.in_sync && hasLockOnlyData;
 
-  const statusIcon = (p: ProfileSyncDetail) => {
-    switch (p.status) {
-      case 'synced': return circleCheck;
-      case 'changed': return circleAlert;
-      case 'new': return circlePlus;
-      case 'lock_only': return circleX;
-      default: return circleCheck;
-    }
+  const STATUS_CONFIG: Record<string, {
+    icon: string;
+    colorClass: string;
+    badgeColor: 'success' | 'warning' | 'accent' | 'neutral';
+    labelKey: string;
+  }> = {
+    synced:    { icon: circleCheck, colorClass: 'lock-panel__icon--success', badgeColor: 'success', labelKey: 'lockPanel.synced' },
+    changed:   { icon: circleAlert, colorClass: 'lock-panel__icon--warning', badgeColor: 'warning', labelKey: 'lockPanel.changed' },
+    new:       { icon: circlePlus,  colorClass: 'lock-panel__icon--accent',  badgeColor: 'accent',  labelKey: 'lockPanel.newProfile' },
+    lock_only: { icon: circleX,     colorClass: 'lock-panel__icon--muted',   badgeColor: 'neutral', labelKey: 'lockPanel.lockOnly' },
   };
 
-  const statusColorClass = (p: ProfileSyncDetail): string => {
-    switch (p.status) {
-      case 'synced': return 'lock-panel__icon--success';
-      case 'changed': return 'lock-panel__icon--warning';
-      case 'new': return 'lock-panel__icon--accent';
-      case 'lock_only': return 'lock-panel__icon--muted';
-      default: return 'lock-panel__icon--muted';
-    }
-  };
-
-  const statusBadgeColor = (p: ProfileSyncDetail): 'success' | 'warning' | 'accent' | 'neutral' => {
-    switch (p.status) {
-      case 'synced': return 'success';
-      case 'changed': return 'warning';
-      case 'new': return 'accent';
-      case 'lock_only': return 'neutral';
-      default: return 'neutral';
-    }
-  };
-
-  const statusLabel = (p: ProfileSyncDetail): string => {
-    switch (p.status) {
-      case 'synced': return t('lockPanel.synced');
-      case 'changed': return t('lockPanel.changed');
-      case 'new': return t('lockPanel.newProfile');
-      case 'lock_only': return t('lockPanel.lockOnly');
-      default: return '';
-    }
-  };
+  const getStatusConfig = (p: ProfileSyncDetail) =>
+    STATUS_CONFIG[p.status] ?? STATUS_CONFIG.synced;
 
   return (
     <div className={`lock-panel ${status.in_sync ? 'lock-panel--synced' : 'lock-panel--unsynced'}`}>
@@ -249,12 +249,12 @@ export function StashLockPanel({ projectId, onSynced }: StashLockPanelProps) {
           {status.profiles.map((profile) => (
             <div key={profile.name} className={`lock-panel__profile lock-panel__profile--${profile.status}`}>
               <div className="lock-panel__profile-header">
-                <span className={statusColorClass(profile)}>
-                  <Icon icon={statusIcon(profile)} size="xs" color="currentColor" />
+                <span className={getStatusConfig(profile).colorClass}>
+                  <Icon icon={getStatusConfig(profile).icon} size="xs" color="currentColor" />
                 </span>
                 <span className="lock-panel__profile-name">.env.{profile.name}</span>
-                <Badge variant="subtle" size="sm" color={statusBadgeColor(profile)}>
-                  {statusLabel(profile)}
+                <Badge variant="subtle" size="sm" color={getStatusConfig(profile).badgeColor}>
+                  {t(getStatusConfig(profile).labelKey)}
                 </Badge>
                 <span className="lock-panel__profile-counts">
                   <span className="lock-panel__count-env">{profile.env_key_count} {t('lockPanel.onDisk')}</span>
@@ -288,7 +288,7 @@ export function StashLockPanel({ projectId, onSynced }: StashLockPanelProps) {
               )}
               {profile.status === 'synced' && (
                 <div className="lock-panel__profile-synced-detail">
-                  {profile.env_key_count} {profile.env_key_count === 1 ? 'key' : 'keys'} {t('lockPanel.matchedDescription')}
+                  {t('lockPanel.keysMatched', { count: profile.env_key_count })}
                 </div>
               )}
             </div>
@@ -298,6 +298,39 @@ export function StashLockPanel({ projectId, onSynced }: StashLockPanelProps) {
           )}
         </div>
       )}
+
+      {/* Recent Activity (changelog) */}
+      {status.has_lock && (
+        <div className="lock-panel__changelog">
+          <button className="lock-panel__changelog-toggle" onClick={toggleChangelog}>
+            <Icon icon={clock} size="xs" color="currentColor" />
+            <span>{t('lockPanel.recentActivity')}</span>
+            <Icon icon={changelogOpen ? chevronUp : chevronDown} size="xs" color="currentColor" />
+          </button>
+          {changelogOpen && (
+            <div className="lock-panel__changelog-list">
+              {changelog.length === 0 && changelogLoaded && (
+                <p className="lock-panel__changelog-empty">{t('lockPanel.noActivity')}</p>
+              )}
+              {changelog.map((entry) => (
+                <div key={entry.hash} className="lock-panel__changelog-entry">
+                  <code className="lock-panel__changelog-hash">{entry.hash.slice(0, 7)}</code>
+                  <span className="lock-panel__changelog-author">{entry.author}</span>
+                  <span className="lock-panel__changelog-date">{entry.date}</span>
+                  <span className="lock-panel__changelog-msg">{entry.message}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <PullPreviewDialog
+        open={pullPreviewOpen}
+        projectId={projectId}
+        onClose={() => setPullPreviewOpen(false)}
+        onApplied={handlePullApplied}
+      />
     </div>
   );
 }

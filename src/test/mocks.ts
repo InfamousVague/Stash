@@ -10,6 +10,7 @@ export const mockProjects: Project[] = [
     framework: 'next',
     active_profile: 'default',
     profiles: ['default', 'staging', 'production'],
+    local_only: false,
   },
   {
     id: 'proj-2',
@@ -18,6 +19,7 @@ export const mockProjects: Project[] = [
     framework: 'express',
     active_profile: 'default',
     profiles: ['default', 'development'],
+    local_only: false,
   },
 ];
 

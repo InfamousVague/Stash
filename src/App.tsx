@@ -1,34 +1,18 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
-import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
 import { Icon } from '@base/primitives/icon';
 import '@base/primitives/icon/icon.css';
-import { shieldCheck } from '@base/primitives/icon/icons/shield-check';
-import { radar } from '@base/primitives/icon/icons/radar';
-import { bookOpen } from '@base/primitives/icon/icons/book-open';
-import { bookUser } from '@base/primitives/icon/icons/book-user';
-import { settings } from '@base/primitives/icon/icons/settings';
-import { activity } from '@base/primitives/icon/icons/activity';
-import { users } from '@base/primitives/icon/icons/users';
 import { lock } from '@base/primitives/icon/icons/lock';
 import { circleHelp } from '@base/primitives/icon/icons/circle-help';
-import { shieldCheck as shieldCheckIcon } from '@base/primitives/icon/icons/shield-check';
-import { radar as radarIcon } from '@base/primitives/icon/icons/radar';
-import { bookOpen as bookOpenIcon } from '@base/primitives/icon/icons/book-open';
-import { activity as activityIcon } from '@base/primitives/icon/icons/activity';
-import { users as usersIcon } from '@base/primitives/icon/icons/users';
-import { key as keyIcon } from '@base/primitives/icon/icons/key';
-import { keyRound } from '@base/primitives/icon/icons/key-round';
-import { fingerprint } from '@base/primitives/icon/icons/fingerprint';
-import { sparkles } from '@base/primitives/icon/icons/sparkles';
 import { Tour, type TourStep } from './components/Tour';
+import { type Page, NAV_ITEMS, APP_TOUR_DEFS } from './constants/navigation';
+import { useDeepLinks } from './hooks/useDeepLinks';
 import { VaultsPage } from './pages/VaultsPage';
 import { DiscoverPage } from './pages/DiscoverPage';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { HealthPage } from './pages/HealthPage';
-import { DevelopersPage } from './pages/DevelopersPage';
-import { ContactsPage } from './pages/ContactsPage';
+import { PeoplePage } from './pages/PeoplePage';
 import { SavedKeysPage } from './pages/SavedKeysPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { UnlockScreen } from './components/UnlockScreen';
@@ -39,30 +23,6 @@ import { useUpdater } from './hooks/useUpdater';
 import { UpdateBanner } from './components/UpdateBanner';
 import { IdentityPrompt } from './components/IdentityPrompt';
 import './App.css';
-
-type Page = 'vaults' | 'discover' | 'directory' | 'savedkeys' | 'health' | 'developers' | 'contacts' | 'settings';
-
-const NAV_ITEMS: { page: Page; labelKey: string; icon: string; iconColor: string }[] = [
-  { page: 'vaults', labelKey: 'nav.vaults', icon: shieldCheck, iconColor: '#22c55e' },
-  { page: 'discover', labelKey: 'nav.discover', icon: radar, iconColor: '#3b82f6' },
-  { page: 'directory', labelKey: 'nav.directory', icon: bookOpen, iconColor: '#a78bfa' },
-  { page: 'savedkeys', labelKey: 'nav.savedKeys', icon: keyRound, iconColor: '#f97316' },
-  { page: 'health', labelKey: 'nav.health', icon: activity, iconColor: '#f59e0b' },
-  { page: 'developers', labelKey: 'nav.teams', icon: users, iconColor: '#06b6d4' },
-  { page: 'contacts', labelKey: 'nav.contacts', icon: bookUser, iconColor: '#ec4899' },
-  { page: 'settings', labelKey: 'nav.settings', icon: settings, iconColor: '#6b7280' },
-];
-
-const APP_TOUR_DEFS: { target: string; titleKey: string; bodyKey: string; icon: string; iconColor: string; placement: 'top' | 'bottom' | 'left' | 'right'; page: string }[] = [
-  { target: '.stash__nav', titleKey: 'tour.welcome.title', bodyKey: 'tour.welcome.body', icon: sparkles, iconColor: '#a78bfa', placement: 'right', page: 'vaults' },
-  { target: '.vaults-page__list-actions', titleKey: 'tour.vaults.title', bodyKey: 'tour.vaults.body', icon: shieldCheckIcon, iconColor: '#22c55e', placement: 'bottom', page: 'vaults' },
-  { target: '.vaults-page__detail-tabs', titleKey: 'tour.editor.title', bodyKey: 'tour.editor.body', icon: keyIcon, iconColor: '#f59e0b', placement: 'bottom', page: 'vaults' },
-  { target: '.discover-page__toolbar', titleKey: 'tour.discover.title', bodyKey: 'tour.discover.body', icon: radarIcon, iconColor: '#3b82f6', placement: 'bottom', page: 'discover' },
-  { target: '.directory-page__controls', titleKey: 'tour.directory.title', bodyKey: 'tour.directory.body', icon: bookOpenIcon, iconColor: '#a78bfa', placement: 'bottom', page: 'directory' },
-  { target: '.health-page__summary', titleKey: 'tour.health.title', bodyKey: 'tour.health.body', icon: activityIcon, iconColor: '#f59e0b', placement: 'bottom', page: 'health' },
-  { target: '.developers-page__section-header', titleKey: 'tour.team.title', bodyKey: 'tour.team.body', icon: usersIcon, iconColor: '#06b6d4', placement: 'right', page: 'developers' },
-  { target: '.vaults-create-btn', titleKey: 'tour.getStarted.title', bodyKey: 'tour.getStarted.body', icon: fingerprint, iconColor: '#22c55e', placement: 'top', page: 'vaults' },
-];
 
 function App() {
   const { t } = useTranslation();
@@ -102,15 +62,21 @@ function App() {
         top: btnRect.top - navRect.top,
         height: btnRect.height,
         opacity: 1,
-        background: `${activeColor}18`,
+        background: `${activeColor}22`,
       });
     }
   }, [activeColor]);
 
   useEffect(() => {
-    // Small delay to let DOM update with the active class
-    requestAnimationFrame(updateIndicator);
+    // Double-rAF to ensure the DOM has fully laid out with the active class
+    requestAnimationFrame(() => requestAnimationFrame(updateIndicator));
   }, [page, updateIndicator]);
+
+  // Re-position indicator on window resize
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
 
   useEffect(() => {
     invoke<boolean>('is_setup_complete').then(setSetupComplete).catch(() => setSetupComplete(false));
@@ -126,33 +92,42 @@ function App() {
   }, [vault.unlocked, setupComplete, page]);
 
   // Listen for deep links (stash://add-contact?name=...&key=...)
-  useEffect(() => {
-    // onOpenUrl throws outside Tauri (e.g. in browser / E2E tests)
-    if (!(window as any).__TAURI_INTERNALS__) return;
-    const unlisten = onOpenUrl((urls) => {
-      for (const url of urls) {
-        try {
-          const parsed = new URL(url);
-          if (parsed.protocol === 'stash:' && parsed.hostname === 'add-contact') {
-            const name = parsed.searchParams.get('name') || '';
-            const key = parsed.searchParams.get('key') || '';
-            if (name && key) {
-              setPendingContact({ name, key });
-              setPage('contacts');
-            }
-          }
-          if (parsed.protocol === 'stash:' && parsed.hostname === 'import-key') {
-            const service = parsed.searchParams.get('service') || '';
-            const envKey = parsed.searchParams.get('envKey') || '';
-            setPendingImport({ service, envKey });
-            setPage('savedkeys');
-          }
-        } catch (e) {
-          console.error('Failed to parse deep link:', e);
-        }
+  useDeepLinks({
+    onAddContact: useCallback((name: string, key: string) => {
+      setPendingContact({ name, key });
+      setPage('people');
+    }, []),
+    onImportVar: useCallback((from: string, varKey: string, _enc: string) => {
+      // Decrypt and prompt to save — handled by vault page
+      setPendingImport({ service: `Shared by ${from}`, envKey: varKey });
+      setPage('savedkeys');
+    }, []),
+    onImportKey: useCallback((service: string, envKey: string) => {
+      setPendingImport({ service, envKey });
+      setPage('savedkeys');
+    }, []),
+    onAuthComplete: useCallback(async (token: string) => {
+      try {
+        await invoke('relay_save_token', { token });
+        setPage('settings');
+        // Dispatch event so SettingsPage refreshes relay status
+        window.dispatchEvent(new CustomEvent('stash-relay-connected'));
+      } catch (e) {
+        console.error('Failed to save auth token:', e);
       }
-    });
-    return () => { unlisten.then(fn => fn()); };
+    }, []),
+  });
+
+  // Listen for cross-component navigation events (e.g. Settings → People link)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const target = (e as CustomEvent).detail;
+      if (target && NAV_ITEMS.some((i) => i.page === target)) {
+        setPage(target as Page);
+      }
+    };
+    window.addEventListener('stash-navigate', handler);
+    return () => window.removeEventListener('stash-navigate', handler);
   }, []);
 
   // Reset page to vaults when vault locks
@@ -205,7 +180,13 @@ function App() {
     <ToastProvider>
     <div className="stash">
       <aside className="stash__sidebar">
-        <nav className="stash__nav" ref={navRef}>
+        <nav className="stash__nav" ref={(node) => {
+          navRef.current = node;
+          if (node) {
+            // Nav just mounted — position indicator after layout settles
+            requestAnimationFrame(() => requestAnimationFrame(updateIndicator));
+          }
+        }}>
           <div className="stash__nav-indicator" style={indicatorStyle} />
           {NAV_ITEMS.map((item) => {
             const isActive = page === item.page;
@@ -259,9 +240,8 @@ function App() {
             />
           )}
           {page === 'health' && <HealthPage />}
-          {page === 'developers' && <DevelopersPage />}
-          {page === 'contacts' && (
-            <ContactsPage
+          {page === 'people' && (
+            <PeoplePage
               pendingContact={pendingContact}
               onPendingHandled={() => setPendingContact(null)}
             />

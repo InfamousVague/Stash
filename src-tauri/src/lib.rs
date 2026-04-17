@@ -6,6 +6,7 @@ pub mod team;
 pub mod session;
 pub mod config;
 pub mod state;
+pub mod helpers;
 mod commands;
 
 use state::AppState;
@@ -36,7 +37,10 @@ pub fn run() {
             commands::projects::get_project_profile_vars,
             commands::projects::generate_env_file,
             commands::projects::get_var_history,
+            commands::projects::generate_env_example,
+            commands::projects::batch_add_vars,
             commands::projects::find_project_icon,
+            commands::projects::set_local_only,
             // Profile commands
             commands::profiles::list_profiles,
             commands::profiles::get_active_profile,
@@ -73,6 +77,13 @@ pub fn run() {
             commands::team::get_git_username,
             commands::team::set_git_username,
             commands::team::rename_lock_member,
+            commands::team::install_git_hook,
+            commands::team::remove_git_hook,
+            commands::team::preview_pull,
+            commands::team::apply_pull,
+            commands::team::encrypt_for_person,
+            commands::team::decrypt_from_person,
+            commands::team::get_lock_changelog,
             // CLI commands
             commands::cli::check_cli_installed,
             commands::cli::install_cli,
@@ -92,6 +103,7 @@ pub fn run() {
             commands::health::scan_all_git,
             commands::health::check_git_status,
             commands::health::fix_gitignore,
+            commands::health::get_expiring_keys,
             commands::health::remove_env_from_git,
             // Contact commands
             commands::contacts::list_contacts,
@@ -104,6 +116,18 @@ pub fn run() {
             commands::saved_keys::update_saved_key,
             commands::saved_keys::delete_saved_key,
             commands::saved_keys::get_saved_key_value,
+            // Relay commands
+            commands::relay::relay_sign_in_with_apple,
+            commands::relay::relay_sign_in_with_apple_web,
+            commands::relay::relay_save_token,
+            commands::relay::relay_get_status,
+            commands::relay::relay_disconnect,
+            commands::relay::relay_generate_link_code,
+            commands::relay::relay_redeem_link_code,
+            commands::relay::relay_get_workspace_label,
+            commands::relay::relay_set_workspace_label,
+            commands::relay::relay_get_linked_devices,
+            commands::relay::relay_unlink_device,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

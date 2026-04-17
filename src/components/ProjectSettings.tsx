@@ -26,6 +26,8 @@ import './ProjectSettings.css';
 interface ProjectSettingsProps {
   projectId: string;
   projectPath: string;
+  localOnly?: boolean;
+  onLocalOnlyChange?: (localOnly: boolean) => void;
 }
 
 /** Metadata keys stored in .stash.lock */
@@ -40,7 +42,7 @@ const META = {
   NOTES: 'project_notes',
 } as const;
 
-export function ProjectSettings({ projectId, projectPath }: ProjectSettingsProps) {
+export function ProjectSettings({ projectId, projectPath, localOnly = false, onLocalOnlyChange }: ProjectSettingsProps) {
   const { t } = useTranslation();
   const toast = useToastContext();
   const meta = useLockMetadata(projectId);
@@ -182,6 +184,27 @@ export function ProjectSettings({ projectId, projectPath }: ProjectSettingsProps
 
         <div className="project-settings__row">
           <div className="project-settings__row-info">
+            <span className="project-settings__row-label">{t('projectSettings.localOnly')}</span>
+            <span className="project-settings__row-desc">{t('projectSettings.localOnlyDesc')}</span>
+          </div>
+          <Toggle
+            size="sm"
+            checked={localOnly}
+            onChange={async (e) => {
+              const enabled = e.target.checked;
+              try {
+                await invoke('set_local_only', { projectId, localOnly: enabled });
+                onLocalOnlyChange?.(enabled);
+                toast.success(enabled ? t('projectSettings.localOnlyEnabled') : t('projectSettings.localOnlyDisabled'));
+              } catch (err) {
+                toast.error(String(err));
+              }
+            }}
+          />
+        </div>
+
+        <div className="project-settings__row">
+          <div className="project-settings__row-info">
             <span className="project-settings__row-label">{t('projectSettings.autoPush')}</span>
             <span className="project-settings__row-desc">{t('projectSettings.autoPushDesc')}</span>
           </div>
@@ -212,7 +235,19 @@ export function ProjectSettings({ projectId, projectPath }: ProjectSettingsProps
           <Toggle
             size="sm"
             checked={gitHookPush}
-            onChange={(e) => saveMeta(META.GIT_HOOK_PUSH, e.target.checked)}
+            onChange={async (e) => {
+              const enabled = e.target.checked;
+              saveMeta(META.GIT_HOOK_PUSH, enabled);
+              try {
+                if (enabled) {
+                  await invoke('install_git_hook', { projectId });
+                } else {
+                  await invoke('remove_git_hook', { projectId });
+                }
+              } catch (err) {
+                console.error('Git hook toggle failed:', err);
+              }
+            }}
           />
         </div>
       </section>

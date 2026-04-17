@@ -1,0 +1,54 @@
+name: Stash Watch
+options:
+  bundleIdPrefix: com.mattssoftware.stash
+  deploymentTarget:
+    watchOS: "10.0"
+  xcodeVersion: "16.0"
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: F6ZAL7ANAD
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  Stash Watch App:
+    type: application
+    platform: watchOS
+    sources:
+      - path: Stash Watch App
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mattssoftware.stash.watchkitapp
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_FILE: "Stash Watch App/Info.plist"
+        INFOPLIST_KEY_WKWatchOnly: "YES"
+        INFOPLIST_KEY_CFBundleDisplayName: Stash
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: "Stash Watch App/Stash Watch App.entitlements"
+        CODE_SIGN_STYLE: Automatic
+    dependencies:
+      - target: StashWidgets
+
+  StashWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: StashWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mattssoftware.stash.watchkitapp.widgets
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_FILE: StashWidgets/Info.plist
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGN_ENTITLEMENTS: "StashWidgets/StashWidgets.entitlements"
+        CODE_SIGN_STYLE: Automatic
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+    dependencies:
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework

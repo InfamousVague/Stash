@@ -8,3 +8,4 @@ pub mod config;
 pub mod health;
 pub mod contacts;
 pub mod saved_keys;
+pub mod relay;

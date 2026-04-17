@@ -30,3 +30,11 @@ dist-ssr
 # Test artifacts
 test-results/
 playwright-report/
+
+# Relay build artifacts
+relay/target/
+
+# Watch build artifacts  
+watch/Stash Watch.xcodeproj/
+watch/.build/
+*.xcuserstate

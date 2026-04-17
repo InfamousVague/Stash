@@ -62,19 +62,65 @@ export function VaultsPage({ tourShowDemo, onNavigateToDiscover }: VaultsPagePro
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [cliInstalled, setCliInstalled] = useState<boolean | null>(null);
   const [cliBannerDismissed, setCliBannerDismissed] = useState(() => localStorage.getItem('stash-cli-banner-dismissed') === 'true');
-
+  const [watchBannerDismissed, setWatchBannerDismissed] = useState(() => localStorage.getItem('stash-watch-banner-dismissed') === 'true');
+  const [relayConnected, setRelayConnected] = useState(false);
+  const [hasWatch, setHasWatch] = useState(false);
+  const [highlightFilter, setHighlightFilter] = useState('');
   useEffect(() => { loadProjects(); refreshSavedKeys(); }, [loadProjects, refreshSavedKeys]);
+
+  // Check relay + watch status for the suggestion banner
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const status = await invoke<{ connected: boolean }>('relay_get_status');
+        setRelayConnected(status.connected);
+        if (status.connected) {
+          const devices = await invoke<{ devices: { device_type: string }[] }>('relay_get_linked_devices');
+          setHasWatch(devices.devices?.some(d => d.device_type === 'watch') ?? false);
+        }
+      } catch { /* ignore */ }
+    };
+    check();
+  }, []);
 
   useEffect(() => {
     invoke<boolean>('check_cli_installed').then(setCliInstalled).catch(() => setCliInstalled(false));
   }, []);
 
-  // Check if navigated from Discover with a project to select
+  // Poll active profile every 3 seconds while a project is open, so the UI
+  // reflects watch-triggered profile switches in (near) real time.
+  // When the active profile changes, also reload the project to fetch the
+  // new variables.
+  useEffect(() => {
+    if (!activeProject?.id) return;
+    const id = activeProject.id;
+    let lastSeenProfile = activeProfile;
+    const interval = setInterval(async () => {
+      await loadProfiles(id);
+      // After loadProfiles, activeProfile state has updated; if it changed,
+      // reload the project to fetch the new variables.
+      const current = await invoke<string>('get_active_profile', { projectId: id });
+      if (current !== lastSeenProfile) {
+        lastSeenProfile = current;
+        selectProject(id);
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [activeProject?.id, activeProfile, loadProfiles, selectProject]);
+
+  // Check if navigated from another page with a project to select
   useEffect(() => {
     const pendingId = localStorage.getItem('stash-select-project');
     if (pendingId && projects.length > 0) {
       localStorage.removeItem('stash-select-project');
       selectProject(pendingId);
+      // If a highlight key was set (e.g. from Health), switch to editor and set filter
+      const highlightKey = localStorage.getItem('stash-highlight-key');
+      if (highlightKey) {
+        localStorage.removeItem('stash-highlight-key');
+        setDetailTab('editor');
+        setHighlightFilter(highlightKey);
+      }
     }
   }, [projects, selectProject]);
 
@@ -134,6 +180,91 @@ export function VaultsPage({ tourShowDemo, onNavigateToDiscover }: VaultsPagePro
           <Button variant="primary" icon={scan} onClick={onNavigateToDiscover || startScan}>
             {t('vaults.scanForEnvs')}
           </Button>
+        </div>
+      )}
+
+      {/* Apple Watch suggestion banner */}
+      {!watchBannerDismissed && !hasWatch && relayConnected && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '12px 16px',
+          margin: '16px 16px 12px',
+          borderRadius: 12,
+          background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(52, 211, 153, 0.03))',
+          border: '1px solid rgba(52, 211, 153, 0.15)',
+        }}>
+          <span style={{ fontSize: 28 }}>⌚</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
+              Stash is available on Apple Watch
+            </div>
+            <div style={{ fontSize: 11, opacity: 0.6 }}>
+              View and switch .env profiles from your wrist. Install Stash from the Watch App Store to get started.
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setWatchBannerDismissed(true);
+              localStorage.setItem('stash-watch-banner-dismissed', 'true');
+            }}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              opacity: 0.4, fontSize: 16, padding: 4,
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Apple Watch not linked banner — show when relay is connected but no watch */}
+      {!watchBannerDismissed && !hasWatch && !relayConnected && projects.length > 0 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '12px 16px',
+          margin: '16px 16px 12px',
+          borderRadius: 12,
+          background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(52, 211, 153, 0.03))',
+          border: '1px solid rgba(52, 211, 153, 0.15)',
+        }}>
+          <span style={{ fontSize: 28 }}>⌚</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
+              Sync secrets to your Apple Watch
+            </div>
+            <div style={{ fontSize: 11, opacity: 0.6 }}>
+              Sign in to sync your .env profiles to your watch. View variables and switch profiles from your wrist.
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              // Navigate to settings
+              window.dispatchEvent(new CustomEvent('stash-navigate', { detail: 'settings' }));
+            }}
+            style={{
+              background: 'rgba(52, 211, 153, 0.15)', border: '1px solid rgba(52, 211, 153, 0.2)',
+              borderRadius: 6, cursor: 'pointer', padding: '4px 10px',
+              fontSize: 11, fontWeight: 600, color: '#34d399',
+            }}
+          >
+            Set up
+          </button>
+          <button
+            onClick={() => {
+              setWatchBannerDismissed(true);
+              localStorage.setItem('stash-watch-banner-dismissed', 'true');
+            }}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              opacity: 0.4, fontSize: 16, padding: 4,
+            }}
+          >
+            ✕
+          </button>
         </div>
       )}
 
@@ -326,6 +457,8 @@ export function VaultsPage({ tourShowDemo, onNavigateToDiscover }: VaultsPagePro
                       matchEnvKey={matchEnvKey}
                       rotation={rotation}
                       framework={activeProject.framework}
+                      initialFilter={highlightFilter}
+                      onFilterUsed={() => setHighlightFilter('')}
                       savedKeys={savedKeys}
                       onSaveKey={async (envKey, value, service) => {
                         const svc = service as ApiService | null | undefined;
@@ -349,7 +482,12 @@ export function VaultsPage({ tourShowDemo, onNavigateToDiscover }: VaultsPagePro
                   <TeamPanel projectId={activeProject.id} />
                 )}
                 {detailTab === 'settings' && (
-                  <ProjectSettings projectId={activeProject.id} projectPath={activeProject.path} />
+                  <ProjectSettings
+                    projectId={activeProject.id}
+                    projectPath={activeProject.path}
+                    localOnly={activeProject.local_only}
+                    onLocalOnlyChange={() => loadProjects()}
+                  />
                 )}
               </>
             ) : tourShowDemo ? (

@@ -9,6 +9,19 @@
 .env-editor__search {
   padding: 12px 16px;
   border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.env-editor__search > *:first-child {
+  flex: 1;
+}
+
+.env-editor__toolbar-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .env-editor__list {
@@ -24,10 +37,11 @@
   color: var(--color-text-tertiary);
 }
 
+/* Framework suggestions — pinned below scroll */
 .env-editor__suggestions {
   padding: 10px 16px;
   border-top: 1px solid var(--color-border-default);
-  background: var(--color-bg-secondary);
+  flex-shrink: 0;
 }
 
 .env-editor__suggestions-header {
@@ -89,32 +103,67 @@
   color: var(--color-text-secondary);
 }
 
-.env-editor__add {
+/* New Variable button at end of list */
+.env-editor__new-btn {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid var(--color-border-default);
-  background: var(--color-bg-secondary);
-  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 4px;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  transition: color 0.15s;
 }
 
-.env-editor__add-row {
+.env-editor__new-btn:hover {
+  color: var(--color-accent, var(--color-text-primary));
+}
+
+.env-editor__new-btn-icon {
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Inline add form */
+.env-editor__add-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0;
+  margin-top: 8px;
+  animation: env-editor-slide-in 0.15s ease-out;
+}
+
+.env-editor__add-inputs {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
 }
 
-.env-editor__add-row > * {
+.env-editor__add-inputs > * {
   min-width: 0;
 }
 
-.env-editor__add-label {
+.env-editor__add-hint {
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: var(--color-text-tertiary);
-  white-space: nowrap;
+  padding-left: 2px;
+}
+
+@keyframes env-editor-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -49,6 +49,13 @@ const FILTERS: { value: IssueFilter; labelKey: string }[] = [
 
 function IssueRow({ issue, style }: { issue: HealthIssue; style?: React.CSSProperties }) {
   const { t } = useTranslation();
+
+  const handleFix = () => {
+    localStorage.setItem('stash-select-project', issue.project_id);
+    localStorage.setItem('stash-highlight-key', issue.key);
+    window.dispatchEvent(new CustomEvent('stash-navigate', { detail: 'vaults' }));
+  };
+
   return (
     <div className="health-page__issue" style={style}>
       <Badge variant="subtle" size="sm" color={SEVERITY_COLOR[issue.severity] ?? 'neutral'}>
@@ -60,6 +67,9 @@ function IssueRow({ issue, style }: { issue: HealthIssue; style?: React.CSSPrope
       <code className="health-page__issue-key">{issue.key}</code>
       <span className="health-page__issue-project">{issue.project_name}</span>
       <span className="health-page__issue-details">{issue.details}</span>
+      <Button variant="ghost" size="sm" onClick={handleFix}>
+        {t('health.fix')}
+      </Button>
     </div>
   );
 }

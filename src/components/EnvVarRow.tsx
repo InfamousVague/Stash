@@ -15,11 +15,13 @@ import { clipboardPaste } from '@base/primitives/icon/icons/clipboard-paste';
 import { history as historyIcon } from '@base/primitives/icon/icons/history';
 import { alertTriangle } from '@base/primitives/icon/icons/alert-triangle';
 import { save } from '@base/primitives/icon/icons/save';
+import { send } from '@base/primitives/icon/icons/send';
 import { Icon } from '@base/primitives/icon';
 import '@base/primitives/icon/icon.css';
 import { openUrl } from '@tauri-apps/plugin-opener';
-import type { ApiService, HistoryEntry } from '../types';
+import type { ApiService, Contact, HistoryEntry } from '../types';
 import type { SavedKey } from '../hooks/useSavedKeys';
+import { formatRelativeTime, getStaleStatus, validateEnvVar, detectServiceFromValue } from '../utils/validation';
 import { Tip } from './Tip';
 import './EnvVarRow.css';
 
@@ -35,57 +37,6 @@ interface EnvVarRowProps {
   onSaveKey?: (envKey: string, value: string, service?: ApiService | null) => void;
 }
 
-function formatRelativeTime(timestamp: number): string {
-  const now = Date.now() / 1000;
-  const diff = now - timestamp;
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-  return new Date(timestamp * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function getStaleStatus(lastChanged?: number): 'fresh' | 'aging' | 'stale' | 'unknown' {
-  if (!lastChanged) return 'unknown';
-  const now = Date.now() / 1000;
-  const days = (now - lastChanged) / 86400;
-  if (days > 90) return 'stale';
-  if (days > 30) return 'aging';
-  return 'fresh';
-}
-
-function validateEnvVar(key: string, value: string): string | null {
-  if (!value) return null;
-  const upper = key.toUpperCase();
-
-  if (value !== value.trimEnd()) return 'Value has trailing whitespace';
-
-  if (upper.includes('AWS_ACCESS_KEY')) {
-    if (!value.startsWith('AKIA') || value.length !== 20)
-      return 'AWS access keys should start with AKIA and be 20 characters';
-  }
-  if (upper.startsWith('STRIPE_') && (upper.includes('KEY') || upper.includes('SECRET'))) {
-    const prefixes = ['sk_live_', 'sk_test_', 'pk_live_', 'pk_test_', 'rk_live_', 'rk_test_'];
-    if (!prefixes.some(p => value.startsWith(p)))
-      return 'Stripe keys should start with sk_live_, sk_test_, pk_live_, or pk_test_';
-  }
-  if (upper.includes('GITHUB_TOKEN') || upper.includes('GH_TOKEN')) {
-    const prefixes = ['ghp_', 'gho_', 'ghs_', 'github_pat_'];
-    if (!prefixes.some(p => value.startsWith(p)))
-      return 'GitHub tokens should start with ghp_, gho_, ghs_, or github_pat_';
-  }
-  if (upper.endsWith('_URL') || upper.endsWith('_URI')) {
-    if (!value.includes('://'))
-      return 'URL values should include a protocol (e.g. https://, postgres://)';
-  }
-  if (upper.endsWith('_PORT')) {
-    const port = parseInt(value, 10);
-    if (isNaN(port) || port < 1 || port > 65535)
-      return 'Port should be a number between 1 and 65535';
-  }
-  return null;
-}
-
 export function EnvVarRow({ envKey, value, projectId, matchedService, lastChanged, onUpdate, onDelete, savedKeys, onSaveKey }: EnvVarRowProps) {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
@@ -94,15 +45,20 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
   const [showHistory, setShowHistory] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [showSavedKeyPicker, setShowSavedKeyPicker] = useState(false);
+  const [showSharePicker, setShowSharePicker] = useState(false);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [sharedContactId, setSharedContactId] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [historyVisible, setHistoryVisible] = useState(false);
   const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
   const [dotKey, setDotKey] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [pasteHint, setPasteHint] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const historyRef = useRef<HTMLDivElement>(null);
   const validationRef = useRef<HTMLSpanElement>(null);
   const savedKeyPickerRef = useRef<HTMLDivElement>(null);
+  const sharePickerRef = useRef<HTMLDivElement>(null);
 
   const openPopoverAt = (el: HTMLElement) => {
     const rect = el.getBoundingClientRect();
@@ -130,10 +86,13 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
       if (showSavedKeyPicker && savedKeyPickerRef.current && !savedKeyPickerRef.current.contains(e.target as Node)) {
         setShowSavedKeyPicker(false);
       }
+      if (showSharePicker && sharePickerRef.current && !sharePickerRef.current.contains(e.target as Node)) {
+        setShowSharePicker(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showHistory, showValidation, showSavedKeyPicker]);
+  }, [showHistory, showValidation, showSavedKeyPicker, showSharePicker]);
 
   const loadHistory = useCallback(async () => {
     if (!projectId) return;
@@ -166,7 +125,21 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
   useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (pasteTimerRef.current) clearTimeout(pasteTimerRef.current);
     };
+  }, []);
+
+  const pasteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    const pasted = e.clipboardData.getData('text');
+    if (!pasted) return;
+    const detected = detectServiceFromValue(pasted.trim());
+    if (detected) {
+      if (pasteTimerRef.current) clearTimeout(pasteTimerRef.current);
+      setPasteHint(detected);
+      pasteTimerRef.current = setTimeout(() => setPasteHint(null), 5000);
+    }
   }, []);
 
   const handleCopy = async () => {
@@ -181,6 +154,34 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
     setLocalValue(sk.value);
     onUpdate(envKey, sk.value);
     setShowSavedKeyPicker(false);
+  };
+
+  const handleOpenSharePicker = async (el: HTMLElement) => {
+    openPopoverAt(el);
+    try {
+      const list = await invoke<Contact[]>('list_contacts');
+      setContacts(list);
+    } catch {
+      setContacts([]);
+    }
+    setSharedContactId(null);
+    setShowSharePicker(true);
+  };
+
+  const handleShareWithContact = async (contact: Contact) => {
+    try {
+      const link = await invoke<string>('encrypt_for_person', {
+        key: envKey,
+        value: localValue,
+        recipientPublicKey: contact.public_key,
+      });
+      await navigator.clipboard.writeText(link);
+      setSharedContactId(contact.public_key);
+      setTimeout(() => {
+        setSharedContactId(null);
+        setShowSharePicker(false);
+      }, 1500);
+    } catch { /* ignore */ }
   };
 
   const showGetKey = matchedService && !value.trim();
@@ -306,6 +307,7 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
             onChange={handleChange}
             onFocus={() => setEditing(true)}
             onBlur={() => { setEditing(false); setDotKey((k) => k + 1); }}
+            onPaste={handlePaste}
             placeholder={t('envVarRow.valuePlaceholder')}
             style={{ fontFamily: 'var(--font-mono)', flex: 1 }}
             autoFocus={editing && !visible}
@@ -322,7 +324,7 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
                   setShowValidation(true);
                 }
               }}
-              aria-label="Validation warning"
+              aria-label={t('envVarRow.validationWarning')}
             >
               <Icon icon={alertTriangle} size="sm" color="currentColor" />
             </button>
@@ -393,6 +395,55 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
             aria-label={visible ? t('envVarRow.hide') : t('envVarRow.reveal')}
           />
         </Tip>
+        {/* Share with contact */}
+        {localValue && (
+          <div className="env-var-row__share-wrapper" ref={sharePickerRef}>
+            <Tip content={t('envVarRow.share')}>
+              <Button
+                variant="ghost"
+                size="md"
+                iconOnly
+                icon={send}
+                onClick={(e) => {
+                  if (showSharePicker) {
+                    setShowSharePicker(false);
+                  } else {
+                    handleOpenSharePicker(e.currentTarget as HTMLElement);
+                  }
+                }}
+                aria-label={t('envVarRow.share')}
+              />
+            </Tip>
+            {showSharePicker && popoverPos && (
+              <div className="env-var-row__share-popover" style={{ top: popoverPos.top, left: popoverPos.left }}>
+                <div className="env-var-row__share-popover-header">{t('envVarRow.shareWith')}</div>
+                {contacts.length === 0 ? (
+                  <div className="env-var-row__share-empty">{t('envVarRow.noContacts')}</div>
+                ) : (
+                  <div className="env-var-row__share-list">
+                    {contacts.map((contact) => (
+                      <button
+                        key={contact.public_key}
+                        className="env-var-row__share-option"
+                        onClick={() => handleShareWithContact(contact)}
+                        disabled={sharedContactId === contact.public_key}
+                      >
+                        {sharedContactId === contact.public_key ? (
+                          <span className="env-var-row__share-success">{t('envVarRow.linkCopied')}</span>
+                        ) : (
+                          <>
+                            <span className="env-var-row__share-option-name">{contact.name}</span>
+                            <code className="env-var-row__share-option-key">{contact.public_key.slice(0, 12)}...</code>
+                          </>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
         {/* Save to saved keys */}
         {onSaveKey && localValue && !isAlreadySaved && (
           <Tip content={t('envVarRow.saveKey')}>
@@ -426,6 +477,21 @@ export function EnvVarRow({ envKey, value, projectId, matchedService, lastChange
           </Button>
         )}
       </div>
+      {pasteHint && (
+        <div className="env-var-row__paste-hint">
+          <Badge variant="subtle" size="sm" color="info">
+            {t('envVarRow.detectedService', { service: pasteHint })}
+          </Badge>
+          {onSaveKey && (
+            <button
+              className="env-var-row__paste-save"
+              onClick={() => { onSaveKey(envKey, localValue, matchedService); setPasteHint(null); }}
+            >
+              {t('envVarRow.saveKey')}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

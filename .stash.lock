@@ -1,0 +1,60 @@
+{
+  "version": 2,
+  "members": [
+    {
+      "name": "InfamousVague",
+      "public_key": "HBWEOrd6M+OEw7hLNd8GvZ1iWTdU8zkmYk6jH2/mmTw="
+    }
+  ],
+  "profiles": {
+    "Production": {
+      "APPLE_ID": {
+        "InfamousVague": "gzNbeEXPZ6K+DpOTH0uyqTPCW5EaqyWGDjslUxDE+wMoxLop76qKBOYSakI1gBw0xunY0YVUZk/QGefSJev19DjqM5RDv+jeq/+d0aspLZTc7PTIr7g="
+      },
+      "APPLE_PASSWORD": {
+        "InfamousVague": "NZMEpAL6beIbP1yU425iB16P8i/u3rwJ++H+ySjD3GJ0MTJ7/ZmDdcxKayUcrzanFmVartfkyNO7DAkp768ayWLSWpVMFf4W2Ko9RshMdg=="
+      },
+      "APPLE_SIGNING_IDENTITY": {
+        "InfamousVague": "KzGxU6DQS3/Z53kH8VqnMOPcLCf6DYsxsOWjgD8tzAHyb4Fi08U0oxN7nmU0wfET9yniPn3yGdYCD+kE5j5el/0h02iiSh4lshbX2HQmOz+iDrxqMwOHgJT85Q11wf/egqTpbw=="
+      },
+      "TAURI_SIGNING_PRIVATE_KEY_PATH": {
+        "InfamousVague": "9yhHzTDYKQWifgICt+nkJ89lR7AGhZWikQjy4gTlEhVY3pYIz1sgvxsJIwg9JZ4TZd8+2ztF3Q9Acgh52fVwnUAD6BCX/tdLH9uycSu7yRXsflCEMs9njQ=="
+      },
+      "APPLE_TEAM_ID": {
+        "InfamousVague": "iXFCSyG9tJ0S9GduQpaIkTbrQh4evXFSPH17WesmaTwB4ESiOulzEAFi42BMfkvbcvPXnqHeRJ0Atd9modhtDH4ymJaYvw=="
+      }
+    },
+    "apple": {
+      "APPLE_ID": {
+        "InfamousVague": "EcoHYEQZYZE1NZp1e8cRVJKp/g6zPPi4iofMAY1e7BnVI5SMhybS1HQR+XdCqP+FUYLndPnXFewFByKkEibG8WrFXwuRaly6O5ERLlg1BjLzwkiP++Y="
+      },
+      "APPLE_PASSWORD": {
+        "InfamousVague": "wnAgUTEER/lcFqAmvxkZ8VqNbAgs1H5tBEN63NiKmmnGaqWNt/hz1jQZc4AgZVZ/yB0OtY78NiRDCBIySYLAS1QNRWex2bX9HQkYONTBWA=="
+      },
+      "TAURI_SIGNING_PRIVATE_KEY_PATH": {
+        "InfamousVague": "QtZNKRBhUwcSyj7+1hCMbfgGRzlapXAkgRAuupPgFB0SaR73xWxydndVv9jL1eituEXq8X8Me+gL3rUiGJhZPvSzF7+LmcjAsVQ78GgDfG2YRIHOFAnmoQ=="
+      },
+      "APPLE_SIGNING_IDENTITY": {
+        "InfamousVague": "RcV8nihHK8n5FxUCjszqVOQEV2IKxwKgwzRHxFsOwDYzV0vf24Md00I9wDI0z2dPS8OG4Iw8ycXtLFKSPjC4gQ+2Xu2ZMxyoc7sEkweLhgnSN6ZNlpq2bVc9R41LhzrhejPClw=="
+      },
+      "APPLE_TEAM_ID": {
+        "InfamousVague": "WfHgycsZeOw5FXGghX1+3bMJ7mXZCqWE6hy5HypvJmdqGrdqkwLurkLHv56hAIpKEcMICyJ7tIXmTiA8zsV1tTqoS1y9xQ=="
+      }
+    }
+  },
+  "metadata": {
+    "auto_push_on_change": true,
+    "require_all_profiles_synced": true,
+    "git_hook_pre_commit_push": true,
+    "rotation": {
+      "Production:APPLE_ID": 1775795836,
+      "Production:APPLE_PASSWORD": 1775795844,
+      "Production:APPLE_SIGNING_IDENTITY": 1775802133,
+      "Production:APPLE_TEAM_ID": 1775795836,
+      "apple:APPLE_ID": 1775795836,
+      "apple:APPLE_PASSWORD": 1775795844,
+      "apple:APPLE_SIGNING_IDENTITY": 1775802133,
+      "apple:APPLE_TEAM_ID": 1775795836
+    }
+  }
+}

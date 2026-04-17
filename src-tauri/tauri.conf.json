@@ -13,12 +13,12 @@
     "windows": [
       {
         "title": "Stash",
-        "width": 1196,
-        "height": 806,
+        "width": 957,
+        "height": 645,
         "resizable": true,
         "center": true,
-        "minWidth": 910,
-        "minHeight": 624,
+        "minWidth": 728,
+        "minHeight": 500,
         "decorations": true
       }
     ],

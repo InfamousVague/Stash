@@ -4,6 +4,8 @@ use std::path::Path;
 pub struct AppConfig {
     pub scan_directories: Vec<String>,
     pub setup_complete: bool,
+    #[serde(default)]
+    pub profile_colors: std::collections::HashMap<String, String>,
 }
 
 impl Default for AppConfig {
@@ -11,6 +13,7 @@ impl Default for AppConfig {
         Self {
             scan_directories: Vec::new(),
             setup_complete: false,
+            profile_colors: std::collections::HashMap::new(),
         }
     }
 }

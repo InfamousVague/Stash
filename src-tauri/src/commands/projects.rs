@@ -1,7 +1,40 @@
 use crate::state::{AppState, EnvVar, HistoryEntry, Project};
+use crate::team;
 use crate::env_parser;
 use crate::profile_manager;
+use std::collections::HashSet;
 use std::path::Path;
+
+/// If auto-push is enabled in lock metadata, silently push to .stash.lock after a var change.
+fn maybe_auto_push(state: &AppState, project_id: &str) {
+    let project_path = match state.get_project_path(project_id) {
+        Ok(p) => p,
+        Err(_) => return,
+    };
+    let lock_path = Path::new(&project_path).join(".stash.lock");
+    if !lock_path.exists() {
+        return;
+    }
+    let lock = match team::read_lock_file(&project_path) {
+        Ok(l) => l,
+        Err(_) => return,
+    };
+    let enabled = lock.metadata
+        .get("auto_push_on_change")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
+    if !enabled {
+        return;
+    }
+    // Fire push_lock logic inline (best-effort, don't fail the var operation)
+    if let Ok((_, my_public)) = team::load_keypair(&state.stash_dir) {
+        if lock.members.iter().any(|m| m.public_key == my_public) {
+            // Re-invoke push via the command module — import would be circular,
+            // so we call the team module directly
+            let _ = crate::commands::team::push_lock_inner(state, project_id);
+        }
+    }
+}
 
 #[tauri::command]
 pub fn import_project(
@@ -48,6 +81,7 @@ pub fn import_project(
         framework,
         active_profile,
         profiles,
+        local_only: false,
     };
 
     {
@@ -108,6 +142,7 @@ pub fn update_var(
     env_parser::update_var_in_file(&env_path.to_string_lossy(), &key, &value)?;
     state.record_rotation(&project_id, &key);
     state.record_history(&project_id, &key, "updated", old_value.as_deref(), Some(&value));
+    maybe_auto_push(&state, &project_id);
     Ok(())
 }
 
@@ -124,6 +159,7 @@ pub fn add_var(
     env_parser::add_var_to_file(&env_path.to_string_lossy(), &key, &value)?;
     state.record_rotation(&project_id, &key);
     state.record_history(&project_id, &key, "created", None, Some(&value));
+    maybe_auto_push(&state, &project_id);
     Ok(())
 }
 
@@ -143,6 +179,7 @@ pub fn delete_var(
 
     env_parser::remove_var_from_file(&env_path.to_string_lossy(), &key)?;
     state.record_history(&project_id, &key, "deleted", old_value.as_deref(), None);
+    maybe_auto_push(&state, &project_id);
     Ok(())
 }
 
@@ -170,15 +207,40 @@ pub fn get_rotation_info(
     state: tauri::State<'_, AppState>,
     project_id: String,
 ) -> std::collections::HashMap<String, u64> {
-    let rotation = match state.rotation.lock() {
-        Ok(r) => r,
-        Err(_) => return std::collections::HashMap::new(),
-    };
-    let prefix = format!("{}:", project_id);
-    rotation.iter()
-        .filter(|(k, _)| k.starts_with(&prefix))
-        .map(|(k, v)| (k[prefix.len()..].to_string(), *v))
-        .collect()
+    let mut result: std::collections::HashMap<String, u64> = std::collections::HashMap::new();
+
+    // Local rotation data
+    if let Ok(rotation) = state.rotation.lock() {
+        let prefix = format!("{}:", project_id);
+        for (k, &v) in rotation.iter() {
+            if let Some(key) = k.strip_prefix(&prefix) {
+                result.insert(key.to_string(), v);
+            }
+        }
+    }
+
+    // Merge rotation from .stash.lock metadata (team-shared timestamps)
+    if let Ok(project_path) = state.get_project_path(&project_id) {
+        let lock_path = std::path::Path::new(&project_path).join(".stash.lock");
+        if lock_path.exists() {
+            if let Ok(lock) = crate::team::read_lock_file(&project_path) {
+                if let Some(rotation_value) = lock.metadata.get("rotation") {
+                    if let Ok(lock_rotation) = serde_json::from_value::<std::collections::HashMap<String, u64>>(rotation_value.clone()) {
+                        for (lock_key, lock_ts) in lock_rotation {
+                            // lock_key is "profile:KEY" — extract just the KEY
+                            let env_key = lock_key.splitn(2, ':').nth(1).unwrap_or(&lock_key);
+                            let local_ts = result.get(env_key).copied().unwrap_or(0);
+                            if lock_ts > local_ts {
+                                result.insert(env_key.to_string(), lock_ts);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    result
 }
 
 #[tauri::command]
@@ -189,11 +251,7 @@ pub fn get_project_profile_vars(
 ) -> Result<Vec<EnvVar>, String> {
     let project_path = state.get_project_path(&project_id)?;
 
-    let env_path = if profile_name == "default" {
-        Path::new(&project_path).join(".env")
-    } else {
-        Path::new(&project_path).join(format!(".env.{}", profile_name))
-    };
+    let env_path = crate::helpers::profile_env_path(&project_path, &profile_name);
 
     if !env_path.exists() {
         return Ok(Vec::new());
@@ -227,6 +285,83 @@ pub fn get_var_history(
     state.get_history(&project_id, &key)
 }
 
+#[tauri::command]
+pub fn generate_env_example(
+    state: tauri::State<'_, AppState>,
+    project_id: String,
+) -> Result<String, String> {
+    let project_path = state.get_project_path(&project_id)?;
+    let env_path = Path::new(&project_path).join(".env");
+
+    let vars = if env_path.exists() {
+        env_parser::read_env_file(&env_path.to_string_lossy())?
+    } else {
+        // Try active profile
+        let profiles = profile_manager::list_profiles(&project_path);
+        if let Some(first) = profiles.first() {
+            let profile_path = Path::new(&project_path).join(format!(".env.{}", first));
+            if profile_path.exists() {
+                env_parser::read_env_file(&profile_path.to_string_lossy())?
+            } else {
+                Vec::new()
+            }
+        } else {
+            Vec::new()
+        }
+    };
+
+    if vars.is_empty() {
+        return Err("No variables found to generate .env.example".to_string());
+    }
+
+    let example_path = Path::new(&project_path).join(".env.example");
+    let example_vars: Vec<EnvVar> = vars.into_iter().map(|v| EnvVar {
+        key: v.key,
+        value: String::new(),
+    }).collect();
+
+    env_parser::write_env_file(&example_path.to_string_lossy(), &example_vars)?;
+    Ok(example_path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+pub fn batch_add_vars(
+    state: tauri::State<'_, AppState>,
+    project_id: String,
+    vars: Vec<EnvVar>,
+) -> Result<usize, String> {
+    let project_path = state.get_project_path(&project_id)?;
+    let env_path = Path::new(&project_path).join(".env");
+    let mut count = 0;
+
+    for var in &vars {
+        if var.key.is_empty() {
+            continue;
+        }
+        match env_parser::add_var_to_file(&env_path.to_string_lossy(), &var.key, &var.value) {
+            Ok(_) => {
+                state.record_rotation(&project_id, &var.key);
+                state.record_history(&project_id, &var.key, "created", None, Some(&var.value));
+                count += 1;
+            }
+            Err(_) => {
+                // Duplicate key — try updating instead
+                let _ = env_parser::update_var_in_file(&env_path.to_string_lossy(), &var.key, &var.value);
+                state.record_rotation(&project_id, &var.key);
+                state.record_history(&project_id, &var.key, "updated", None, Some(&var.value));
+                count += 1;
+            }
+        }
+    }
+
+    // Single auto-push at the end
+    if count > 0 {
+        maybe_auto_push(&state, &project_id);
+    }
+
+    Ok(count)
+}
+
 /// Find a project icon and return it as a base64 data URL.
 #[tauri::command]
 pub fn find_project_icon(project_path: String) -> Option<String> {
@@ -235,7 +370,7 @@ pub fn find_project_icon(project_path: String) -> Option<String> {
     let found_path = find_icon_path(base)?;
 
     // Read file and convert to data URL
-    let data = std::fs::read(&found_path).ok()?;
+    let data = std::fs::read(&found_path).ok()?; // graceful: missing icon is not an error
     let ext = found_path.rsplit('.').next().unwrap_or("png").to_lowercase();
     let mime = match ext.as_str() {
         "svg" => "image/svg+xml",
@@ -304,6 +439,80 @@ fn find_icon_path(base: &Path) -> Option<String> {
     }
 
     None
+}
+
+const STASH_GITIGNORE_ENTRIES: &[&str] = &[
+    "# Stash local-only mode",
+    ".env",
+    ".env.*",
+    "!.env.example",
+    ".stash.lock",
+];
+
+#[tauri::command]
+pub fn set_local_only(
+    state: tauri::State<'_, AppState>,
+    project_id: String,
+    local_only: bool,
+) -> Result<(), String> {
+    // Update project state
+    let project_path = {
+        let mut projects = state.projects.lock()
+            .map_err(|_| "Lock poisoned".to_string())?;
+        let project = projects.iter_mut()
+            .find(|p| p.id == project_id)
+            .ok_or("Project not found".to_string())?;
+        project.local_only = local_only;
+        project.path.clone()
+    };
+    state.save_projects();
+
+    // Update .gitignore
+    let gitignore_path = Path::new(&project_path).join(".gitignore");
+
+    if local_only {
+        // Add entries to .gitignore
+        let existing = std::fs::read_to_string(&gitignore_path).unwrap_or_default();
+        let mut lines: Vec<String> = existing.lines().map(|l| l.to_string()).collect();
+
+        // Check if we already added our block
+        if !lines.iter().any(|l| l.contains("Stash local-only mode")) {
+            if !lines.is_empty() && !lines.last().map(|l| l.is_empty()).unwrap_or(true) {
+                lines.push(String::new());
+            }
+            for entry in STASH_GITIGNORE_ENTRIES {
+                lines.push(entry.to_string());
+            }
+            let content = lines.join("\n") + "\n";
+            std::fs::write(&gitignore_path, content)
+                .map_err(|e| format!("Failed to write .gitignore: {}", e))?;
+        }
+    } else {
+        // Remove our entries from .gitignore
+        if gitignore_path.exists() {
+            let existing = std::fs::read_to_string(&gitignore_path)
+                .map_err(|e| format!("Failed to read .gitignore: {}", e))?;
+            let stash_entries: HashSet<&str> =
+                STASH_GITIGNORE_ENTRIES.iter().copied().collect();
+            let lines: Vec<&str> = existing.lines()
+                .filter(|l| !stash_entries.contains(l))
+                .collect();
+            // Trim trailing empty lines left over
+            let mut result: Vec<&str> = lines.into_iter().collect();
+            while result.last() == Some(&"") {
+                result.pop();
+            }
+            let content = if result.is_empty() {
+                String::new()
+            } else {
+                result.join("\n") + "\n"
+            };
+            std::fs::write(&gitignore_path, content)
+                .map_err(|e| format!("Failed to write .gitignore: {}", e))?;
+        }
+    }
+
+    Ok(())
 }
 
 fn detect_framework_for_project(path: &Path) -> Option<String> {

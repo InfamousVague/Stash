@@ -1,0 +1,7 @@
+# Stash Relay configuration
+# Place at /etc/stash/stash-relay.toml, ~/.stash-relay/stash-relay.toml, or ./stash-relay.toml
+
+[server]
+host = "127.0.0.1"
+port = 8444
+data_dir = "/var/lib/stash"

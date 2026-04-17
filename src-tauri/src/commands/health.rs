@@ -712,6 +712,64 @@ pub fn fix_gitignore(project_path: String) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(serde::Serialize, Clone, Debug)]
+pub struct ExpiringKeyInfo {
+    pub project_id: String,
+    pub project_name: String,
+    pub key: String,
+    pub expires_at: u64,
+    pub days_remaining: i64,
+}
+
+#[tauri::command]
+pub fn get_expiring_keys(
+    state: tauri::State<'_, AppState>,
+    days_ahead: u64,
+) -> Result<Vec<ExpiringKeyInfo>, String> {
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+
+    let days_ahead = days_ahead.min(3650); // cap at 10 years
+    let threshold = now.saturating_add(days_ahead.saturating_mul(86400));
+
+    let expiry = state.expiry.lock()
+        .map_err(|_| "Lock poisoned".to_string())?;
+    let projects = state.projects.lock()
+        .map_err(|_| "Lock poisoned".to_string())?;
+
+    let mut results: Vec<ExpiringKeyInfo> = Vec::new();
+
+    for (composite, &exp_ts) in expiry.iter() {
+        if exp_ts > threshold {
+            continue;
+        }
+        // composite is "project_id:key"
+        let mut parts = composite.splitn(2, ':');
+        let project_id = parts.next().unwrap_or("").to_string();
+        let key = parts.next().unwrap_or("").to_string();
+
+        let project_name = projects.iter()
+            .find(|p| p.id == project_id)
+            .map(|p| p.name.clone())
+            .unwrap_or_else(|| "Unknown".to_string());
+
+        let days_remaining = (exp_ts as i64 - now as i64) / 86400;
+
+        results.push(ExpiringKeyInfo {
+            project_id,
+            project_name,
+            key,
+            expires_at: exp_ts,
+            days_remaining,
+        });
+    }
+
+    results.sort_by_key(|e| e.expires_at);
+    Ok(results)
+}
+
 #[tauri::command]
 pub fn remove_env_from_git(project_path: String) -> Result<(), String> {
     let output = std::process::Command::new("git")

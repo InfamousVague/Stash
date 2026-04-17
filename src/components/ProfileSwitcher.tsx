@@ -114,8 +114,9 @@ export function ProfileSwitcher({
                 className="profile-switcher__item-name"
                 onClick={() => !isActive && onSwitch(p)}
                 disabled={isActive}
+                style={{ color: isActive ? color : undefined }}
               >
-                {p}
+                .env{p !== 'default' ? `.${p}` : ''}
               </button>
               {canDelete && (
                 <button

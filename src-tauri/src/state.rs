@@ -31,6 +31,8 @@ pub struct Project {
     pub framework: Option<String>,
     pub active_profile: String,
     pub profiles: Vec<String>,
+    #[serde(default)]
+    pub local_only: bool,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]

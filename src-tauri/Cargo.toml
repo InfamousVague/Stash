@@ -39,6 +39,12 @@ ed25519-dalek = { version = "2", features = ["rand_core"] }
 base64 = "0.22"
 sha2 = "0.10"
 clap = { version = "4", features = ["derive"] }
+notify = "7"
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+tokio = { version = "1", features = ["full"] }
+local-ip-address = "0.6"
+axum = "0.7"
+tower-http = { version = "0.5", features = ["cors"] }
 # keyring removed — Touch ID key stored in local file, protected by biometric prompt
 
 [dev-dependencies]
@@ -47,4 +53,8 @@ tempfile = "3"
 [[bin]]
 name = "stash-cli"
 path = "src/bin/stash-cli.rs"
+
+[[bin]]
+name = "stash-daemon"
+path = "src/bin/stash-daemon.rs"
 

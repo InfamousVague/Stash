@@ -1,0 +1,136 @@
+.import-dialog__tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border-default);
+  margin-bottom: 16px;
+}
+
+.import-dialog__tab {
+  flex: 1;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.import-dialog__tab:hover {
+  color: var(--color-text-primary);
+}
+
+.import-dialog__tab--active {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-accent);
+}
+
+.import-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.import-dialog__textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  resize: vertical;
+  outline: none;
+}
+
+.import-dialog__textarea:focus {
+  border-color: var(--color-accent);
+}
+
+.import-dialog__textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.import-dialog__file-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
+  padding: 24px;
+  border: 2px dashed var(--color-border-default);
+  border-radius: 10px;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.import-dialog__file-drop:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
+}
+
+.import-dialog__file-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-primary);
+}
+
+.import-dialog__preview {
+  max-height: 240px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.import-dialog__preview-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.import-dialog__preview-row:hover {
+  background: var(--color-bg-elevated);
+}
+
+.import-dialog__preview-key {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  min-width: 160px;
+}
+
+.import-dialog__preview-value {
+  font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.import-dialog__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.import-dialog__count {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  flex: 1;
+  display: flex;
+  align-items: center;
+}

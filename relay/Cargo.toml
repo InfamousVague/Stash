@@ -1,0 +1,31 @@
+[package]
+name = "stash-relay"
+version = "1.0.0"
+edition = "2021"
+
+[[bin]]
+name = "stash-relay"
+path = "src/main.rs"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+rusqlite = { version = "0.31", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4"] }
+argon2 = "0.5"
+aes-gcm = "0.10"
+base64 = "0.22"
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+rsa = "0.9"
+sha2 = { version = "0.10", features = ["oid"] }
+chrono = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+tower_governor = "0.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+toml = "0.8"
+anyhow = "1"
+rand = "0.8"
+signature = "2"

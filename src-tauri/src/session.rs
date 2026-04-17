@@ -23,7 +23,13 @@ pub fn write_session(key: &[u8; 32]) {
     };
 
     if let Ok(json) = serde_json::to_string(&session) {
-        std::fs::write(session_path(), json).ok();
+        let path = session_path();
+        std::fs::write(&path, json).ok();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600)).ok();
+        }
     }
 }
 

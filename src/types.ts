@@ -25,6 +25,7 @@ export interface Project {
   framework: string | null;
   active_profile: string;
   profiles: string[];
+  local_only: boolean;
 }
 
 export interface EnvVar {
@@ -119,4 +120,43 @@ export interface Contact {
   name: string;
   public_key: string;
   added_at: number;
+}
+
+// ── Pull conflict resolution types ──────────────────────────
+
+export interface ChangedVar {
+  key: string;
+  local_value: string;
+  incoming_value: string;
+}
+
+export interface ProfilePullDiff {
+  name: string;
+  added: EnvVar[];
+  removed: string[];
+  changed: ChangedVar[];
+  unchanged: number;
+}
+
+export interface PullPreview {
+  profiles: ProfilePullDiff[];
+}
+
+// ── Lock changelog types ────────────────────────────────────
+
+export interface ChangelogEntry {
+  hash: string;
+  author: string;
+  date: string;
+  message: string;
+}
+
+// ── Expiry notification types ───────────────────────────────
+
+export interface ExpiringKeyInfo {
+  project_id: string;
+  project_name: string;
+  key: string;
+  expires_at: number;
+  days_remaining: number;
 }
