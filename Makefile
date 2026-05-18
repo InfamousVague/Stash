@@ -81,27 +81,13 @@ dev:
 ## Bump version, commit, tag, push
 BUMP ?= patch
 
+# A release MUST ship the signed+notarized .dmg (and the embedded
+# StashBar). The old tag-only recipe produced assetless releases that
+# broke the launcher/site download — so `release` now delegates to
+# `local-release` (bump → build → sign → notarize → tag/push → upload).
 release:
-	@CURRENT=$(VERSION); \
-	IFS='.' read -r MAJOR MINOR PATCH <<< "$$CURRENT"; \
-	if [ "$(BUMP)" = "major" ]; then \
-		MAJOR=$$((MAJOR + 1)); MINOR=0; PATCH=0; \
-	elif [ "$(BUMP)" = "minor" ]; then \
-		MINOR=$$((MINOR + 1)); PATCH=0; \
-	else \
-		PATCH=$$((PATCH + 1)); \
-	fi; \
-	NEW="$$MAJOR.$$MINOR.$$PATCH"; \
-	echo "=== Bumping $$CURRENT → $$NEW ==="; \
-	sed -i '' "s/\"version\": \"$$CURRENT\"/\"version\": \"$$NEW\"/" src-tauri/tauri.conf.json; \
-	sed -i '' "s/^version = \"$$CURRENT\"/version = \"$$NEW\"/" src-tauri/Cargo.toml; \
-	git add src-tauri/tauri.conf.json src-tauri/Cargo.toml; \
-	git commit -m "Stash v$$NEW"; \
-	git tag -a "v$$NEW" -m "Stash v$$NEW"; \
-	git push origin main; \
-	git push origin "v$$NEW"; \
-	echo ""; \
-	echo "✓ v$$NEW tagged and pushed"
+	@echo "=== make release → full build+notarize+upload (no assetless releases) ==="
+	@$(MAKE) local-release BUMP=$(BUMP)
 
 ## Local release: bump + build + sign + notarize + upload to GitHub
 local-release:
