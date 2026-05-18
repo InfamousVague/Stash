@@ -215,13 +215,19 @@ async fn verify_apple_identity_token(token: &str) -> anyhow::Result<AppleClaims>
         anyhow::bail!("Invalid issuer: {}", iss);
     }
 
-    let aud = claims["aud"].as_str().unwrap_or("");
+    let aud_value = &claims["aud"];
+    tracing::info!("Apple JWT aud raw: {:?}", aud_value);
+    let aud = aud_value.as_str().unwrap_or("");
+    tracing::info!("Apple JWT aud parsed: '{}' (len={})", aud, aud.len());
     let valid_audiences = [
         "com.mattssoftware.stash.watchkitapp",
         "com.mattssoftware.stash",
         "com.mattssoftware.stash.web",
+        "com.mattssoftware.stash.mobile",
     ];
-    if !valid_audiences.contains(&aud) {
+    let matched = valid_audiences.contains(&aud);
+    tracing::info!("Audience match result: {} (checking against {} audiences)", matched, valid_audiences.len());
+    if !matched {
         anyhow::bail!("Invalid audience: {}", aud);
     }
 

@@ -38,3 +38,7 @@ relay/target/
 watch/Stash Watch.xcodeproj/
 watch/.build/
 *.xcuserstate
+
+# Expo local cache
+mobile/.expo/
+.expo/

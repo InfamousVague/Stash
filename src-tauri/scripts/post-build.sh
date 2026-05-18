@@ -38,6 +38,21 @@ codesign --force --options runtime --timestamp \
     "$APP_BUNDLE/Contents/MacOS/stash"
 echo "Signed: main binary"
 
+# Embed + sign the StashBar menu-bar companion (co-launched with Stash).
+# Must happen BEFORE the outer .app sign so the bundle seal includes it.
+STASHBAR_DIR="$TAURI_DIR/../native/StashBar"
+if [ -d "$STASHBAR_DIR" ]; then
+    echo "=== Building + embedding StashBar companion ==="
+    SIGN_IDENTITY="$IDENTITY" bash "$STASHBAR_DIR/scripts/make-app.sh"
+    rm -rf "$APP_BUNDLE/Contents/Resources/StashBar.app"
+    cp -R "$STASHBAR_DIR/StashBar.app" "$APP_BUNDLE/Contents/Resources/StashBar.app"
+    codesign --force --options runtime --timestamp --sign "$IDENTITY" \
+        "$APP_BUNDLE/Contents/Resources/StashBar.app/Contents/MacOS/StashBar"
+    codesign --force --options runtime --timestamp --sign "$IDENTITY" \
+        "$APP_BUNDLE/Contents/Resources/StashBar.app"
+    echo "Embedded + signed: StashBar.app"
+fi
+
 # Sign the entire .app bundle (outermost, must be last)
 codesign --force --options runtime --timestamp \
     --sign "$IDENTITY" \

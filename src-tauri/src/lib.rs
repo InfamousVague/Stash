@@ -11,6 +11,26 @@ mod commands;
 
 use state::AppState;
 
+/// Launch the embedded StashBar menu-bar companion (one app, two UIs).
+/// In a packaged build it sits at Stash.app/Contents/Resources/StashBar.app;
+/// `open -g` starts it in the background. The companion self-quits when
+/// Stash is no longer running, so it lives and dies with this process.
+fn launch_stashbar_companion() {
+    let exe = match std::env::current_exe() {
+        Ok(p) => p,
+        Err(_) => return,
+    };
+    if let Some(macos_dir) = exe.parent() {
+        let companion = macos_dir.join("../Resources/StashBar.app");
+        if companion.exists() {
+            let _ = std::process::Command::new("/usr/bin/open")
+                .arg("-g")
+                .arg(&companion)
+                .spawn();
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -131,6 +151,10 @@ pub fn run() {
             commands::relay::relay_daemon_status,
             commands::relay::relay_install_daemon,
         ])
+        .setup(|_app| {
+            launch_stashbar_companion();
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -44,114 +44,22 @@ struct ProjectDetailView: View {
                 .padding(.vertical, 4)
             }
 
-            // Framework & stats
+            // Variables
             Section {
-                if let framework = project.framework {
-                    HStack {
-                        Text("Framework")
+                NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "list.bullet.rectangle")
                             .font(.caption)
-                        Spacer()
-                        Text(framework)
-                            .font(.system(.caption, design: .monospaced))
                             .foregroundStyle(.stashGreen)
-                    }
-                }
-
-                HStack {
-                    Text("Variables")
-                        .font(.caption)
-                    Spacer()
-                    Text("\(project.variableCount)")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.stashGreen)
-                }
-
-                HStack {
-                    Text("Profiles")
-                        .font(.caption)
-                    Spacer()
-                    Text("\(project.profileCount)")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            // Health section
-            if let health = project.health, !health.isHealthy {
-                Section {
-                    if health.staleCount > 0 {
-                        NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "clock.badge.exclamationmark")
-                                    .font(.caption)
-                                    .foregroundStyle(.orange)
-                                    .frame(width: 18)
-                                Text("Stale")
-                                    .font(.caption)
-                                Spacer()
-                                Text("\(health.staleCount)")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundStyle(.orange)
-                            }
-                        }
-                    }
-
-                    if health.expiringCount > 0 {
-                        NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "hourglass")
-                                    .font(.caption)
-                                    .foregroundStyle(.yellow)
-                                    .frame(width: 18)
-                                Text("Expiring")
-                                    .font(.caption)
-                                Spacer()
-                                Text("\(health.expiringCount)")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundStyle(.yellow)
-                            }
-                        }
-                    }
-
-                    if health.exposedCount > 0 {
-                        NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "exclamationmark.shield.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(.red)
-                                    .frame(width: 18)
-                                Text("Exposed")
-                                    .font(.caption)
-                                Spacer()
-                                Text("\(health.exposedCount)")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundStyle(.red)
-                            }
-                        }
-                    }
-
-                    NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "list.bullet.rectangle")
-                                .font(.caption)
-                                .foregroundStyle(.stashGreen)
-                                .frame(width: 18)
-                            Text("View All Issues")
-                                .font(.caption)
-                                .foregroundStyle(.stashGreen)
-                        }
-                    }
-                } header: {
-                    Label("Health Issues", systemImage: "exclamationmark.triangle.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                } footer: {
-                    if let lastSync = appState.lastSyncTime {
-                        Text("Health checked \(lastSync, formatter: relativeDateFormatter)")
-                            .font(.system(size: 9))
+                            .frame(width: 18)
+                        Text("Variables")
+                            .font(.body)
+                        Spacer()
+                        Text("\(project.variableCount)")
+                            .font(.system(.caption, design: .monospaced))
                             .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
+                    .padding(.vertical, 4)
                 }
             }
 
@@ -220,23 +128,107 @@ struct ProjectDetailView: View {
                     .foregroundStyle(.stashGreen)
             }
 
-            // View variables
-            Section {
-                NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "list.bullet.rectangle")
-                            .font(.caption)
-                            .foregroundStyle(.stashGreen)
-                            .frame(width: 18)
-                        Text("View Variables")
-                            .font(.body)
-                        Spacer()
-                        Text("\(project.variableCount)")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.secondary)
+            // Health section
+            if let health = project.health, !health.isHealthy {
+                Section {
+                    if health.staleCount > 0 {
+                        NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "clock.badge.exclamationmark")
+                                    .font(.caption)
+                                    .foregroundStyle(.orange)
+                                    .frame(width: 18)
+                                Text("Stale")
+                                    .font(.caption)
+                                Spacer()
+                                Text("\(health.staleCount)")
+                                    .font(.system(.caption, design: .monospaced))
+                                    .foregroundStyle(.orange)
+                            }
+                        }
                     }
-                    .padding(.vertical, 4)
+
+                    if health.expiringCount > 0 {
+                        NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "hourglass")
+                                    .font(.caption)
+                                    .foregroundStyle(.yellow)
+                                    .frame(width: 18)
+                                Text("Expiring")
+                                    .font(.caption)
+                                Spacer()
+                                Text("\(health.expiringCount)")
+                                    .font(.system(.caption, design: .monospaced))
+                                    .foregroundStyle(.yellow)
+                            }
+                        }
+                    }
+
+                    if health.exposedCount > 0 {
+                        NavigationLink(destination: VariableListView(projectId: project.id, profileName: project.activeProfile)) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "exclamationmark.shield.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                                    .frame(width: 18)
+                                Text("Exposed")
+                                    .font(.caption)
+                                Spacer()
+                                Text("\(health.exposedCount)")
+                                    .font(.system(.caption, design: .monospaced))
+                                    .foregroundStyle(.red)
+                            }
+                        }
+                    }
+                } header: {
+                    Label("Health Issues", systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } footer: {
+                    if let lastSync = appState.lastSyncTime {
+                        Text("Health checked \(lastSync, formatter: relativeDateFormatter)")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
                 }
+            }
+
+            // Stats (at bottom)
+            Section {
+                if let framework = project.framework {
+                    HStack {
+                        Text("Framework")
+                            .font(.caption)
+                        Spacer()
+                        Text(framework)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(.stashGreen)
+                    }
+                }
+
+                HStack {
+                    Text("Variables")
+                        .font(.caption)
+                    Spacer()
+                    Text("\(project.variableCount)")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.stashGreen)
+                }
+
+                HStack {
+                    Text("Profiles")
+                        .font(.caption)
+                    Spacer()
+                    Text("\(project.profileCount)")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Info")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
         }
         .navigationTitle(project.name)
