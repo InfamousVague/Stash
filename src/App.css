@@ -13,6 +13,33 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* Glass scrollbars — WKWebView's default is an opaque dark track
+   that clashes with the glass UI. Make it a thin, transparent-track,
+   translucent rounded thumb that tracks the Base theme tokens. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-text-primary) 26%, transparent) transparent;
+}
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+  background: transparent;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-primary) 22%, transparent);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
+  background-clip: content-box;
+}
+
 /* Prevent button color flash when variant/state changes (e.g. Import → Open in Vaults) */
 button, .btn {
   transition: opacity 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
